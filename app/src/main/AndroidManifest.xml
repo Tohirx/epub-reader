@@ -12,7 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BooksAndStuff">
         <activity
-            android:name=".MainActivity"
+            android:name=".ReadingPageActivity"
+            android:exported="false"
+            android:theme="@style/Theme.BooksAndStuff" />
+        <activity
+            android:name=".ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
