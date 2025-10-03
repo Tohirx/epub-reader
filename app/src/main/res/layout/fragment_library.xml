@@ -8,7 +8,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.recyclerview.widget.RecyclerView
-
         android:id="@+id/library_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,6 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:spanCount="2"
         tools:listitem="@layout/item_book" />
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/library_fragment_fab"

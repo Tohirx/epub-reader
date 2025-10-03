@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.coreLibraryDesugaring
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -36,6 +38,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
         jvmTarget = "17"
@@ -47,11 +50,15 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
-    implementation("org.readium.kotlin-toolkit:readium-shared:3.1.1")
-    implementation("org.readium.kotlin-toolkit:readium-streamer:3.1.1")
-    implementation("org.readium.kotlin-toolkit:readium-navigator:3.1.1")
-    implementation("org.readium.kotlin-toolkit:readium-opds:3.1.1")
-    implementation("org.readium.kotlin-toolkit:readium-lcp:3.1.1")
+    implementation(libs.picasso)
+
+    coreLibraryDesugaring (libs.desugar.jdk.libs)
+
+    implementation(libs.readium.shared)
+    implementation(libs.readium.streamer)
+    implementation(libs.readium.navigator)
+    implementation(libs.readium.adapter.pdfium)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

@@ -18,8 +18,6 @@ class BooksRepository(private val bookDao: BookDao) {
         bookDao.updateBook(book)
     }
 
-    suspend fun getAllBooks(): Flow<List<Book>> {
-        return bookDao.getAllBooks()
-    }
+     fun getAllBooks(): Flow<List<Book>> = bookDao.getAllBooks()
 
 }
