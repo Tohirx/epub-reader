@@ -21,7 +21,6 @@ class BooksAndStuffApplication: Application() {
 
     companion object {
         lateinit var booksRepository: BooksRepository
-        var currentPublication: Publication? = null
 
     }
 }

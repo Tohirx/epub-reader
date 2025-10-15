@@ -1,7 +1,8 @@
 package com.tohir.booksandstuff.data
 
-import com.tohir.booksandstuff.data.model.Book
+import android.util.Log.i
 import com.tohir.booksandstuff.data.database.BookDao
+import com.tohir.booksandstuff.data.model.Book
 import kotlinx.coroutines.flow.Flow
 
 class BooksRepository(private val bookDao: BookDao) {
@@ -18,6 +19,28 @@ class BooksRepository(private val bookDao: BookDao) {
         bookDao.updateBook(book)
     }
 
-     fun getAllBooks(): Flow<List<Book>> = bookDao.getAllBooks()
+    fun getAllBooks(): Flow<List<Book>> = bookDao.getAllBooksAsFlow()
+
+    suspend fun saveReadingProgress(locator: String?, bookID: Int?) {
+        bookDao.saveReadingProgress(locator, bookID)
+    }
+
+    suspend fun getReadingProgress(bookID: Int): String? {
+        return bookDao.getReadingProgress(bookID)
+    }
+
+    suspend fun getBookByIdentifier(identifier: String?): Book? {
+        return bookDao.getBookByIdentifier(identifier = identifier)
+    }
+
+    suspend fun getAllBooksAsList(): List<Book> {
+        return bookDao.getAllBooksAsList()
+    }
+
+    suspend fun getBookById(id: Int): Book {
+        return bookDao.getBookById(id)
+    }
+
+
 
 }

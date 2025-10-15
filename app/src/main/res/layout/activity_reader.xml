@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.fragment.app.FragmentContainerView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:name="com.tohir.booksandstuff.ui.books.EpubReaderFragment"
-    android:id="@+id/reader_container"
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ReaderActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-</androidx.fragment.app.FragmentContainerView>
+
+    <androidx.fragment.app.FragmentContainerView xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/reader_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.books.ReaderActivity" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
