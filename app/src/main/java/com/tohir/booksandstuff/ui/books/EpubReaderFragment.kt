@@ -2,10 +2,11 @@ package com.tohir.booksandstuff.ui.books
 
 import android.os.Bundle
 import android.util.Log
+import android.view.ActionMode
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -25,11 +26,13 @@ import org.readium.r2.navigator.epub.EpubNavigatorFactory
 import org.readium.r2.navigator.epub.EpubNavigatorFragment
 import org.readium.r2.navigator.input.InputListener
 import org.readium.r2.navigator.input.TapEvent
+import org.readium.r2.navigator.util.BaseActionModeCallback
 import java.io.File
 
 class EpubReaderFragment : Fragment() {
 
     private val viewModel: ReaderViewModel by viewModels()
+    private lateinit var navigator: EpubNavigatorFragment
     private lateinit var binding: FragmentReaderBinding
 
     override fun onCreateView(
@@ -60,7 +63,10 @@ class EpubReaderFragment : Fragment() {
 
                 childFragmentManager.fragmentFactory =
                     navigatorFactory.createFragmentFactory(
-                        viewModel.restoreReadingProgression(bookID)
+                        viewModel.restoreReadingProgression(bookID),
+                        configuration = EpubNavigatorFragment.Configuration {
+                            selectionActionModeCallback = customSelectionActionModeCallback
+                        }
                     )
 
                 val tag = "EpubNavigatorFragment"
@@ -77,26 +83,12 @@ class EpubReaderFragment : Fragment() {
 
                 setupClickListeners()
 
-                val navigator = childFragmentManager.findFragmentByTag(tag) as EpubNavigatorFragment
+                navigator = childFragmentManager.findFragmentByTag(tag) as EpubNavigatorFragment
 
                 (navigator as VisualNavigator).apply {
                     addInputListener(object : InputListener {
                         override fun onTap(event: TapEvent): Boolean {
-
-                            if (binding.imageViewCancelButton.isVisible) {
-                                binding.imageViewCancelButton.visibility = View.INVISIBLE
-                            } else if (binding.imageViewCancelButton.isInvisible) {
-                                binding.imageViewCancelButton.visibility = View.VISIBLE
-                            }
-
-                            if (binding.imageViewOptions.isVisible) {
-                                binding.imageViewOptions.visibility = View.INVISIBLE
-                            } else if (binding.imageViewOptions.isInvisible) {
-                                binding.imageViewOptions.visibility = View.VISIBLE
-                            }
-
-
-
+                            showButtons()
                             return true
                         }
                     })
@@ -111,6 +103,20 @@ class EpubReaderFragment : Fragment() {
         }
     }
 
+    private fun showButtons() {
+        if (binding.imageViewCancelButton.isVisible) {
+            binding.imageViewCancelButton.visibility = View.INVISIBLE
+        } else if (binding.imageViewCancelButton.isInvisible) {
+            binding.imageViewCancelButton.visibility = View.VISIBLE
+        }
+
+        if (binding.imageViewOptions.isVisible) {
+            binding.imageViewOptions.visibility = View.INVISIBLE
+        } else if (binding.imageViewOptions.isInvisible) {
+            binding.imageViewOptions.visibility = View.VISIBLE
+        }
+    }
+
     fun setupClickListeners() {
         binding.imageViewCancelButton.setOnClickListener {
             requireActivity().finish()
@@ -119,6 +125,24 @@ class EpubReaderFragment : Fragment() {
         binding.imageViewOptions.setOnClickListener {
 
         }
+    }
+
+    val customSelectionActionModeCallback: ActionMode.Callback by lazy { SelectionActionModeCallBack() }
+
+    private inner class SelectionActionModeCallBack : BaseActionModeCallback() {
+        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+
+            mode?.menuInflater?.inflate(R.menu.menu_action_mode, menu)
+
+            menu?.findItem(R.id.highlight)?.isVisible = true
+            menu?.findItem(R.id.underline)?.isVisible = true
+            menu?.findItem(R.id.note)?.isVisible = true
+            menu?.findItem(R.id.dictionary)?.isVisible = true
+
+            return true
+
+        }
+
     }
 
 }

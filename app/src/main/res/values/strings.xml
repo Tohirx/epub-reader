@@ -43,4 +43,8 @@
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
     <string name="reader_activity_cancel_button">Cancel Button</string>
+    <string name="menu_action_mode_highlight">Highlight</string>
+    <string name="menu_action_mode_underline">Underline</string>
+    <string name="menu_action_mode_note">Note</string>
+    <string name="menu_action_mode_dictionary">Dictionary</string>
 </resources>
