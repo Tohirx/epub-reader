@@ -47,4 +47,5 @@
     <string name="menu_action_mode_underline">Underline</string>
     <string name="menu_action_mode_note">Note</string>
     <string name="menu_action_mode_dictionary">Dictionary</string>
+    <string name="bottom_sheet_dialog_appearance">APPEARANCE</string>
 </resources>

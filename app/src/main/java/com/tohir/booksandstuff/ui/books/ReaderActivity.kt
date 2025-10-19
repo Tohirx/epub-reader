@@ -1,5 +1,6 @@
 package com.tohir.booksandstuff.ui.books
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -39,6 +40,7 @@ class ReaderActivity : AppCompatActivity() {
         val uri: Uri? = intent?.data
         if (uri != null) {
             Log.d("tohir", " Reader Activity Gotten Uri: $uri")
+
 
             val fragment = EpubReaderFragment().apply {
                 arguments = bundleOf("BOOK_PATH" to uri.toString(), "BOOK_ID" to bookIdIntent)

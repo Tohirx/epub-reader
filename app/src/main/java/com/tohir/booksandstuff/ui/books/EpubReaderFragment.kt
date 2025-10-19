@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.ActionMode
 import android.view.LayoutInflater
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.net.toUri
@@ -16,6 +17,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.tohir.booksandstuff.R
 import com.tohir.booksandstuff.databinding.FragmentReaderBinding
 import kotlinx.coroutines.flow.launchIn
@@ -56,8 +58,7 @@ class EpubReaderFragment : Fragment() {
 
         if (bookFile != null && bookID != null) {
             lifecycleScope.launch {
-                val publication =
-                    viewModel.importPublication(bookFile.toUri(), requireContext(), bookID)
+                val publication = viewModel.importPublication(bookFile.toUri(), requireContext(), bookID)
 
                 val navigatorFactory = EpubNavigatorFactory(publication = publication)
 
@@ -67,6 +68,7 @@ class EpubReaderFragment : Fragment() {
                         configuration = EpubNavigatorFragment.Configuration {
                             selectionActionModeCallback = customSelectionActionModeCallback
                         }
+
                     )
 
                 val tag = "EpubNavigatorFragment"
@@ -123,6 +125,13 @@ class EpubReaderFragment : Fragment() {
         }
 
         binding.imageViewOptions.setOnClickListener {
+            val dialogBinding = layoutInflater.inflate(R.layout.bottom_sheet_dialog_layout, null)
+            val dialog = BottomSheetDialog(requireContext())
+            dialog.setContentView(dialogBinding)
+            dialog.show()
+
+
+
 
         }
     }
@@ -141,6 +150,10 @@ class EpubReaderFragment : Fragment() {
 
             return true
 
+        }
+
+        override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+           return true
         }
 
     }

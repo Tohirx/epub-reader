@@ -30,6 +30,8 @@ interface BookDao {
     @Query("SELECT * FROM book ORDER BY dateAdded DESC")
      fun getAllBooksAsFlow(): Flow<List<Book>>
 
+
+
     @Query("SELECT * FROM book WHERE identifier = :identifier LIMIT 1")
     suspend fun getBookByIdentifier(identifier: String?): Book?
 
@@ -38,6 +40,9 @@ interface BookDao {
 
     @Query("SELECT * FROM book WHERE bookId = :id")
     fun getBookById(id: Int): Book
+
+    @Query("SELECT * FROM book ORDER BY lastDateOpened DESC LIMIT 5")
+    fun getRecentBooks(): Flow<List<Book>>
 
 
 }

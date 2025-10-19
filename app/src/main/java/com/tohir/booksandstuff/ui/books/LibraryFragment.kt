@@ -41,12 +41,10 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
     }
 
     fun fetchAllBooks() {
-
         lifecycleScope.launch {
             viewModel.getAllBooks().collectLatest { books ->
                 adapter.setBooks(books)
             }
-
         }
     }
 

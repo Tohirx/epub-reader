@@ -21,6 +21,7 @@ import org.readium.r2.streamer.PublicationOpener
 import org.readium.r2.streamer.parser.DefaultPublicationParser
 import java.io.File
 import java.io.FileOutputStream
+import java.time.LocalDateTime
 
 class ReaderViewModel : ViewModel() {
 
@@ -41,7 +42,7 @@ class ReaderViewModel : ViewModel() {
             val url: AbsoluteUrl? = fileUri.toAbsoluteUrl()
 
             val asset =
-                assetRetriever.retrieve(url!!,)
+                assetRetriever.retrieve(url!!)
                     .getOrNull()
 
 
@@ -81,7 +82,8 @@ class ReaderViewModel : ViewModel() {
                     identifier = publication.metadata.identifier ?: "",
                     uri = destFile.absolutePath,
                     readingProgress = null,
-                    mediaType = mediaType.toString()
+                    mediaType = mediaType.toString(),
+                    lastDateOpened = LocalDateTime.now().toString()
                 )
                 if (!books.contains(book)) {
 
@@ -97,9 +99,7 @@ class ReaderViewModel : ViewModel() {
 
         }
 
-
         return publications[bookID]!!
-
 
     }
 

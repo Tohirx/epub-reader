@@ -41,6 +41,13 @@ class BooksRepository(private val bookDao: BookDao) {
         return bookDao.getBookById(id)
     }
 
+    fun getRecentBooks(): Flow<List<Book>> {
+        return bookDao.getRecentBooks()
+    }
+
+
+
+
 
 
 }
