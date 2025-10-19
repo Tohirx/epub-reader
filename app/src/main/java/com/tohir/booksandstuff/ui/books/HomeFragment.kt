@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 class HomeFragment : Fragment() {
 
     private val viewModel: HomeViewModel by viewModels()
-
     private val adapter = RecentBookAdapter()
     private lateinit var binding: FragmentHomeBinding
 
@@ -33,11 +32,9 @@ class HomeFragment : Fragment() {
         binding.recyclerViewPreviouslyRead.adapter = adapter
         fetchAllBooks()
 
-
     }
 
     fun fetchAllBooks() {
-
         lifecycleScope.launch {
             viewModel.getRecentBooks().collectLatest { books ->
                 adapter.setBooks(books)

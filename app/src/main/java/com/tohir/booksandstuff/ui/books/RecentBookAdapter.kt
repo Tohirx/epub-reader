@@ -12,7 +12,7 @@ import java.io.File
 
 class RecentBookAdapter : RecyclerView.Adapter<RecentBookAdapter.ViewHolder>() {
 
-    private var books: List<Book> = emptyList()
+    private var books: List<Book> = listOf()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -42,6 +42,7 @@ class RecentBookAdapter : RecyclerView.Adapter<RecentBookAdapter.ViewHolder>() {
     }
 
     inner class ViewHolder(private val binding: ItemRecentlyReadBooksBinding) : RecyclerView.ViewHolder(binding.root) {
+
         fun bind(book : Book) {
             val file = File(book.cover!!)
             val uri = Uri.fromFile(file)
@@ -50,6 +51,12 @@ class RecentBookAdapter : RecyclerView.Adapter<RecentBookAdapter.ViewHolder>() {
                 .load(uri)
                 .error(R.drawable.ic_launcher_background)
                 .into(binding.imageViewRecentlyReadBookCover)
+
+            binding.textViewAuthorName.text = book.author
+            binding.textViewBookTitle.text = book.title
+
+
         }
+
     }
 }

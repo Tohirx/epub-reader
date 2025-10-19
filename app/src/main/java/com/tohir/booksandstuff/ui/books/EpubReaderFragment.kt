@@ -37,11 +37,7 @@ class EpubReaderFragment : Fragment() {
     private lateinit var navigator: EpubNavigatorFragment
     private lateinit var binding: FragmentReaderBinding
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentReaderBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -54,11 +50,11 @@ class EpubReaderFragment : Fragment() {
         val bookID = arguments?.getInt("BOOK_ID")
         Log.d("tohir", "EpubReaderFragment, Gotten $bookUri")
 
-        val bookFile = bookPath?.let { File(it) } ?: bookUri?.let { File(it) }
+        val bookFile = bookPath?.let { File(it) } ?: bookUri
 
         if (bookFile != null && bookID != null) {
             lifecycleScope.launch {
-                val publication = viewModel.importPublication(bookFile.toUri(), requireContext(), bookID)
+                val publication = viewModel.importPublication(bookFile.toString().toUri(), requireContext(), bookID)
 
                 val navigatorFactory = EpubNavigatorFactory(publication = publication)
 

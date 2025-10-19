@@ -104,6 +104,7 @@ class ReaderViewModel : ViewModel() {
     }
 
     fun persistEpubFile(context: Context, sourceUri: Uri): File {
+
         val fileName = "book_${System.currentTimeMillis()}.epub"
         val destFile = File(context.filesDir, fileName)
         context.contentResolver.openInputStream(sourceUri)?.use { input ->
