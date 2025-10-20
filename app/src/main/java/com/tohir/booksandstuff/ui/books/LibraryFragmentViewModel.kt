@@ -36,6 +36,12 @@ class LibraryFragmentViewModel : ViewModel() {
         return booksRepository.getAllBooks()
     }
 
+    fun updateBook(book: Book) {
+        viewModelScope.launch {
+            booksRepository.updateBook(book)
+        }
+    }
+
 
 
 }

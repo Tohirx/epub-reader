@@ -12,6 +12,7 @@ import com.tohir.booksandstuff.data.model.Book
 import com.tohir.booksandstuff.databinding.FragmentHomeBinding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 class HomeFragment : Fragment(), RecentBookAdapter.OnRecentBooksClickedListener {
 
@@ -42,6 +43,10 @@ class HomeFragment : Fragment(), RecentBookAdapter.OnRecentBooksClickedListener 
     }
 
     override fun onRecentBookClicked(book: Book) {
+
+        val bookCopy = book.copy(lastDateOpened = LocalDateTime.now().toString())
+        viewModel.updateBook(bookCopy)
+
         val intent = Intent(requireContext(), ReaderActivity::class.java)
         intent.putExtra("BOOK_URI", book.uri)
         intent.putExtra("BOOK_ID", book.id)

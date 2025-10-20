@@ -35,7 +35,6 @@ class ReaderViewModel : ViewModel() {
     private val booksRepository = BooksAndStuffApplication.booksRepository
     suspend fun importPublication(uri: Uri, context: Context, bookId: Int?): Publication? {
 
-
         if (bookId != null && !publicationCache.contains(bookId)) {
 
             val fileFromStorage = copyUriToInternalStorage(uri, context)
@@ -95,10 +94,8 @@ class ReaderViewModel : ViewModel() {
                             mediaType = mediaType.toString(),
                             lastDateOpened = LocalDateTime.now().toString()
                         )
-                        if (!books.contains(book)) {
-
+                        if (!books.contains(book))
                             booksRepository.addBook(book)
-                        }
 
                     }
 
