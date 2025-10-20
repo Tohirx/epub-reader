@@ -8,95 +8,17 @@
     android:layout_height="match_parent"
     android:padding="24dp">
 
-    <TextView
-        android:id="@+id/text_view_time_read"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:text="12h 45m" />
-
-    <TextView
-        android:id="@+id/text_view_time_read_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Time Read"
-        app:layout_constraintEnd_toEndOf="@id/text_view_time_read"
-        app:layout_constraintStart_toStartOf="@id/text_view_time_read"
-        app:layout_constraintTop_toBottomOf="@id/text_view_time_read" />
-
-
-    <TextView
-        android:id="@+id/books_completed_number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@id/text_view_reading_speed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/text_view_time_read"
-        android:text="7" />
-
-    <TextView
-        android:id="@+id/books_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Books"
-        app:layout_constraintEnd_toEndOf="@id/books_completed_number"
-        app:layout_constraintStart_toStartOf="@id/books_completed_number"
-        app:layout_constraintTop_toBottomOf="@id/books_completed_number" />
-
-    <TextView
-        android:id="@+id/text_view_completed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Completed"
-        app:layout_constraintEnd_toEndOf="@id/books_text"
-        app:layout_constraintStart_toStartOf="@id/books_text"
-        app:layout_constraintTop_toBottomOf="@id/books_text" />
-
-    <TextView
-        android:id="@+id/text_view_reading_speed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:text="230" />
-
-    <TextView
-        android:id="@+id/text_view_wpm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="WPM"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/text_view_reading_speed"
-        app:layout_constraintTop_toBottomOf="@id/text_view_reading_speed" />
-
-    <TextView
-        android:id="@+id/text_view_reading_speed_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="end"
-        android:text="Reading Speed"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_view_wpm" />
-
 
     <TextView
         android:id="@+id/text_view_continue_reading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="58dp"
+        android:layout_marginTop="24dp"
         android:text="Continue Reading"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_view_time_read" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_previously_read"

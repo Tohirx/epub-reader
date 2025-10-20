@@ -25,77 +25,93 @@ import java.time.LocalDateTime
 
 class ReaderViewModel : ViewModel() {
 
+    val publicationCache = object : LinkedHashMap<Int, Publication>(5, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<Int?, Publication?>?): Boolean {
+            return size > 3
+        }
+    }
+
     private var publication: Publication? = null
     private val booksRepository = BooksAndStuffApplication.booksRepository
-    suspend fun importPublication(uri: Uri, context: Context): Publication? {
-
-        val fileFromStorage = copyUriToInternalStorage(uri, context)
-
-        if (fileFromStorage != null) {
-
-            val httpClient = DefaultHttpClient()
-            val assetRetriever = AssetRetriever(context.contentResolver, httpClient)
-            val url: AbsoluteUrl? = Uri.fromFile(fileFromStorage).toAbsoluteUrl()
-
-            val asset = assetRetriever.retrieve(url!!).getOrNull()
-
-            if (asset != null) {
-                val publicationParser = DefaultPublicationParser(
-                    context,
-                    httpClient,
-                    assetRetriever,
-                    PdfiumDocumentFactory(context)
-                )
-
-                val publicationOpener = PublicationOpener(publicationParser)
-
-                publication =
-                    publicationOpener.open(asset, allowUserInteraction = false).getOrNull()
-
-            }
-
-            if (publication != null) {
-
-                val authors = publication!!.metadata.authors.joinToString(", ") { contributor ->
-                    contributor.name
-                }
-
-                // PLEASE FIX THIS LATER. GET A SUITABLE PLACEHOLDER IMAGE FOR BOOKS MISSING A COVER, AND STORE IT THE FILE.
-                // This stores the cover in the App's directory as a PNG image
+    suspend fun importPublication(uri: Uri, context: Context, bookId: Int?): Publication? {
 
 
-                val file = File(context.filesDir, "cover_${publication!!.metadata.title}.png")
-                if (publication!!.cover() != null && !file.exists()) {
-                    FileOutputStream(file).use { out ->
-                        publication!!.cover()?.compress(Bitmap.CompressFormat.PNG, 80, out)
-                    }
-                }
+        if (bookId != null && !publicationCache.contains(bookId)) {
 
+            val fileFromStorage = copyUriToInternalStorage(uri, context)
 
-                val mediaType = asset?.format?.mediaType
-                viewModelScope.launch {
+            if (fileFromStorage != null) {
 
-                    val books = booksRepository.getAllBooksAsList()
-                    val book = Book(
-                        title = publication!!.metadata.title,
-                        author = authors,
-                        cover = file.absolutePath,
-                        identifier = publication!!.metadata.identifier ?: "",
-                        uri = Uri.fromFile(fileFromStorage).toString(),
-                        readingProgress = null,
-                        mediaType = mediaType.toString(),
-                        lastDateOpened = LocalDateTime.now().toString()
+                val httpClient = DefaultHttpClient()
+                val assetRetriever = AssetRetriever(context.contentResolver, httpClient)
+                val url: AbsoluteUrl? = Uri.fromFile(fileFromStorage).toAbsoluteUrl()
+
+                val asset = assetRetriever.retrieve(url!!).getOrNull()
+
+                if (asset != null) {
+                    val publicationParser = DefaultPublicationParser(
+                        context,
+                        httpClient,
+                        assetRetriever,
+                        PdfiumDocumentFactory(context)
                     )
-                    if (!books.contains(book)) {
 
-                        booksRepository.addBook(book)
-                    }
+                    val publicationOpener = PublicationOpener(publicationParser)
+
+                    publication =
+                        publicationOpener.open(asset, allowUserInteraction = false).getOrNull()
 
                 }
 
-                return publication
+                if (publication != null) {
+
+                    val authors = publication!!.metadata.authors.joinToString(", ") { contributor ->
+                        contributor.name
+                    }
+
+                    // PLEASE FIX THIS LATER. GET A SUITABLE PLACEHOLDER IMAGE FOR BOOKS MISSING A COVER, AND STORE IT THE FILE.
+                    // This stores the cover in the App's directory as a PNG image
+
+
+                    val file = File(context.filesDir, "cover_${publication!!.metadata.title}.png")
+                    if (publication!!.cover() != null && !file.exists()) {
+                        FileOutputStream(file).use { out ->
+                            publication!!.cover()?.compress(Bitmap.CompressFormat.PNG, 80, out)
+                        }
+                    }
+
+
+                    val mediaType = asset?.format?.mediaType
+                    viewModelScope.launch {
+
+                        val books = booksRepository.getAllBooksAsList()
+                        val book = Book(
+                            title = publication!!.metadata.title,
+                            author = authors,
+                            cover = file.absolutePath,
+                            identifier = publication!!.metadata.identifier ?: "",
+                            uri = Uri.fromFile(fileFromStorage).toString(),
+                            readingProgress = null,
+                            mediaType = mediaType.toString(),
+                            lastDateOpened = LocalDateTime.now().toString()
+                        )
+                        if (!books.contains(book)) {
+
+                            booksRepository.addBook(book)
+                        }
+
+                    }
+
+                    publicationCache.putIfAbsent(bookId, publication!!)
+
+                    return publication
+
+                }
 
             }
+
+        } else {
+            return publicationCache[bookId]
         }
         return null
     }

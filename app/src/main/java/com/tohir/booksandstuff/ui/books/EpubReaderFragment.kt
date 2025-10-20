@@ -54,7 +54,7 @@ class EpubReaderFragment : Fragment() {
 
         if (bookUri != null) {
             lifecycleScope.launch {
-                val publication = viewModel.importPublication(bookUri.toUri(), requireContext())
+                val publication = viewModel.importPublication(bookUri.toUri(), requireContext(), bookId)
 
                 if (publication != null) {
                     val navigatorFactory = EpubNavigatorFactory(publication = publication)

@@ -2,13 +2,11 @@ package com.tohir.booksandstuff.ui
 
 import android.net.Uri
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import com.tohir.booksandstuff.R
 import com.tohir.booksandstuff.data.model.Book
-import com.tohir.booksandstuff.databinding.ErrorBookCoverBinding
 import com.tohir.booksandstuff.databinding.ItemBookBinding
 import java.io.File
 

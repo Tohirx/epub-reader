@@ -10,7 +10,7 @@ import com.tohir.booksandstuff.data.model.Book
 import com.tohir.booksandstuff.databinding.ItemRecentlyReadBooksBinding
 import java.io.File
 
-class RecentBookAdapter : RecyclerView.Adapter<RecentBookAdapter.ViewHolder>() {
+class RecentBookAdapter(private val listener : OnRecentBooksClickedListener) : RecyclerView.Adapter<RecentBookAdapter.ViewHolder>() {
 
     private var books: List<Book> = listOf()
 
@@ -55,8 +55,16 @@ class RecentBookAdapter : RecyclerView.Adapter<RecentBookAdapter.ViewHolder>() {
             binding.textViewAuthorName.text = book.author
             binding.textViewBookTitle.text = book.title
 
+            binding.root.setOnClickListener {
+                listener.onRecentBookClicked(book)
+            }
+
 
         }
 
+    }
+
+    interface OnRecentBooksClickedListener {
+        fun onRecentBookClicked(book: Book)
     }
 }

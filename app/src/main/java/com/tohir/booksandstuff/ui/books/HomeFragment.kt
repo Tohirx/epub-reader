@@ -1,5 +1,6 @@
 package com.tohir.booksandstuff.ui.books
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,14 +8,15 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.tohir.booksandstuff.data.model.Book
 import com.tohir.booksandstuff.databinding.FragmentHomeBinding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), RecentBookAdapter.OnRecentBooksClickedListener {
 
     private val viewModel: HomeViewModel by viewModels()
-    private val adapter = RecentBookAdapter()
+    private val adapter = RecentBookAdapter(this)
     private lateinit var binding: FragmentHomeBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -37,5 +39,12 @@ class HomeFragment : Fragment() {
             }
         }
 
+    }
+
+    override fun onRecentBookClicked(book: Book) {
+        val intent = Intent(requireContext(), ReaderActivity::class.java)
+        intent.putExtra("BOOK_URI", book.uri)
+        intent.putExtra("BOOK_ID", book.id)
+        startActivity(intent)
     }
 }
