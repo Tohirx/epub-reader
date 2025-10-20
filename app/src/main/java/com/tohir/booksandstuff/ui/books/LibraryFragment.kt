@@ -55,7 +55,7 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
     override fun onBookOpened(book: Book) {
         val intent = Intent(requireContext(), ReaderActivity::class.java)
         intent.putExtra("BOOK_URI", book.uri)
-        intent.putExtra("BOOK_ID", book.bookId)
+        intent.putExtra("BOOK_ID", book.id)
         startActivity(intent)
 
     }

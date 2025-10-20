@@ -32,8 +32,6 @@ class LibraryFragmentViewModel : ViewModel() {
         }
     }
 
-
-
     fun getAllBooks(): Flow<List<Book>> {
         return booksRepository.getAllBooks()
     }

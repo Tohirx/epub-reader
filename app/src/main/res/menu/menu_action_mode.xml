@@ -10,6 +10,12 @@
     </item>
 
     <item
+        android:id="@+id/dictionary"
+        android:title="@string/menu_action_mode_dictionary"
+        android:visible="false"
+        app:showAsAction="ifRoom"/>
+
+    <item
         android:id="@+id/underline"
         android:title="@string/menu_action_mode_underline"
         android:visible="false"
@@ -23,10 +29,6 @@
         app:showAsAction="ifRoom">
     </item>
 
-    <item
-        android:id="@+id/dictionary"
-        android:title="@string/menu_action_mode_dictionary"
-        android:visible="false"
-        app:showAsAction="ifRoom"/>
+
 
 </menu>

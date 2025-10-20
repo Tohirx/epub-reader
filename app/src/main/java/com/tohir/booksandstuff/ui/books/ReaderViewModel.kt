@@ -25,95 +25,106 @@ import java.time.LocalDateTime
 
 class ReaderViewModel : ViewModel() {
 
-    private lateinit var publication: Publication
-
+    private var publication: Publication? = null
     private val booksRepository = BooksAndStuffApplication.booksRepository
-    private val publications = mutableMapOf<Int, Publication>()
+    suspend fun importPublication(uri: Uri, context: Context): Publication? {
 
-    suspend fun importPublication(uri: Uri, context: Context, bookID: Int?): Publication {
+        val fileFromStorage = copyUriToInternalStorage(uri, context)
 
-
-        if (!publications.contains(bookID)) {
-            val destFile = persistEpubFile(context, uri)
+        if (fileFromStorage != null) {
 
             val httpClient = DefaultHttpClient()
             val assetRetriever = AssetRetriever(context.contentResolver, httpClient)
-            val fileUri = Uri.fromFile(destFile)
-            val url: AbsoluteUrl? = fileUri.toAbsoluteUrl()
+            val url: AbsoluteUrl? = Uri.fromFile(fileFromStorage).toAbsoluteUrl()
 
-            val asset =
-                assetRetriever.retrieve(url!!)
-                    .getOrNull()
+            val asset = assetRetriever.retrieve(url!!).getOrNull()
 
-
-            val publicationParser = DefaultPublicationParser(
-                context,
-                httpClient,
-                assetRetriever,
-                PdfiumDocumentFactory(context)
-            )
-
-
-            val publicationOpener = PublicationOpener(publicationParser)
-
-            publication =
-                publicationOpener.open(asset!!, allowUserInteraction = false).getOrNull()!!
-
-            val authors = publication.metadata.authors.joinToString(", ") { contributor ->
-                contributor.name
-            }
-
-            //This stores the cover in the App's directory as a PNG image
-            val file =
-                File(context.filesDir, "cover_${publication.metadata.title}.png")
-            FileOutputStream(file).use { out ->
-                publication.cover()!!.compress(Bitmap.CompressFormat.PNG, 80, out)
-            }
-
-
-            val mediaType = asset.format.mediaType
-            viewModelScope.launch {
-
-                val books = booksRepository.getAllBooksAsList()
-                val book = Book(
-                    title = publication.metadata.title,
-                    author = authors,
-                    cover = file.absolutePath,
-                    identifier = publication.metadata.identifier ?: "",
-                    uri = destFile.absolutePath,
-                    readingProgress = null,
-                    mediaType = mediaType.toString(),
-                    lastDateOpened = LocalDateTime.now().toString()
+            if (asset != null) {
+                val publicationParser = DefaultPublicationParser(
+                    context,
+                    httpClient,
+                    assetRetriever,
+                    PdfiumDocumentFactory(context)
                 )
-                if (!books.contains(book)) {
 
-                    booksRepository.addBook(book)
+                val publicationOpener = PublicationOpener(publicationParser)
+
+                publication =
+                    publicationOpener.open(asset, allowUserInteraction = false).getOrNull()
+
+            }
+
+            if (publication != null) {
+
+                val authors = publication!!.metadata.authors.joinToString(", ") { contributor ->
+                    contributor.name
                 }
 
-                publications.putIfAbsent(bookID!!, publication)
+                // PLEASE FIX THIS LATER. GET A SUITABLE PLACEHOLDER IMAGE FOR BOOKS MISSING A COVER, AND STORE IT THE FILE.
+                // This stores the cover in the App's directory as a PNG image
+
+
+                val file = File(context.filesDir, "cover_${publication!!.metadata.title}.png")
+                if (publication!!.cover() != null && !file.exists()) {
+                    FileOutputStream(file).use { out ->
+                        publication!!.cover()?.compress(Bitmap.CompressFormat.PNG, 80, out)
+                    }
+                }
+
+
+                val mediaType = asset?.format?.mediaType
+                viewModelScope.launch {
+
+                    val books = booksRepository.getAllBooksAsList()
+                    val book = Book(
+                        title = publication!!.metadata.title,
+                        author = authors,
+                        cover = file.absolutePath,
+                        identifier = publication!!.metadata.identifier ?: "",
+                        uri = Uri.fromFile(fileFromStorage).toString(),
+                        readingProgress = null,
+                        mediaType = mediaType.toString(),
+                        lastDateOpened = LocalDateTime.now().toString()
+                    )
+                    if (!books.contains(book)) {
+
+                        booksRepository.addBook(book)
+                    }
+
+                }
+
+                return publication
 
             }
-
-
-            return publication
-
         }
-
-        return publications[bookID]!!
-
+        return null
     }
 
-    fun persistEpubFile(context: Context, sourceUri: Uri): File {
+    fun copyUriToInternalStorage(sourceUri: Uri, context: Context): File? {
 
-        val fileName = "book_${System.currentTimeMillis()}.epub"
-        val destFile = File(context.filesDir, fileName)
-        context.contentResolver.openInputStream(sourceUri)?.use { input ->
-            FileOutputStream(destFile).use { output ->
-                input.copyTo(output)
+        val existingFile = File(context.filesDir, sourceUri.lastPathSegment ?: "book.epub")
+
+        if (existingFile.exists()) return existingFile
+
+        try {
+            val fileName = "file_${System.currentTimeMillis()}.epub"
+            val destinationFile = File(context.filesDir, fileName)
+
+            context.contentResolver.openInputStream(sourceUri)?.use { inputStream ->
+                FileOutputStream(destinationFile).use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
             }
+            return destinationFile
+
+        } catch (e: Exception) {
+            println(e.message)
+            println(e.printStackTrace())
         }
-        return destFile
+
+        return null
     }
+
 
     suspend fun saveReadingProgression(locator: Locator, bookID: Int) {
         val locatorString = locator.toJSON().toString()

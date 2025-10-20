@@ -1,6 +1,5 @@
 package com.tohir.booksandstuff.ui.books
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -19,31 +18,23 @@ class ReaderActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-
-        val controller = WindowInsetsControllerCompat(window, window.decorView)
-        controller.hide(WindowInsetsCompat.Type.systemBars())
-
-        controller.systemBarsBehavior =
-            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        toggleFullScreen()
 
         binding = ActivityReaderBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val bookIdFromLibraryFragment = intent.getIntExtra("BOOK_ID", 0)
+        val bookUriFromLibraryFragment = intent.getStringExtra("BOOK_URI")
 
-        val bookIdIntent = intent.getIntExtra("BOOK_ID", 0)
+        Log.d("tohir", "Reader Activity gotten $bookUriFromLibraryFragment from Library Fragment")
 
-        val uriIntent = intent.getStringExtra("BOOK_URI")
-        Log.d("tohir", "Reader Activity gotten $uriIntent")
+        val uriFromFileManager: Uri? = intent?.data
 
-        val uri: Uri? = intent?.data
-        if (uri != null) {
-            Log.d("tohir", " Reader Activity Gotten Uri: $uri")
-
+        if (uriFromFileManager != null) {
+            Log.d("tohir", "Reader Activity Gotten Uri: $uriFromFileManager from file manager")
 
             val fragment = EpubReaderFragment().apply {
-                arguments = bundleOf("BOOK_PATH" to uri.toString(), "BOOK_ID" to bookIdIntent)
+                arguments = bundleOf("BOOK_PATH" to uriFromFileManager.toString())
             }
 
             supportFragmentManager.commit {
@@ -51,7 +42,7 @@ class ReaderActivity : AppCompatActivity() {
             }
         } else {
             val fragment = EpubReaderFragment().apply {
-                arguments = bundleOf("BOOK_URI" to uriIntent, "BOOK_ID" to bookIdIntent)
+                arguments = bundleOf("BOOK_URI" to bookUriFromLibraryFragment, "BOOK_ID" to bookIdFromLibraryFragment)
             }
 
             supportFragmentManager.commit {
@@ -59,6 +50,16 @@ class ReaderActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    private fun toggleFullScreen() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        val controller = WindowInsetsControllerCompat(window, window.decorView)
+        controller.hide(WindowInsetsCompat.Type.systemBars())
+
+        controller.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     }
 
 

@@ -29,7 +29,6 @@ import org.readium.r2.navigator.epub.EpubNavigatorFragment
 import org.readium.r2.navigator.input.InputListener
 import org.readium.r2.navigator.input.TapEvent
 import org.readium.r2.navigator.util.BaseActionModeCallback
-import java.io.File
 
 class EpubReaderFragment : Fragment() {
 
@@ -39,33 +38,37 @@ class EpubReaderFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentReaderBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
         super.onViewCreated(view, savedInstanceState)
 
-        val bookPath = arguments?.getString("BOOK_PATH")
-        val bookUri = arguments?.getString("BOOK_URI")
-        val bookID = arguments?.getInt("BOOK_ID")
+        val bookUri = arguments?.getString("BOOK_PATH") ?: arguments?.getString("BOOK_URI")
+        val bookId = arguments?.getInt("BOOK_ID")
+
         Log.d("tohir", "EpubReaderFragment, Gotten $bookUri")
 
-        val bookFile = bookPath?.let { File(it) } ?: bookUri
 
-        if (bookFile != null && bookID != null) {
+        if (bookUri != null) {
             lifecycleScope.launch {
-                val publication = viewModel.importPublication(bookFile.toString().toUri(), requireContext(), bookID)
+                val publication = viewModel.importPublication(bookUri.toUri(), requireContext())
 
-                val navigatorFactory = EpubNavigatorFactory(publication = publication)
-
-                childFragmentManager.fragmentFactory =
-                    navigatorFactory.createFragmentFactory(
-                        viewModel.restoreReadingProgression(bookID),
+                if (publication != null) {
+                    val navigatorFactory = EpubNavigatorFactory(publication = publication)
+                    childFragmentManager.fragmentFactory = navigatorFactory.createFragmentFactory(
+                        initialLocator = viewModel.restoreReadingProgression(bookId!!),
                         configuration = EpubNavigatorFragment.Configuration {
                             selectionActionModeCallback = customSelectionActionModeCallback
                         }
 
                     )
+                } else {
+                    return@launch
+                }
+
 
                 val tag = "EpubNavigatorFragment"
                 if (savedInstanceState == null) {
@@ -92,14 +95,26 @@ class EpubReaderFragment : Fragment() {
                     })
                 }
 
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    navigator.currentLocator
-                        .onEach { viewModel.saveReadingProgression(it, bookID) }
-                        .launchIn(this)
-                }
+                saveReadingProgression(bookId)
+
+            }
+        }
+
+
+
+
+    }
+
+    fun saveReadingProgression(bookId: Int) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                navigator.currentLocator
+                    .onEach { viewModel.saveReadingProgression(it, bookId) }
+                    .launchIn(this)
             }
         }
     }
+
 
     private fun showButtons() {
         if (binding.imageViewCancelButton.isVisible) {
@@ -127,8 +142,6 @@ class EpubReaderFragment : Fragment() {
             dialog.show()
 
 
-
-
         }
     }
 
@@ -149,7 +162,7 @@ class EpubReaderFragment : Fragment() {
         }
 
         override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
-           return true
+            return true
         }
 
     }
