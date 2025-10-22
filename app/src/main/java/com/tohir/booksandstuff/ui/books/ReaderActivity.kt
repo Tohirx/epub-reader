@@ -23,10 +23,10 @@ class ReaderActivity : AppCompatActivity() {
         binding = ActivityReaderBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val bookIdFromLibraryFragment = intent.getIntExtra("BOOK_ID", 0)
-        val bookUriFromLibraryFragment = intent.getStringExtra("BOOK_URI")
+        val bookIdFromLibraryFragmentOrHomeFragment = intent.getIntExtra(LibraryFragment.BOOK_ID, 0)
+        val bookUriFromLibraryFragmentOrHomeFragment = intent.getStringExtra(LibraryFragment.BOOK_URI)
 
-        Log.d("tohir", "Reader Activity gotten $bookUriFromLibraryFragment from Library Fragment")
+        Log.d("tohir", "Reader Activity gotten $bookUriFromLibraryFragmentOrHomeFragment from Library Fragment")
 
         val uriFromFileManager: Uri? = intent?.data
 
@@ -34,7 +34,7 @@ class ReaderActivity : AppCompatActivity() {
             Log.d("tohir", "Reader Activity Gotten Uri: $uriFromFileManager from file manager")
 
             val fragment = EpubReaderFragment().apply {
-                arguments = bundleOf("BOOK_PATH" to uriFromFileManager.toString())
+                arguments = bundleOf(BOOK_PATH to uriFromFileManager.toString())
             }
 
             supportFragmentManager.commit {
@@ -42,7 +42,7 @@ class ReaderActivity : AppCompatActivity() {
             }
         } else {
             val fragment = EpubReaderFragment().apply {
-                arguments = bundleOf("BOOK_URI" to bookUriFromLibraryFragment, "BOOK_ID" to bookIdFromLibraryFragment)
+                arguments = bundleOf(BOOK_URI to bookUriFromLibraryFragmentOrHomeFragment, "BOOK_ID" to bookIdFromLibraryFragmentOrHomeFragment)
             }
 
             supportFragmentManager.commit {
@@ -60,6 +60,11 @@ class ReaderActivity : AppCompatActivity() {
 
         controller.systemBarsBehavior =
             WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+    }
+
+    companion object {
+        const val BOOK_PATH = "BOOK_PATH"
+        const val BOOK_URI = "BOOK_URI"
     }
 
 

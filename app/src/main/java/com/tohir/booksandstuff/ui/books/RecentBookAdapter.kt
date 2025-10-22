@@ -44,6 +44,7 @@ class RecentBookAdapter(private val listener : OnRecentBooksClickedListener) : R
     inner class ViewHolder(private val binding: ItemRecentlyReadBooksBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(book : Book) {
+
             val file = File(book.cover!!)
             val uri = Uri.fromFile(file)
 
@@ -58,7 +59,6 @@ class RecentBookAdapter(private val listener : OnRecentBooksClickedListener) : R
             binding.root.setOnClickListener {
                 listener.onRecentBookClicked(book)
             }
-
 
         }
 

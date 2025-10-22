@@ -59,8 +59,8 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
         viewModel.updateBook(bookCopy)
 
         val intent = Intent(requireContext(), ReaderActivity::class.java)
-        intent.putExtra("BOOK_URI", book.uri)
-        intent.putExtra("BOOK_ID", book.id)
+        intent.putExtra(BOOK_URI, book.uri)
+        intent.putExtra(BOOK_ID, book.id)
         startActivity(intent)
 
     }
@@ -74,6 +74,11 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
                 "No"
             ) { dialog, _ -> dialog.dismiss() }
             .show()
+    }
+
+    companion object {
+        const val BOOK_ID = "BOOK_ID"
+        const val BOOK_URI = "BOOK_URI"
     }
 
 
