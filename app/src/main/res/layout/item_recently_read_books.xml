@@ -71,7 +71,7 @@
                 android:textSize="11sp"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/text_view_author_name"
-                android:text="Progress 48%"
+                tools:text="Progress 48%"
                 app:layout_constraintStart_toStartOf="@id/text_view_author_name"
                 app:layout_constraintEnd_toEndOf="parent"/>
 

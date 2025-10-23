@@ -39,7 +39,7 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:minHeight="56dp">
+                        android:minHeight="58dp">
 
                         <TextView
                             android:id="@+id/text_view_theme"
@@ -51,43 +51,119 @@
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/material_card_view_custom_theme_1"
+                            app:strokeWidth="0dp"
+                            android:id="@+id/material_card_view_custom_theme_container"
                             android:layout_width="wrap_content"
-                            app:layout_constraintEnd_toStartOf="@id/material_card_view_custom_theme_2"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:cardBackgroundColor="@color/md_theme_scrim"
-                            android:layout_height="wrap_content">
-
-                            <TextView
-                                android:fontFamily="sans-serif-medium"
-                                android:id="@+id/text_view_custom_theme_1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Aa"
-                                android:padding="8dp"
-                                android:textColor="@color/white"/>
-
-                        </com.google.android.material.card.MaterialCardView>
-
-                        <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/material_card_view_custom_theme_2"
-                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:padding="16dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:cardBackgroundColor="@color/warm_white"
-                            android:layout_height="wrap_content">
+                            app:layout_constraintTop_toTopOf="parent">
 
-                            <TextView
-                                android:id="@+id/text_view_custom_theme_2"
+                            <androidx.constraintlayout.widget.ConstraintLayout
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Aa"
-                                android:padding="8dp"
-                                android:textColor="@color/dark_grey"/>
+                                android:layout_height="wrap_content">
+
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:id="@+id/material_card_view_custom_theme_1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="4dp"
+                                    android:minWidth="60dp"
+                                    android:minHeight="60dp"
+                                    app:cardBackgroundColor="@color/md_theme_scrim"
+                                    app:layout_constraintEnd_toStartOf="@id/material_card_view_custom_theme_2"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+
+                                    <TextView
+                                        android:id="@+id/text_view_custom_theme_1"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:fontFamily="sans-serif-medium"
+                                        android:layout_gravity="center"
+                                        android:text="Aa"
+                                        android:textColor="@color/white" />
+
+
+                                </com.google.android.material.card.MaterialCardView>
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:id="@+id/material_card_view_custom_theme_2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="4dp"
+                                    android:minWidth="60dp"
+                                    android:minHeight="60dp"
+                                    app:cardBackgroundColor="@color/dark_brown"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <TextView
+                                        android:id="@+id/text_view_custom_theme_2"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:fontFamily="@font/open_sans"
+                                        android:text="Aa"
+                                        android:textColor="@color/oasis" />
+
+                                </com.google.android.material.card.MaterialCardView>
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:id="@+id/material_card_view_custom_theme_3"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:minWidth="60dp"
+                                    android:minHeight="60dp"
+                                    app:cardBackgroundColor="@color/white"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintStart_toStartOf="@id/material_card_view_custom_theme_1"
+                                    app:layout_constraintTop_toBottomOf="@id/material_card_view_custom_theme_1">
+
+                                    <TextView
+                                        android:id="@+id/text_view_custom_theme_3"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:fontFamily="@font/open_dyslexic_regular"
+                                        android:text="Aa"
+                                        android:textColor="@color/almost_dark" />
+
+                                </com.google.android.material.card.MaterialCardView>
+
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:id="@+id/material_card_view_custom_theme_4"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:minWidth="60dp"
+                                    android:minHeight="60dp"
+                                    app:cardBackgroundColor="@color/cream"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintStart_toStartOf="@id/material_card_view_custom_theme_2">
+
+                                    <TextView
+                                        android:id="@+id/text_view_custom_theme_4"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:fontFamily="serif"
+                                        android:padding="8dp"
+                                        android:text="Aa"
+                                        android:textColor="@color/oasis" />
+
+                                </com.google.android.material.card.MaterialCardView>
+
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
                         </com.google.android.material.card.MaterialCardView>
-
-
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -257,13 +333,13 @@
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.button.MaterialButton
-                app:backgroundTint="?attr/colorPrimaryContainer"
-                android:textColor="?attr/colorOnPrimaryContainer"
                 android:id="@+id/button_apply"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:text="APPLY" />
+                android:text="APPLY"
+                android:textColor="?attr/colorOnPrimaryContainer"
+                app:backgroundTint="?attr/colorPrimaryContainer" />
 
         </LinearLayout>
 

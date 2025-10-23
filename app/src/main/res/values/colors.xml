@@ -145,4 +145,8 @@
     <color name="white">#FFFFFF</color>
     <color name="warm_white">#FAF8F5</color>
     <color name="dark_grey">#2E2E2E</color>
+    <color name="dark_brown">#423b30</color>
+    <color name="oasis">#feefcc</color>
+    <color name="almost_dark">#222222</color>
+    <color name="cream">#504B38</color>
 </resources>
