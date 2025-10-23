@@ -16,5 +16,6 @@ data class Book(
     val uri: String,
     val identifier: String?,
     val readingProgress: String?,
-    val mediaType: String?
+    val mediaType: String?,
+    val isComplete: Boolean = false
 )

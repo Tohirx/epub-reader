@@ -15,6 +15,7 @@
         android:layout_height="match_parent">
 
         <ImageView
+            android:padding="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:id="@+id/image_view_cancel_button"
@@ -22,25 +23,22 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:contentDescription="@string/reader_activity_cancel_button"
-            android:layout_margin="32dp"
-            android:src="@drawable/icon_circle_cancel"/>
+            android:layout_margin="20dp"
+            android:src="@drawable/icon_cancel"/>
 
         <ImageView
+            android:padding="12dp"
             android:id="@+id/image_view_options"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_margin="32dp"
+            android:layout_margin="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/icon_options"/>
+            android:src="@drawable/icon_setting_border"/>
 
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
 
 
 </FrameLayout>

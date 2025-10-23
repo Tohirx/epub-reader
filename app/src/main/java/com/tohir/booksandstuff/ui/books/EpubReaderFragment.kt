@@ -166,9 +166,9 @@ class EpubReaderFragment : Fragment() {
             val position = itemsAdapter1.getPosition(savedValue)
             spinnerFontFamily.setSelection(position)
 
-            dialogBinding.sliderFontSize.value = userPreferences.getFloat(FONT_SIZE, 0f)
+            dialogBinding.sliderFontSize.value = userPreferences.getFloat(FONT_SIZE, 1f)
 
-            dialogBinding.sliderLineSpacing.value = userPreferences.getFloat(LINE_HEIGHT, 0f)
+            dialogBinding.sliderLineSpacing.value = userPreferences.getFloat(LINE_HEIGHT, 1f)
 
             scrollSwitch.isChecked = userPreferences.getBoolean(SCROLL, false)
 
