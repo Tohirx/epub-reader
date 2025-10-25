@@ -26,6 +26,7 @@ import com.tohir.booksandstuff.databinding.FragmentReaderBinding
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.readium.r2.navigator.VisualNavigator
 import org.readium.r2.navigator.epub.EpubNavigatorFactory
 import org.readium.r2.navigator.epub.EpubNavigatorFragment
@@ -50,12 +51,63 @@ class EpubReaderFragment : Fragment() {
     private lateinit var navigator: EpubNavigatorFragment
     private lateinit var binding: FragmentReaderBinding
 
+    private var bookUri: String? = null
+    private var bookId: Int? = null
+    private var publication: Publication? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+
+         bookUri = arguments?.getString("BOOK_PATH") ?: arguments?.getString("BOOK_URI")
+         bookId = arguments?.getInt("BOOK_ID")
+
+        if (bookUri != null) {
+            publication = runBlocking {
+                viewModel.importPublication(
+                    bookUri!!.toUri(),
+                    requireContext(),
+                    bookId
+                )
+            }
+
+            if (publication != null) {
+                val navigatorFactory = EpubNavigatorFactory(publication = publication!!)
+                childFragmentManager.fragmentFactory = navigatorFactory.createFragmentFactory(
+                    initialLocator = runBlocking { viewModel.restoreReadingProgression(bookId!!) },
+                    configuration = EpubNavigatorFragment.Configuration {
+                        selectionActionModeCallback = customSelectionActionModeCallback
+                    }
+
+                )
+            } else {
+                throw IllegalStateException("Argument is null")
+            }
+
+        }
+
+        super.onCreate(savedInstanceState)
+    }
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentReaderBinding.inflate(inflater, container, false)
+
+        val tag = "EpubNavigatorFragment"
+        if (savedInstanceState == null) {
+            childFragmentManager.commitNow {
+                add(
+                    R.id.fragment_reader_container,
+                    EpubNavigatorFragment::class.java,
+                    Bundle(),
+                    tag
+                )
+            }
+        }
+
+        navigator = childFragmentManager.findFragmentByTag(tag) as EpubNavigatorFragment
 
         return binding.root
     }
@@ -64,59 +116,24 @@ class EpubReaderFragment : Fragment() {
 
         super.onViewCreated(view, savedInstanceState)
 
-        val bookUri = arguments?.getString("BOOK_PATH") ?: arguments?.getString("BOOK_URI")
-        val bookId = arguments?.getInt("BOOK_ID")
+        setupClickListeners()
 
-        if (bookUri != null) {
-            lifecycleScope.launch {
-                val publication =
-                    viewModel.importPublication(bookUri.toUri(), requireContext(), bookId)
-
-                if (publication != null) {
-                    val navigatorFactory = EpubNavigatorFactory(publication = publication)
-                    childFragmentManager.fragmentFactory = navigatorFactory.createFragmentFactory(
-                        initialLocator = viewModel.restoreReadingProgression(bookId!!),
-                        configuration = EpubNavigatorFragment.Configuration {
-                            selectionActionModeCallback = customSelectionActionModeCallback
-                        }
-
-                    )
-                } else {
-                    return@launch
+        (navigator as VisualNavigator).apply {
+            addInputListener(object : InputListener {
+                override fun onTap(event: TapEvent): Boolean {
+                    showButtons()
+                    return true
                 }
-
-                val tag = "EpubNavigatorFragment"
-                if (savedInstanceState == null) {
-                    childFragmentManager.commitNow {
-                        add(
-                            R.id.fragment_reader_container,
-                            EpubNavigatorFragment::class.java,
-                            Bundle(),
-                            tag
-                        )
-                    }
-                }
-
-                navigator = childFragmentManager.findFragmentByTag(tag) as EpubNavigatorFragment
-
-                setupClickListeners()
-
-                (navigator as VisualNavigator).apply {
-                    addInputListener(object : InputListener {
-                        override fun onTap(event: TapEvent): Boolean {
-                            showButtons()
-                            return true
-                        }
-                    })
-                }
-
-                setupPreferences(publication)
-                saveReadingProgression(bookId)
-            }
-
+            })
         }
 
+        lifecycleScope.launch {
+            saveReadingProgression(bookId!!)
+        }
+
+        setupPreferences(publication!!)
     }
+
 
     fun setupClickListeners() {
         binding.imageViewCancelButton.setOnClickListener {
