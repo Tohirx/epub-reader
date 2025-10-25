@@ -8,8 +8,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.content.edit
+import androidx.core.graphics.toColorInt
 import androidx.core.net.toUri
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -31,11 +33,15 @@ import org.readium.r2.navigator.VisualNavigator
 import org.readium.r2.navigator.epub.EpubNavigatorFactory
 import org.readium.r2.navigator.epub.EpubNavigatorFragment
 import org.readium.r2.navigator.epub.EpubPreferences
+import org.readium.r2.navigator.epub.EpubPreferencesEditor
+import org.readium.r2.navigator.epub.css.FontStyle
+import org.readium.r2.navigator.epub.css.FontWeight
 import org.readium.r2.navigator.input.InputListener
 import org.readium.r2.navigator.input.TapEvent
 import org.readium.r2.navigator.preferences.FontFamily
 import org.readium.r2.navigator.preferences.TextAlign
 import org.readium.r2.navigator.util.BaseActionModeCallback
+import org.readium.r2.shared.ExperimentalReadiumApi
 import org.readium.r2.shared.publication.Publication
 
 class EpubReaderFragment : Fragment() {
@@ -46,19 +52,36 @@ class EpubReaderFragment : Fragment() {
             Context.MODE_PRIVATE
         )
     }
-
     private val viewModel: ReaderViewModel by viewModels()
     private lateinit var navigator: EpubNavigatorFragment
     private lateinit var binding: FragmentReaderBinding
-
     private var bookUri: String? = null
     private var bookId: Int? = null
     private var publication: Publication? = null
 
+    val FontFamily.Companion.ROBOTO get() = FontFamily("Roboto")
+    val FontFamily.Companion.OPEN_SANS get() = FontFamily("OpenSans")
+
+    private val editor: EpubPreferencesEditor by lazy {
+        val preferences = EpubPreferences(
+
+            fontFamily = FontFamily.SANS_SERIF,
+            fontSize = 1.0,
+            lineHeight = 1.0,
+            scroll = false,
+            publisherStyles = false,
+            textAlign = TextAlign.START,
+        )
+
+        EpubNavigatorFactory(publication!!).createPreferencesEditor(preferences)
+    }
+
+    @OptIn(ExperimentalReadiumApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
 
-         bookUri = arguments?.getString("BOOK_PATH") ?: arguments?.getString("BOOK_URI")
-         bookId = arguments?.getInt("BOOK_ID")
+
+        bookUri = arguments?.getString("BOOK_PATH") ?: arguments?.getString("BOOK_URI")
+        bookId = arguments?.getInt("BOOK_ID")
 
         if (bookUri != null) {
             publication = runBlocking {
@@ -75,18 +98,34 @@ class EpubReaderFragment : Fragment() {
                     initialLocator = runBlocking { viewModel.restoreReadingProgression(bookId!!) },
                     configuration = EpubNavigatorFragment.Configuration {
                         selectionActionModeCallback = customSelectionActionModeCallback
-                    }
 
+                        servedAssets += "font/.*"
+
+
+                        addFontFamilyDeclaration(FontFamily.OPEN_SANS) {
+                            addFontFace {
+                                addSource("font/open_sans.ttf", preload = true)
+                                setFontStyle(FontStyle.NORMAL)
+                                setFontWeight(FontWeight.NORMAL)
+                            }
+
+                        }
+
+                        addFontFamilyDeclaration(FontFamily.ROBOTO) {
+                            addFontFace {
+                                addSource("font/roboto_regular.ttf", preload = true)
+                                setFontStyle(FontStyle.NORMAL)
+                                setFontWeight(FontWeight.NORMAL)
+                            }
+                        }
+                    }
                 )
             } else {
                 throw IllegalStateException("Argument is null")
             }
-
         }
-
         super.onCreate(savedInstanceState)
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -131,7 +170,7 @@ class EpubReaderFragment : Fragment() {
             saveReadingProgression(bookId!!)
         }
 
-        setupPreferences(publication!!)
+        setupPreferences()
     }
 
 
@@ -143,12 +182,23 @@ class EpubReaderFragment : Fragment() {
         binding.imageViewOptions.setOnClickListener {
             showSettings()
         }
+
     }
 
     private fun showSettings() {
         val dialogBinding = BottomSheetDialogLayoutBinding.inflate(layoutInflater).apply {
 
-            val fontFamilies = listOf("san-serif", "serif", "cursive", "fantasy", "monospace")
+
+            val fontFamilies = listOf(
+                "san-serif",
+                "serif",
+                "cursive",
+                "fantasy",
+                "monospace",
+                "OpenDyslexic",
+                "OpenSans",
+                "Roboto"
+            )
             val itemsAdapter = ArrayAdapter(requireContext(), R.layout.spinner_item, fontFamilies)
             itemsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             spinnerFontFamily.adapter = itemsAdapter
@@ -162,12 +212,42 @@ class EpubReaderFragment : Fragment() {
 
         dialog.show()
 
+        setupClickListenersForSettings(dialogBinding)
 
-        dialogBinding.buttonApply.setOnClickListener {
-            saveUserPreferences(dialogBinding)
+        updatePreferences(dialogBinding)
 
-            dialog.dismiss()
+    }
+
+    private fun setupClickListenersForSettings(dialogBinding: BottomSheetDialogLayoutBinding) {
+        dialogBinding.materialCardViewCustomTheme1.setOnClickListener {
+            setThemes(
+                "#FFFFFF",
+                "#000000",
+                "Roboto"
+            )
         }
+        dialogBinding.materialCardViewCustomTheme2.setOnClickListener {
+            setThemes(
+                "#feefcc",
+                "#423b30",
+                "OpenSans"
+            )
+        }
+        dialogBinding.materialCardViewCustomTheme3.setOnClickListener {
+            setThemes(
+                "#222222",
+                "#ffffff",
+                "OpenDyslexic"
+            )
+        }
+        dialogBinding.materialCardViewCustomTheme4.setOnClickListener {
+            setThemes(
+                "#feefcc",
+                "#504B38",
+                "serif"
+            )
+        }
+
     }
 
     fun setInitialValuesForSettings(
@@ -187,24 +267,13 @@ class EpubReaderFragment : Fragment() {
 
             dialogBinding.sliderLineSpacing.value = userPreferences.getFloat(LINE_HEIGHT, 1f)
 
-            scrollSwitch.isChecked = userPreferences.getBoolean(SCROLL, false)
 
             justifyContentSwitch.isChecked = userPreferences.getBoolean(JUSTIFY_CONTENT, false)
         }
 
     }
 
-    private fun setupPreferences(publication: Publication) {
-        val preferences = EpubPreferences(
-            fontFamily = FontFamily.SANS_SERIF,
-            fontSize = 1.0,
-            lineHeight = 1.0,
-            scroll = false,
-            publisherStyles = false,
-            textAlign = TextAlign.START
-        )
-
-        val editor = EpubNavigatorFactory(publication).createPreferencesEditor(preferences)
+    private fun setupPreferences() {
 
         editor.apply {
 
@@ -215,6 +284,26 @@ class EpubReaderFragment : Fragment() {
             fontSize.set(userPreferences.getFloat(FONT_SIZE, 1.0f).toDouble())
             scroll.set(userPreferences.getBoolean(SCROLL, false))
             lineHeight.set(userPreferences.getFloat(LINE_HEIGHT, 1.0f).toDouble())
+
+            if (userPreferences.getString(TEXT_COLOR, null) != null) {
+
+                textColor.set(
+                    org.readium.r2.navigator.preferences.Color(
+                        userPreferences.getString(
+                            TEXT_COLOR,
+                            null
+                        )!!.toColorInt()
+                    )
+                )
+                backgroundColor.set(
+                    org.readium.r2.navigator.preferences.Color(
+                        userPreferences.getString(
+                            BACKGROUND_COLOR,
+                            null
+                        )!!.toColorInt()
+                    )
+                )
+            }
 
             if (userPreferences.getBoolean("JUSTIFY_CONTENT", false)) {
                 textAlign.set(TextAlign.START)
@@ -233,6 +322,53 @@ class EpubReaderFragment : Fragment() {
         }
     }
 
+    fun updatePreferences(dialogBinding: BottomSheetDialogLayoutBinding) {
+
+        dialogBinding.sliderFontSize.addOnChangeListener { _, value, _ ->
+            editor.apply {
+                fontSize.set(value.toDouble())
+            }
+
+            navigator.submitPreferences(editor.preferences)
+            userPreferences.edit {
+                putFloat(FONT_SIZE, value)
+            }
+        }
+
+        dialogBinding.spinnerFontFamily.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    val selectedItem = parent?.getItemAtPosition(position)
+
+                    if (selectedItem != null) {
+                        editor.apply {
+                            fontFamily.set(FontFamily(selectedItem.toString()))
+                            navigator.submitPreferences(editor.preferences)
+                        }
+
+                        userPreferences.edit { putString(FONT_FAMILY, selectedItem.toString()) }
+                    }
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
+
+            }
+
+        dialogBinding.sliderLineSpacing.addOnChangeListener { _, value, _ ->
+            editor.apply {
+                lineHeight.set(value.toDouble())
+            }
+            userPreferences.edit { putFloat(LINE_HEIGHT, value) }
+            navigator.submitPreferences(editor.preferences)
+
+        }
+    }
 
     private fun showButtons() {
 
@@ -249,21 +385,6 @@ class EpubReaderFragment : Fragment() {
 
         }
 
-    }
-
-
-    private fun saveUserPreferences(dialogBinding: BottomSheetDialogLayoutBinding) {
-
-        dialogBinding.apply {
-            userPreferences.edit {
-                putString(FONT_FAMILY, spinnerFontFamily.selectedItem.toString())
-                putFloat(FONT_SIZE, sliderFontSize.value)
-                putFloat(LINE_HEIGHT, sliderLineSpacing.value)
-                putBoolean(SCROLL, scrollSwitch.isChecked)
-                putBoolean(JUSTIFY_CONTENT, justifyContentSwitch.isChecked)
-
-            }
-        }
     }
 
     val customSelectionActionModeCallback: ActionMode.Callback by lazy { SelectionActionModeCallBack() }
@@ -288,13 +409,30 @@ class EpubReaderFragment : Fragment() {
 
     }
 
+    fun setThemes(textColor: String, backgroundColor: String, fontFamily: String) {
+        editor.apply {
+            this.textColor.set(org.readium.r2.navigator.preferences.Color(textColor.toColorInt()))
+            this.backgroundColor.set(org.readium.r2.navigator.preferences.Color(backgroundColor.toColorInt()))
+            this.fontFamily.set(FontFamily(fontFamily))
+        }
+
+        userPreferences.edit {
+            putString(TEXT_COLOR, textColor)
+            putString(BACKGROUND_COLOR, backgroundColor)
+            putString(FONT_FAMILY, fontFamily)
+        }
+
+        navigator.submitPreferences(editor.preferences)
+    }
+
     companion object {
         const val FONT_FAMILY = "FONT_FAMILY"
         const val FONT_SIZE = "FONT_SIZE"
         const val LINE_HEIGHT = "LINE_HEIGHT"
         const val SCROLL = "SCROLL"
         const val JUSTIFY_CONTENT = "JUSTIFY_CONTENT"
-
+        const val TEXT_COLOR = "TEXT_COLOR"
+        const val BACKGROUND_COLOR = "BACKGROUNDCOLOR"
 
     }
 
