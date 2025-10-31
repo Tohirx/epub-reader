@@ -90,9 +90,10 @@ class ReaderViewModel : ViewModel() {
                             cover = file.absolutePath,
                             identifier = publication!!.metadata.identifier ?: "",
                             uri = Uri.fromFile(fileFromStorage).toString(),
-                            readingProgress = null,
+                            readingProgressJSON = null,
                             mediaType = mediaType.toString(),
-                            lastDateOpened = LocalDateTime.now().toString()
+                            lastDateOpened = LocalDateTime.now().toString(),
+                            readingProgressDouble = null
                         )
                         if (!books.contains(book))
                             booksRepository.addBook(book)
@@ -142,11 +143,17 @@ class ReaderViewModel : ViewModel() {
     suspend fun saveReadingProgression(locator: Locator, bookID: Int) {
         val locatorString = locator.toJSON().toString()
 
+        val progressValue = locator.locations.totalProgression
+
         booksRepository.saveReadingProgress(locatorString, bookID)
+
+        if (progressValue != null)
+            booksRepository.saveReadingProgressAsDouble(progressValue, bookID)
 
     }
 
     suspend fun restoreReadingProgression(bookID: Int): Locator? {
+
 
         val readingProgressLocator = booksRepository.getReadingProgress(bookID)
 

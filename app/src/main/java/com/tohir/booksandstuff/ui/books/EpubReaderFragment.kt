@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.readium.r2.navigator.OverflowableNavigator
 import org.readium.r2.navigator.VisualNavigator
 import org.readium.r2.navigator.epub.EpubNavigatorFactory
 import org.readium.r2.navigator.epub.EpubNavigatorFragment
@@ -38,11 +39,13 @@ import org.readium.r2.navigator.epub.css.FontStyle
 import org.readium.r2.navigator.epub.css.FontWeight
 import org.readium.r2.navigator.input.InputListener
 import org.readium.r2.navigator.input.TapEvent
+import org.readium.r2.navigator.preferences.ColumnCount
 import org.readium.r2.navigator.preferences.FontFamily
 import org.readium.r2.navigator.preferences.TextAlign
 import org.readium.r2.navigator.util.BaseActionModeCallback
 import org.readium.r2.shared.ExperimentalReadiumApi
 import org.readium.r2.shared.publication.Publication
+import org.readium.r2.shared.publication.services.positions
 
 class EpubReaderFragment : Fragment() {
 
@@ -62,9 +65,11 @@ class EpubReaderFragment : Fragment() {
     val FontFamily.Companion.ROBOTO get() = FontFamily("Roboto")
     val FontFamily.Companion.OPEN_SANS get() = FontFamily("OpenSans")
 
+    @OptIn(ExperimentalReadiumApi::class)
     private val editor: EpubPreferencesEditor by lazy {
         val preferences = EpubPreferences(
 
+            columnCount = ColumnCount.ONE,
             fontFamily = FontFamily.SANS_SERIF,
             fontSize = 1.0,
             lineHeight = 1.0,
@@ -92,8 +97,11 @@ class EpubReaderFragment : Fragment() {
                 )
             }
 
+
             if (publication != null) {
                 val navigatorFactory = EpubNavigatorFactory(publication = publication!!)
+
+
                 childFragmentManager.fragmentFactory = navigatorFactory.createFragmentFactory(
                     initialLocator = runBlocking { viewModel.restoreReadingProgression(bookId!!) },
                     configuration = EpubNavigatorFragment.Configuration {
@@ -121,7 +129,7 @@ class EpubReaderFragment : Fragment() {
                     }
                 )
             } else {
-                throw IllegalStateException("Argument is null")
+                throw IllegalStateException("Publication is null")
             }
         }
         super.onCreate(savedInstanceState)
@@ -151,6 +159,7 @@ class EpubReaderFragment : Fragment() {
         return binding.root
     }
 
+    @OptIn(ExperimentalReadiumApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         super.onViewCreated(view, savedInstanceState)
@@ -166,13 +175,17 @@ class EpubReaderFragment : Fragment() {
             })
         }
 
+        (navigator as OverflowableNavigator)
+
+
+
         lifecycleScope.launch {
             saveReadingProgression(bookId!!)
         }
 
         setupPreferences()
+        setPageNumber()
     }
-
 
     fun setupClickListeners() {
         binding.imageViewCancelButton.setOnClickListener {
@@ -187,7 +200,6 @@ class EpubReaderFragment : Fragment() {
 
     private fun showSettings() {
         val dialogBinding = BottomSheetDialogLayoutBinding.inflate(layoutInflater).apply {
-
 
             val fontFamilies = listOf(
                 "san-serif",
@@ -377,14 +389,41 @@ class EpubReaderFragment : Fragment() {
             if (imageViewCancelButton.isVisible && imageViewOptions.isVisible) {
                 imageViewCancelButton.visibility = View.INVISIBLE
                 imageViewOptions.visibility = View.INVISIBLE
+                cardViewPageNumberContainer.visibility = View.INVISIBLE
 
             } else if (imageViewCancelButton.isInvisible && imageViewOptions.isInvisible) {
                 imageViewCancelButton.visibility = View.VISIBLE
                 imageViewOptions.visibility = View.VISIBLE
+                cardViewPageNumberContainer.visibility = View.VISIBLE
             }
 
         }
 
+    }
+
+    fun setPageNumber() {
+
+
+        lifecycleScope.launch {
+
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                navigator.currentLocator.collect {
+
+                    if (!publication!!.positions().isEmpty()) {
+
+                        val currentPage = navigator.currentLocator.value.locations.position
+                        val totalPages = publication!!.positions().size
+
+                        binding.textViewPageNumber.text = "$currentPage of $totalPages"
+
+                    }
+
+                }
+
+            }
+
+
+        }
     }
 
     val customSelectionActionModeCallback: ActionMode.Callback by lazy { SelectionActionModeCallBack() }
@@ -404,10 +443,16 @@ class EpubReaderFragment : Fragment() {
         }
 
         override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+
+
+            mode.finish()
+
+
             return true
         }
 
     }
+
 
     fun setThemes(textColor: String, backgroundColor: String, fontFamily: String) {
         editor.apply {
@@ -432,7 +477,7 @@ class EpubReaderFragment : Fragment() {
         const val SCROLL = "SCROLL"
         const val JUSTIFY_CONTENT = "JUSTIFY_CONTENT"
         const val TEXT_COLOR = "TEXT_COLOR"
-        const val BACKGROUND_COLOR = "BACKGROUNDCOLOR"
+        const val BACKGROUND_COLOR = "BACKGROUND_COLOR"
 
     }
 

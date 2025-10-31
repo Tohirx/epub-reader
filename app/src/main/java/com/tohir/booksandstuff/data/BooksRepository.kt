@@ -15,6 +15,10 @@ class BooksRepository(private val bookDao: BookDao) {
         bookDao.deleteBook(book)
     }
 
+    suspend fun saveReadingProgressAsDouble(value: Double, bookID: Int) {
+        bookDao.saveReadingProgressAsDouble(value, bookID)
+    }
+
     suspend fun updateBook(book: Book) {
         bookDao.updateBook(book)
     }
@@ -23,6 +27,10 @@ class BooksRepository(private val bookDao: BookDao) {
 
     suspend fun saveReadingProgress(locator: String?, bookID: Int?) {
         bookDao.saveReadingProgress(locator, bookID)
+    }
+
+    suspend fun getReadingProgressAsDouble(bookID: Int): Double {
+        return bookDao.getReadingProgressDouble(bookID)
     }
 
     suspend fun getReadingProgress(bookID: Int): String? {

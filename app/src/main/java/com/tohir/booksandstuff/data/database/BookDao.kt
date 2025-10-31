@@ -18,25 +18,29 @@ interface BookDao {
     @Update
     suspend fun updateBook(book: Book)
 
-    @Query("UPDATE book SET readingProgress = :locator WHERE id = :bookID")
-    suspend fun  saveReadingProgress(locator: String?, bookID: Int?)
+    @Query("UPDATE book SET readingProgressJSON = :locator WHERE id = :bookID")
+    suspend fun saveReadingProgress(locator: String?, bookID: Int?)
 
-    @Query("SELECT readingProgress from book WHERE id = :bookID")
+    @Query("SELECT readingProgressJSON from book WHERE id = :bookID")
     suspend fun getReadingProgress(bookID: Int?): String?
+
+    @Query("UPDATE book SET readingProgressDouble = :value WHERE id = :bookID")
+    suspend fun saveReadingProgressAsDouble(value: Double, bookID: Int)
 
     @Delete
     suspend fun deleteBook(book: Book)
 
     @Query("SELECT * FROM book ORDER BY dateAdded DESC")
-     fun getAllBooksAsFlow(): Flow<List<Book>>
+    fun getAllBooksAsFlow(): Flow<List<Book>>
 
-
+    @Query("SELECT readingProgressDouble FROM book WHERE id = :bookID")
+    suspend fun getReadingProgressDouble(bookID: Int): Double
 
     @Query("SELECT * FROM book WHERE identifier = :identifier LIMIT 1")
     suspend fun getBookByIdentifier(identifier: String?): Book?
 
     @Query("SELECT * FROM book")
-    suspend fun getAllBooksAsList() : List<Book>
+    suspend fun getAllBooksAsList(): List<Book>
 
     @Query("SELECT * FROM book WHERE id = :id")
     fun getBookById(id: Int): Book

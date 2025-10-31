@@ -9,6 +9,7 @@ import com.tohir.booksandstuff.R
 import com.tohir.booksandstuff.data.model.Book
 import com.tohir.booksandstuff.databinding.ItemRecentlyReadBooksBinding
 import java.io.File
+import kotlin.math.ceil
 
 class RecentBookAdapter(private val listener : OnRecentBooksClickedListener) : RecyclerView.Adapter<RecentBookAdapter.ViewHolder>() {
 
@@ -55,6 +56,15 @@ class RecentBookAdapter(private val listener : OnRecentBooksClickedListener) : R
 
             binding.textViewAuthorName.text = book.author
             binding.textViewBookTitle.text = book.title
+
+            if (book.readingProgressDouble != null ) {
+                if (book.readingProgressDouble * 100 < 1) {
+                    binding.textViewProgress.text = "Progress 1%"
+                } else {
+                    val value =  ceil(book.readingProgressDouble * 100)
+                    binding.textViewProgress.text = "Progress ${value.toInt()}%"
+                }
+            }
 
             binding.root.setOnClickListener {
                 listener.onRecentBookClicked(book)

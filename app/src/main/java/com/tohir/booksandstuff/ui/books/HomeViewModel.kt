@@ -23,4 +23,8 @@ class HomeViewModel : ViewModel() {
         }
     }
 
+    fun getProgressionAsDouble(book: Book) {
+
+    }
+
 }
