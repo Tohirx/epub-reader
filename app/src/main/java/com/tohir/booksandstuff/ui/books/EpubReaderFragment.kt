@@ -2,6 +2,7 @@ package com.tohir.booksandstuff.ui.books
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.ActionMode
 import android.view.LayoutInflater
 import android.view.Menu
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.annotation.ColorInt
 import androidx.core.content.edit
 import androidx.core.graphics.toColorInt
 import androidx.core.net.toUri
@@ -23,12 +25,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.tohir.booksandstuff.R
+import com.tohir.booksandstuff.data.model.Highlight
 import com.tohir.booksandstuff.databinding.BottomSheetDialogLayoutBinding
 import com.tohir.booksandstuff.databinding.FragmentReaderBinding
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.readium.r2.navigator.SelectableNavigator
 import org.readium.r2.navigator.VisualNavigator
 import org.readium.r2.navigator.epub.EpubNavigatorFactory
 import org.readium.r2.navigator.epub.EpubNavigatorFragment
@@ -43,6 +47,7 @@ import org.readium.r2.navigator.preferences.FontFamily
 import org.readium.r2.navigator.preferences.TextAlign
 import org.readium.r2.navigator.util.BaseActionModeCallback
 import org.readium.r2.shared.ExperimentalReadiumApi
+import org.readium.r2.shared.publication.Locator
 import org.readium.r2.shared.publication.Publication
 import org.readium.r2.shared.publication.services.positions
 
@@ -58,7 +63,7 @@ class EpubReaderFragment : Fragment() {
     private lateinit var navigator: EpubNavigatorFragment
     private lateinit var binding: FragmentReaderBinding
     private var bookUri: String? = null
-    private var bookId: Int? = null
+    private var bookId: Long? = null
     private var publication: Publication? = null
 
     val FontFamily.Companion.ROBOTO get() = FontFamily("Roboto")
@@ -85,7 +90,7 @@ class EpubReaderFragment : Fragment() {
 
 
         bookUri = arguments?.getString("BOOK_PATH") ?: arguments?.getString("BOOK_URI")
-        bookId = arguments?.getInt("BOOK_ID")
+        bookId = arguments?.getLong("BOOK_ID")
 
         if (bookUri != null) {
             publication = runBlocking {
@@ -173,6 +178,7 @@ class EpubReaderFragment : Fragment() {
                 }
             })
         }
+
 
         viewLifecycleOwner.lifecycleScope.launch { saveReadingProgression(bookId!!) }
 
@@ -279,6 +285,8 @@ class EpubReaderFragment : Fragment() {
 
     }
 
+
+
     private fun setupPreferences() {
 
         editor.apply {
@@ -319,7 +327,7 @@ class EpubReaderFragment : Fragment() {
         navigator.submitPreferences(editor.preferences)
     }
 
-    suspend fun saveReadingProgression(bookId: Int) {
+    suspend fun saveReadingProgression(bookId: Long) {
 
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             navigator.currentLocator
@@ -404,7 +412,8 @@ class EpubReaderFragment : Fragment() {
 
                     if (!publication!!.positions().isEmpty()) {
 
-                        val currentPage = navigator.currentLocator.value.locations.position
+                        val currentPage = navigator.currentLocator.value.locations.position ?: 1
+
                         val totalPages = publication!!.positions().size
 
                         binding.textViewPageNumber.text = "$currentPage of $totalPages"
@@ -433,12 +442,29 @@ class EpubReaderFragment : Fragment() {
 
         override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
 
+            when (item.itemId) {
+                R.id.highlight -> addHighlight(Highlight.Style.HIGHLIGHT, "#9CCC65".toColorInt())
+            }
 
             mode.finish()
 
 
             return true
         }
+
+        private fun addHighlight(style: Highlight.Style, @ColorInt tint: Int ) {
+            viewLifecycleOwner.lifecycleScope.launch {
+
+                (navigator as? SelectableNavigator)?.let { navigator ->
+                    navigator.currentSelection()?.let { selection ->
+
+                        viewModel.addHighlight(locator = selection.locator, style = style, tint = tint, bookID = bookId!! )
+                    }
+                }
+
+            }
+        }
+
 
     }
 

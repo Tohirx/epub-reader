@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(indices = [Index(value = ["identifier"], unique = true)])
 data class Book(
 
-     @PrimaryKey (autoGenerate = true) val id: Int = 0,
+     @PrimaryKey (autoGenerate = true) val id: Long = 0,
     val title: String?,
     val lastDateOpened: String?,
     val dateAdded: Long = 0,
@@ -18,6 +18,10 @@ data class Book(
     val readingProgressJSON: String?,
     val readingProgressDouble: Double?,
     val mediaType: String?,
-    val isComplete: Boolean = false,
-)
+    val isComplete: Boolean = false
+) {
+    companion object {
+        const val ID = "id"
+    }
 
+}
