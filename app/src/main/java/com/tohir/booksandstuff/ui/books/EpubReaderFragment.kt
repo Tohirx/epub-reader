@@ -29,7 +29,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.readium.r2.navigator.OverflowableNavigator
 import org.readium.r2.navigator.VisualNavigator
 import org.readium.r2.navigator.epub.EpubNavigatorFactory
 import org.readium.r2.navigator.epub.EpubNavigatorFragment
@@ -175,13 +174,7 @@ class EpubReaderFragment : Fragment() {
             })
         }
 
-        (navigator as OverflowableNavigator)
-
-
-
-        lifecycleScope.launch {
-            saveReadingProgression(bookId!!)
-        }
+        viewLifecycleOwner.lifecycleScope.launch { saveReadingProgression(bookId!!) }
 
         setupPreferences()
         setPageNumber()
@@ -266,6 +259,7 @@ class EpubReaderFragment : Fragment() {
         dialogBinding: BottomSheetDialogLayoutBinding,
         itemsAdapter1: ArrayAdapter<String>
     ) {
+
 
         dialogBinding.apply {
 
@@ -396,7 +390,6 @@ class EpubReaderFragment : Fragment() {
                 imageViewOptions.visibility = View.VISIBLE
                 cardViewPageNumberContainer.visibility = View.VISIBLE
             }
-
         }
 
     }
@@ -417,12 +410,8 @@ class EpubReaderFragment : Fragment() {
                         binding.textViewPageNumber.text = "$currentPage of $totalPages"
 
                     }
-
                 }
-
             }
-
-
         }
     }
 

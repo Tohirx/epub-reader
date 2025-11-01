@@ -7,7 +7,9 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.tohir.booksandstuff.data.model.Book
+import com.tohir.booksandstuff.data.model.Highlight
 import kotlinx.coroutines.flow.Flow
+import org.readium.r2.navigator.Decoration
 
 @Dao
 interface BookDao {
@@ -35,6 +37,7 @@ interface BookDao {
 
     @Query("SELECT readingProgressDouble FROM book WHERE id = :bookID")
     suspend fun getReadingProgressDouble(bookID: Int): Double
+
 
     @Query("SELECT * FROM book WHERE identifier = :identifier LIMIT 1")
     suspend fun getBookByIdentifier(identifier: String?): Book?
