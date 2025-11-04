@@ -9,7 +9,6 @@ import com.tohir.booksandstuff.ui.books.HomeFragment
 import com.tohir.booksandstuff.ui.books.LibraryFragment
 import com.tohir.booksandstuff.R
 import com.tohir.booksandstuff.databinding.ActivityMainBinding
-
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener {
 
     private lateinit var binding: ActivityMainBinding

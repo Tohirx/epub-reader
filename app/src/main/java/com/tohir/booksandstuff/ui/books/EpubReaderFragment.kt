@@ -30,6 +30,7 @@ import com.tohir.booksandstuff.R
 import com.tohir.booksandstuff.data.model.Highlight
 import com.tohir.booksandstuff.databinding.BottomSheetDialogLayoutBinding
 import com.tohir.booksandstuff.databinding.FragmentReaderBinding
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -488,6 +489,7 @@ class EpubReaderFragment : Fragment() {
 
             return true
         }
+
 
         private suspend fun copy() {
             val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
