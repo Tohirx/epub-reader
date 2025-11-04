@@ -1,12 +1,12 @@
-package com.tohir.booksandstuff.ui.books
+package com.tohir.booksplusplus.ui.books
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tohir.booksandstuff.data.model.Book
-import com.tohir.booksandstuff.util.BooksAndStuffApplication
+import com.tohir.booksplusplus.data.model.Book
+import com.tohir.booksplusplus.util.BooksPlusPlus
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.readium.adapter.pdfium.document.PdfiumDocumentFactory
@@ -32,7 +32,7 @@ class ReaderViewModel : ViewModel() {
     }
 
     private var publication: Publication? = null
-    private val booksRepository = BooksAndStuffApplication.booksRepository
+    private val booksRepository = BooksPlusPlus.booksRepository
     suspend fun importPublication(uri: Uri, context: Context, bookId: Int?): Publication? {
 
         if (bookId != null && !publicationCache.contains(bookId)) {

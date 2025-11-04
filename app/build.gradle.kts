@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.tohir.booksandstuff"
+    namespace = "com.tohir.booksplusplus"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.tohir.booksandstuff"
+        applicationId = "com.tohir.booksplusplus"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

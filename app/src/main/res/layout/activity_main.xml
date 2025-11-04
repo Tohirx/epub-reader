@@ -10,7 +10,7 @@
 
 
     <androidx.fragment.app.FragmentContainerView
-        android:name="com.tohir.booksandstuff.ui.books.HomeFragment"
+        android:name="com.tohir.booksplusplus.ui.books.HomeFragment"
         android:id="@+id/fragment_container"
         android:layout_width="0dp"
         android:layout_height="0dp"

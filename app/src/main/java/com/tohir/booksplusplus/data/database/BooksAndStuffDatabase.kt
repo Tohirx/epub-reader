@@ -1,11 +1,10 @@
-package com.tohir.booksandstuff.data.database
+package com.tohir.booksplusplus.data.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.tohir.booksandstuff.data.model.Book
-import com.tohir.booksandstuff.data.database.BookDao
+import com.tohir.booksplusplus.data.model.Book
 
 @Database(entities = [Book::class], version = 3)
 abstract class BooksAndStuffDatabase : RoomDatabase() {

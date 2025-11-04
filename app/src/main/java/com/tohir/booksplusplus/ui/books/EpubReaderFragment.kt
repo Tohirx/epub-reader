@@ -1,4 +1,4 @@
-package com.tohir.booksandstuff.ui.books
+package com.tohir.booksplusplus.ui.books
 
 import android.content.Context
 import android.os.Bundle
@@ -22,9 +22,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.tohir.booksandstuff.R
-import com.tohir.booksandstuff.databinding.BottomSheetDialogLayoutBinding
-import com.tohir.booksandstuff.databinding.FragmentReaderBinding
+import com.tohir.booksplusplus.R
+import com.tohir.booksplusplus.databinding.BottomSheetDialogLayoutBinding
+import com.tohir.booksplusplus.databinding.FragmentReaderBinding
+
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -45,6 +46,7 @@ import org.readium.r2.navigator.util.BaseActionModeCallback
 import org.readium.r2.shared.ExperimentalReadiumApi
 import org.readium.r2.shared.publication.Publication
 import org.readium.r2.shared.publication.services.positions
+
 
 class EpubReaderFragment : Fragment() {
 
@@ -417,7 +419,7 @@ class EpubReaderFragment : Fragment() {
 
     val customSelectionActionModeCallback: ActionMode.Callback by lazy { SelectionActionModeCallBack() }
 
-    private inner class SelectionActionModeCallBack : BaseActionModeCallback() {
+    private  class SelectionActionModeCallBack : BaseActionModeCallback() {
         override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
 
             mode?.menuInflater?.inflate(R.menu.menu_action_mode, menu)
