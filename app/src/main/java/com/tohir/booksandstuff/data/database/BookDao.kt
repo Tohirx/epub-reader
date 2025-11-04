@@ -7,9 +7,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.tohir.booksandstuff.data.model.Book
-import com.tohir.booksandstuff.data.model.Highlight
 import kotlinx.coroutines.flow.Flow
-import org.readium.r2.navigator.Decoration
+
 
 @Dao
 interface BookDao {
