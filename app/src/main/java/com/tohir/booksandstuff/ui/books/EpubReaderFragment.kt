@@ -1,8 +1,10 @@
 package com.tohir.booksandstuff.ui.books
 
+
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.ActionMode
 import android.view.LayoutInflater
 import android.view.Menu
@@ -28,10 +30,12 @@ import com.tohir.booksandstuff.R
 import com.tohir.booksandstuff.data.model.Highlight
 import com.tohir.booksandstuff.databinding.BottomSheetDialogLayoutBinding
 import com.tohir.booksandstuff.databinding.FragmentReaderBinding
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.readium.r2.navigator.Decoration
 import org.readium.r2.navigator.SelectableNavigator
 import org.readium.r2.navigator.VisualNavigator
 import org.readium.r2.navigator.epub.EpubNavigatorFactory
@@ -47,7 +51,6 @@ import org.readium.r2.navigator.preferences.FontFamily
 import org.readium.r2.navigator.preferences.TextAlign
 import org.readium.r2.navigator.util.BaseActionModeCallback
 import org.readium.r2.shared.ExperimentalReadiumApi
-import org.readium.r2.shared.publication.Locator
 import org.readium.r2.shared.publication.Publication
 import org.readium.r2.shared.publication.services.positions
 
@@ -180,10 +183,36 @@ class EpubReaderFragment : Fragment() {
         }
 
 
-        viewLifecycleOwner.lifecycleScope.launch { saveReadingProgression(bookId!!) }
+        setupHighlights()
+        saveReadingProgress()
 
         setupPreferences()
         setPageNumber()
+    }
+
+    private fun setupHighlights() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getAllHighlights(bookId!!).collectLatest { highlightList ->
+
+                val decorations = highlightList.map { highlight ->
+                    Decoration(
+                        id = "decoration-${highlight.id}",
+                        highlight.locator,
+                        Decoration.Style.Highlight(highlight.tint)
+                    )
+
+                }
+
+
+                navigator.applyDecorations(decorations, "user-highlights")
+
+            }
+
+        }
+    }
+
+    private fun saveReadingProgress() {
+        viewLifecycleOwner.lifecycleScope.launch { saveReadingProgression(bookId!!) }
     }
 
     fun setupClickListeners() {
@@ -286,7 +315,6 @@ class EpubReaderFragment : Fragment() {
     }
 
 
-
     private fun setupPreferences() {
 
         editor.apply {
@@ -296,7 +324,12 @@ class EpubReaderFragment : Fragment() {
             }
 
             fontSize.set(userPreferences.getFloat(FONT_SIZE, 1.0f).toDouble())
-            scroll.set(userPreferences.getBoolean(SCROLL, false))
+            scroll.set(
+                userPreferences.getBoolean(
+                    SCROLL,
+                    false
+                )
+            )
             lineHeight.set(userPreferences.getFloat(LINE_HEIGHT, 1.0f).toDouble())
 
             if (userPreferences.getString(TEXT_COLOR, null) != null) {
@@ -435,6 +468,7 @@ class EpubReaderFragment : Fragment() {
             menu?.findItem(R.id.underline)?.isVisible = true
             menu?.findItem(R.id.note)?.isVisible = true
             menu?.findItem(R.id.dictionary)?.isVisible = true
+            menu?.findItem(R.id.copy)?.isVisible = true
 
             return true
 
@@ -444,6 +478,9 @@ class EpubReaderFragment : Fragment() {
 
             when (item.itemId) {
                 R.id.highlight -> addHighlight(Highlight.Style.HIGHLIGHT, "#9CCC65".toColorInt())
+                R.id.underline -> addHighlight(Highlight.Style.UNDERLINE, "#9CCC65".toColorInt())
+                R.id.copy -> lifecycleScope.launch { copy() }
+
             }
 
             mode.finish()
@@ -452,13 +489,28 @@ class EpubReaderFragment : Fragment() {
             return true
         }
 
-        private fun addHighlight(style: Highlight.Style, @ColorInt tint: Int ) {
+        private suspend fun copy() {
+            val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+            val selectedText = (navigator as SelectableNavigator).currentSelection()?.locator?.text?.highlight
+
+            clipboard.setPrimaryClip(ClipData.newPlainText("Selected text", selectedText))
+            (navigator as SelectableNavigator).clearSelection()
+
+        }
+
+        private fun addHighlight(style: Highlight.Style, @ColorInt tint: Int) {
             viewLifecycleOwner.lifecycleScope.launch {
 
                 (navigator as? SelectableNavigator)?.let { navigator ->
                     navigator.currentSelection()?.let { selection ->
 
-                        viewModel.addHighlight(locator = selection.locator, style = style, tint = tint, bookID = bookId!! )
+                        viewModel.addHighlight(
+                            locator = selection.locator,
+                            style = style,
+                            tint = tint,
+                            bookID = bookId!!
+                        )
                     }
                 }
 

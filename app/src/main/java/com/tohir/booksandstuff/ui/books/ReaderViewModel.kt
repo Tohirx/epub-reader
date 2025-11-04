@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.tohir.booksandstuff.data.model.Book
 import com.tohir.booksandstuff.data.model.Highlight
 import com.tohir.booksandstuff.util.BooksAndStuffApplication
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.readium.adapter.pdfium.document.PdfiumDocumentFactory
@@ -156,6 +157,10 @@ class ReaderViewModel : ViewModel() {
 
     suspend fun addHighlight(bookID: Long, style: Highlight.Style, @ColorInt tint: Int, locator: Locator, annotation: String = "") {
         booksRepository.addHighlight(bookID, style, tint, locator, annotation)
+    }
+
+     fun getAllHighlights(bookID: Long): Flow<List<Highlight>> {
+        return booksRepository.getAllHighlights(bookID)
     }
 
     suspend fun restoreReadingProgression(bookID: Long): Locator? {

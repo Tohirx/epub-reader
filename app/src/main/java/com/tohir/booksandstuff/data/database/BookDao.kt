@@ -38,6 +38,12 @@ interface BookDao {
     @Query("SELECT readingProgressDouble FROM book WHERE id = :bookID")
     suspend fun getReadingProgressDouble(bookID: Long): Double
 
+    @Query("SELECT * FROM highlight WHERE BOOK_ID = :bookID")
+     fun getAllHighlights(bookID: Long): Flow<List<Highlight>>
+
+     @Delete
+     suspend fun deleteHighlightByID(id: Long)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addHighlight(highlight: Highlight): Long
 

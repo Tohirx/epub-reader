@@ -26,6 +26,10 @@ class BooksRepository(private val bookDao: BookDao) {
         bookDao.updateBook(book)
     }
 
+     fun getAllHighlights(bookID: Long): Flow<List<Highlight>> {
+        return bookDao.getAllHighlights(bookID)
+    }
+
     suspend fun addHighlight(
         bookId: Long,
         style: Highlight.Style,
