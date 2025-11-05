@@ -7,18 +7,20 @@ import androidx.room.RoomDatabase
 import com.tohir.booksplusplus.data.model.Book
 
 @Database(entities = [Book::class], version = 3)
-abstract class BooksAndStuffDatabase : RoomDatabase() {
+abstract class
+
+BooksPlusPlusDatabase : RoomDatabase() {
 
     abstract fun getBookDao(): BookDao
     companion object {
 
         @Volatile
-        private var DATABASE_INSTANCE: BooksAndStuffDatabase? = null
+        private var DATABASE_INSTANCE: BooksPlusPlusDatabase? = null
 
-        fun createDatabase(context: Context): BooksAndStuffDatabase {
+        fun createDatabase(context: Context): BooksPlusPlusDatabase {
 
             return DATABASE_INSTANCE ?: synchronized(this) {
-                DATABASE_INSTANCE = Room.databaseBuilder(context.applicationContext, BooksAndStuffDatabase::class.java, "books-and-stuff-data")
+                DATABASE_INSTANCE = Room.databaseBuilder(context.applicationContext, BooksPlusPlusDatabase::class.java, "books-plus-plus-data")
                     .fallbackToDestructiveMigration(dropAllTables = true )
                     .build()
 
