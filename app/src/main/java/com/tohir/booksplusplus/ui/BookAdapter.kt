@@ -1,13 +1,13 @@
-package com.tohir.booksandstuff.ui
+package com.tohir.booksplusplus.ui
 
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
-import com.tohir.booksandstuff.R
-import com.tohir.booksandstuff.data.model.Book
-import com.tohir.booksandstuff.databinding.ItemBookBinding
+import com.tohir.booksplusplus.R
+import com.tohir.booksplusplus.data.model.Book
+import com.tohir.booksplusplus.databinding.ItemBookBinding
 import java.io.File
 
 class BookAdapter(private val listener: BookClickListener) : RecyclerView.Adapter<BookAdapter.ViewHolder>() {

@@ -1,10 +1,9 @@
-package com.tohir.booksandstuff.data
+package com.tohir.booksplusplus.data
 
 import android.support.annotation.ColorInt
-import android.util.Log.i
-import com.tohir.booksandstuff.data.database.BookDao
-import com.tohir.booksandstuff.data.model.Book
-import com.tohir.booksandstuff.data.model.Highlight
+import com.tohir.booksplusplus.data.database.BookDao
+import com.tohir.booksplusplus.data.model.Book
+import com.tohir.booksplusplus.data.model.Highlight
 import kotlinx.coroutines.flow.Flow
 import org.readium.r2.shared.publication.Locator
 

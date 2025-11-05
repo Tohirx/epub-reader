@@ -1,4 +1,4 @@
-package com.tohir.booksandstuff.data.database
+package com.tohir.booksplusplus.data.database
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,10 +6,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.tohir.booksandstuff.data.model.Book
-import com.tohir.booksandstuff.data.model.Highlight
+import com.tohir.booksplusplus.data.model.Book
+import com.tohir.booksplusplus.data.model.Highlight
 import kotlinx.coroutines.flow.Flow
-import org.readium.r2.navigator.Decoration
 
 @Dao
 interface BookDao {

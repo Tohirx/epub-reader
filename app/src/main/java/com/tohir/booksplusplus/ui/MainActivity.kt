@@ -1,14 +1,14 @@
-package com.tohir.booksandstuff.ui
+package com.tohir.booksplusplus.ui
 
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import com.google.android.material.navigation.NavigationBarView
-import com.tohir.booksandstuff.ui.books.HomeFragment
-import com.tohir.booksandstuff.ui.books.LibraryFragment
-import com.tohir.booksandstuff.R
-import com.tohir.booksandstuff.databinding.ActivityMainBinding
+import com.tohir.booksplusplus.ui.books.HomeFragment
+import com.tohir.booksplusplus.ui.books.LibraryFragment
+import com.tohir.booksplusplus.R
+import com.tohir.booksplusplus.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener {
 
     private lateinit var binding: ActivityMainBinding

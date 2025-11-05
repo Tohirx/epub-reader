@@ -1,4 +1,4 @@
-package com.tohir.booksandstuff.ui.books
+package com.tohir.booksplusplus.ui.books
 
 import android.net.Uri
 import android.os.Bundle
@@ -9,8 +9,8 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.commit
-import com.tohir.booksandstuff.R
-import com.tohir.booksandstuff.databinding.ActivityReaderBinding
+import com.tohir.booksplusplus.R
+import com.tohir.booksplusplus.databinding.ActivityReaderBinding
 
 class ReaderActivity : AppCompatActivity() {
     private lateinit var binding: ActivityReaderBinding

@@ -1,4 +1,4 @@
-package com.tohir.booksandstuff.ui.books
+package com.tohir.booksplusplus.ui.books
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -6,9 +6,9 @@ import android.net.Uri
 import android.support.annotation.ColorInt
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tohir.booksandstuff.data.model.Book
-import com.tohir.booksandstuff.data.model.Highlight
-import com.tohir.booksandstuff.util.BooksAndStuffApplication
+import com.tohir.booksplusplus.data.model.Book
+import com.tohir.booksplusplus.data.model.Highlight
+import com.tohir.booksplusplus.util.BooksPlusPlusApplication
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -35,7 +35,7 @@ class ReaderViewModel : ViewModel() {
     }
 
     private var publication: Publication? = null
-    private val booksRepository = BooksAndStuffApplication.booksRepository
+    private val booksRepository = BooksPlusPlusApplication.booksRepository
     suspend fun importPublication(uri: Uri, context: Context, bookId: Long?): Publication? {
 
         if (bookId != null && !publicationCache.contains(bookId)) {

@@ -1,4 +1,4 @@
-package com.tohir.booksandstuff.data.model
+package com.tohir.booksplusplus.data.model
 
 import androidx.annotation.ColorInt
 import androidx.room.ColumnInfo

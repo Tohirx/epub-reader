@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.tohir.booksandstuff"
+    namespace = "com.tohir.booksplusplus"
     compileSdk = 36
 
     defaultConfig {

@@ -1,4 +1,4 @@
-package com.tohir.booksandstuff.ui.books
+package com.tohir.booksplusplus.ui.books
 
 
 import android.content.ClipData
@@ -26,10 +26,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.tohir.booksandstuff.R
-import com.tohir.booksandstuff.data.model.Highlight
-import com.tohir.booksandstuff.databinding.BottomSheetDialogLayoutBinding
-import com.tohir.booksandstuff.databinding.FragmentReaderBinding
+import com.tohir.booksplusplus.R
+import com.tohir.booksplusplus.data.model.Highlight
+import com.tohir.booksplusplus.databinding.BottomSheetDialogLayoutBinding
+import com.tohir.booksplusplus.databinding.FragmentReaderBinding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
