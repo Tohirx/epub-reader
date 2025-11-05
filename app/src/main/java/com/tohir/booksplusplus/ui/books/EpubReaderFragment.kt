@@ -174,6 +174,8 @@ class EpubReaderFragment : Fragment() {
 
         setupClickListeners()
 
+
+
         (navigator as VisualNavigator).apply {
             addInputListener(object : InputListener {
                 override fun onTap(event: TapEvent): Boolean {
@@ -185,10 +187,9 @@ class EpubReaderFragment : Fragment() {
 
 
         setupHighlights()
-        saveReadingProgress()
-
         setupPreferences()
         setPageNumber()
+        saveReadingProgress()
     }
 
     private fun setupHighlights() {
@@ -360,6 +361,8 @@ class EpubReaderFragment : Fragment() {
         navigator.submitPreferences(editor.preferences)
     }
 
+
+
     suspend fun saveReadingProgression(bookId: Long) {
 
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -437,7 +440,6 @@ class EpubReaderFragment : Fragment() {
 
     fun setPageNumber() {
 
-
         lifecycleScope.launch {
 
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -508,7 +510,6 @@ class EpubReaderFragment : Fragment() {
 
         }
 
-
         private suspend fun copy() {
             val clipboard =
                 requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -538,10 +539,7 @@ class EpubReaderFragment : Fragment() {
 
             }
         }
-
-
     }
-
 
     fun setThemes(textColor: String, backgroundColor: String, fontFamily: String) {
         editor.apply {
