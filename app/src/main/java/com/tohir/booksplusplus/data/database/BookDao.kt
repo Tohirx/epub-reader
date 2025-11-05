@@ -16,6 +16,7 @@ interface BookDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addBook(book: Book)
 
+
     @Update
     suspend fun updateBook(book: Book)
 
