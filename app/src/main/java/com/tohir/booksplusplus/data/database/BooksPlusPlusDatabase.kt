@@ -7,9 +7,9 @@ import androidx.room.RoomDatabase
 import com.tohir.booksplusplus.data.model.Book
 
 @Database(entities = [Book::class], version = 3)
-abstract class
 
-BooksPlusPlusDatabase : RoomDatabase() {
+
+abstract class BooksPlusPlusDatabase : RoomDatabase() {
 
     abstract fun getBookDao(): BookDao
     companion object {

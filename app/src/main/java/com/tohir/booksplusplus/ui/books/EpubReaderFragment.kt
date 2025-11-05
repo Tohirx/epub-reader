@@ -23,13 +23,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.tohir.booksplusplus.R
+import com.tohir.booksplusplus.data.database.DictionaryProvider
 import com.tohir.booksplusplus.databinding.BottomSheetDialogLayoutBinding
 import com.tohir.booksplusplus.databinding.FragmentReaderBinding
-
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.readium.r2.navigator.SelectableNavigator
 import org.readium.r2.navigator.VisualNavigator
 import org.readium.r2.navigator.epub.EpubNavigatorFactory
 import org.readium.r2.navigator.epub.EpubNavigatorFragment
@@ -46,7 +47,6 @@ import org.readium.r2.navigator.util.BaseActionModeCallback
 import org.readium.r2.shared.ExperimentalReadiumApi
 import org.readium.r2.shared.publication.Publication
 import org.readium.r2.shared.publication.services.positions
-
 
 class EpubReaderFragment : Fragment() {
 
@@ -419,7 +419,7 @@ class EpubReaderFragment : Fragment() {
 
     val customSelectionActionModeCallback: ActionMode.Callback by lazy { SelectionActionModeCallBack() }
 
-    private  class SelectionActionModeCallBack : BaseActionModeCallback() {
+    private inner class SelectionActionModeCallBack : BaseActionModeCallback() {
         override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
 
             mode?.menuInflater?.inflate(R.menu.menu_action_mode, menu)
@@ -435,11 +435,32 @@ class EpubReaderFragment : Fragment() {
 
         override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
 
+            when (item.itemId) {
+                R.id.dictionary -> lifecycleScope.launch { dictionary() }
+            }
+
 
             mode.finish()
 
 
             return true
+        }
+
+        suspend fun dictionary() {
+
+            val selectedWord = (navigator as? SelectableNavigator).let { navigator ->
+                navigator?.currentSelection()?.locator?.text?.highlight
+            } ?: ""
+
+            val db = DictionaryProvider.getInstance(requireContext())
+            val definition = db.dictionaryDao().getDefinition(selectedWord) ?: "No available definitions"
+
+           val dialog = DictionaryBottomSheet.newInstance(selectedWord, definition = definition)
+
+            dialog.show(parentFragmentManager, "DictionaryBottomSheet")
+
+            (navigator as? SelectableNavigator)?.clearSelection()
+
         }
 
     }
