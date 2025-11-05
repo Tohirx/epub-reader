@@ -1,10 +1,10 @@
-package com.tohir.booksandstuff.ui.books
+package com.tohir.booksplusplus.ui.books
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tohir.booksandstuff.data.BooksRepository
-import com.tohir.booksandstuff.data.model.Book
-import com.tohir.booksandstuff.util.BooksAndStuffApplication
+import com.tohir.booksplusplus.data.BooksRepository
+import com.tohir.booksplusplus.data.model.Book
+import com.tohir.booksplusplus.util.BooksAndStuffApplication
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 

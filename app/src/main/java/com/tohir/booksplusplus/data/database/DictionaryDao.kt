@@ -1,4 +1,4 @@
-package com.tohir.booksandstuff.data.database
+package com.tohir.booksplusplus.data.database
 
 import androidx.room.Dao
 import androidx.room.RawQuery

@@ -1,10 +1,8 @@
-package com.tohir.booksandstuff.util
+package com.tohir.booksplusplus.util
 
 import android.app.Application
-import com.squareup.picasso.Picasso
-import com.tohir.booksandstuff.data.BooksRepository
-import com.tohir.booksandstuff.data.database.BooksAndStuffDatabase
-import org.readium.r2.shared.publication.Publication
+import com.tohir.booksplusplus.data.BooksRepository
+import com.tohir.booksplusplus.data.database.BooksAndStuffDatabase
 
 class BooksAndStuffApplication: Application() {
 

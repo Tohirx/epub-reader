@@ -1,4 +1,4 @@
-package com.tohir.booksandstuff.data.database
+package com.tohir.booksplusplus.data.database
 
 import android.content.Context
 import androidx.room.Room
