@@ -4,7 +4,7 @@ import android.app.Application
 import com.tohir.booksplusplus.data.BooksRepository
 import com.tohir.booksplusplus.data.database.BooksAndStuffDatabase
 
-class BooksAndStuffApplication: Application() {
+class BooksPlusPlus: Application() {
 
 
     override fun onCreate() {

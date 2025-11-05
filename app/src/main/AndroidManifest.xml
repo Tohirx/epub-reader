@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
-        android:name=".util.BooksAndStuffApplication"
-        android:theme="@style/Theme.BooksAndStuff"
+        android:name=".util.BooksPlusPlus"
+        android:theme="@style/Theme.BooksPlusPlus"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
