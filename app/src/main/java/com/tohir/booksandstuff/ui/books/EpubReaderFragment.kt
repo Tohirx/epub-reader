@@ -23,12 +23,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.tohir.booksandstuff.R
+import com.tohir.booksandstuff.data.database.DictionaryDatabase
+import com.tohir.booksandstuff.data.database.DictionaryProvider
 import com.tohir.booksandstuff.databinding.BottomSheetDialogLayoutBinding
 import com.tohir.booksandstuff.databinding.FragmentReaderBinding
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.readium.r2.navigator.SelectableNavigator
 import org.readium.r2.navigator.VisualNavigator
 import org.readium.r2.navigator.epub.EpubNavigatorFactory
 import org.readium.r2.navigator.epub.EpubNavigatorFragment
@@ -433,11 +436,32 @@ class EpubReaderFragment : Fragment() {
 
         override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
 
+            when (item.itemId) {
+                R.id.dictionary -> lifecycleScope.launch { dictionary() }
+            }
+
 
             mode.finish()
 
 
             return true
+        }
+
+        suspend fun dictionary() {
+
+            val selectedWord = (navigator as? SelectableNavigator).let { navigator ->
+                navigator?.currentSelection()?.locator?.text?.highlight
+            } ?: ""
+
+            val db = DictionaryProvider.getInstance(requireContext())
+            val definition = db.dictionaryDao().getDefinition(selectedWord) ?: "No available definitions"
+
+           val dialog = DictionaryBottomSheet.newInstance(selectedWord, definition = definition)
+
+            dialog.show(parentFragmentManager, "DictionaryBottomSheet")
+
+            (navigator as? SelectableNavigator)?.clearSelection()
+
         }
 
     }
