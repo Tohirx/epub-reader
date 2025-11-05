@@ -3,10 +3,13 @@ package com.tohir.booksplusplus.ui.books
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import android.support.annotation.ColorInt
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tohir.booksplusplus.data.model.Book
+import com.tohir.booksplusplus.data.model.Highlight
 import com.tohir.booksplusplus.util.BooksPlusPlus
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.readium.adapter.pdfium.document.PdfiumDocumentFactory
@@ -25,15 +28,15 @@ import java.time.LocalDateTime
 
 class ReaderViewModel : ViewModel() {
 
-    val publicationCache = object : LinkedHashMap<Int, Publication>(5, 0.75f, true) {
-        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<Int?, Publication?>?): Boolean {
+    val publicationCache = object : LinkedHashMap<Long, Publication>(5, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<Long?, Publication?>?): Boolean {
             return size > 3
         }
     }
 
     private var publication: Publication? = null
     private val booksRepository = BooksPlusPlus.booksRepository
-    suspend fun importPublication(uri: Uri, context: Context, bookId: Int?): Publication? {
+    suspend fun importPublication(uri: Uri, context: Context, bookId: Long?): Publication? {
 
         if (bookId != null && !publicationCache.contains(bookId)) {
 
@@ -140,7 +143,7 @@ class ReaderViewModel : ViewModel() {
     }
 
 
-    suspend fun saveReadingProgression(locator: Locator, bookID: Int) {
+    suspend fun saveReadingProgression(locator: Locator, bookID: Long) {
         val locatorString = locator.toJSON().toString()
 
         val progressValue = locator.locations.totalProgression
@@ -152,8 +155,15 @@ class ReaderViewModel : ViewModel() {
 
     }
 
-    suspend fun restoreReadingProgression(bookID: Int): Locator? {
+    suspend fun addHighlight(bookID: Long, style: Highlight.Style, @ColorInt tint: Int, locator: Locator, annotation: String = "") {
+        booksRepository.addHighlight(bookID, style, tint, locator, annotation)
+    }
 
+     fun getAllHighlights(bookID: Long): Flow<List<Highlight>> {
+        return booksRepository.getAllHighlights(bookID)
+    }
+
+    suspend fun restoreReadingProgression(bookID: Long): Locator? {
 
         val readingProgressLocator = booksRepository.getReadingProgress(bookID)
 

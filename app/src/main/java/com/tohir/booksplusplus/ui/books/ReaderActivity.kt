@@ -23,7 +23,7 @@ class ReaderActivity : AppCompatActivity() {
         binding = ActivityReaderBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val bookIdFromLibraryFragmentOrHomeFragment = intent.getIntExtra(LibraryFragment.BOOK_ID, 0)
+        val bookIdFromLibraryFragmentOrHomeFragment = intent.getLongExtra(LibraryFragment.BOOK_ID, 0)
         val bookUriFromLibraryFragmentOrHomeFragment = intent.getStringExtra(LibraryFragment.BOOK_URI)
 
         Log.d("tohir", "Reader Activity gotten $bookUriFromLibraryFragmentOrHomeFragment from Library Fragment")

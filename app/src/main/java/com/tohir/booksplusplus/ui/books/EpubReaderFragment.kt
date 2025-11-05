@@ -1,5 +1,8 @@
 package com.tohir.booksplusplus.ui.books
 
+
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
 import android.view.ActionMode
@@ -10,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.annotation.ColorInt
 import androidx.core.content.edit
 import androidx.core.graphics.toColorInt
 import androidx.core.net.toUri
@@ -24,12 +28,15 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.data.database.DictionaryProvider
+import com.tohir.booksplusplus.data.model.Highlight
 import com.tohir.booksplusplus.databinding.BottomSheetDialogLayoutBinding
 import com.tohir.booksplusplus.databinding.FragmentReaderBinding
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.readium.r2.navigator.Decoration
 import org.readium.r2.navigator.SelectableNavigator
 import org.readium.r2.navigator.VisualNavigator
 import org.readium.r2.navigator.epub.EpubNavigatorFactory
@@ -60,7 +67,7 @@ class EpubReaderFragment : Fragment() {
     private lateinit var navigator: EpubNavigatorFragment
     private lateinit var binding: FragmentReaderBinding
     private var bookUri: String? = null
-    private var bookId: Int? = null
+    private var bookId: Long? = null
     private var publication: Publication? = null
 
     val FontFamily.Companion.ROBOTO get() = FontFamily("Roboto")
@@ -87,7 +94,7 @@ class EpubReaderFragment : Fragment() {
 
 
         bookUri = arguments?.getString("BOOK_PATH") ?: arguments?.getString("BOOK_URI")
-        bookId = arguments?.getInt("BOOK_ID")
+        bookId = arguments?.getLong("BOOK_ID")
 
         if (bookUri != null) {
             publication = runBlocking {
@@ -176,10 +183,37 @@ class EpubReaderFragment : Fragment() {
             })
         }
 
-        viewLifecycleOwner.lifecycleScope.launch { saveReadingProgression(bookId!!) }
+
+        setupHighlights()
+        saveReadingProgress()
 
         setupPreferences()
         setPageNumber()
+    }
+
+    private fun setupHighlights() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getAllHighlights(bookId!!).collectLatest { highlightList ->
+
+                val decorations = highlightList.map { highlight ->
+                    Decoration(
+                        id = "decoration-${highlight.id}",
+                        highlight.locator,
+                        Decoration.Style.Highlight(highlight.tint)
+                    )
+
+                }
+
+
+                navigator.applyDecorations(decorations, "user-highlights")
+
+            }
+
+        }
+    }
+
+    private fun saveReadingProgress() {
+        viewLifecycleOwner.lifecycleScope.launch { saveReadingProgression(bookId!!) }
     }
 
     fun setupClickListeners() {
@@ -290,7 +324,12 @@ class EpubReaderFragment : Fragment() {
             }
 
             fontSize.set(userPreferences.getFloat(FONT_SIZE, 1.0f).toDouble())
-            scroll.set(userPreferences.getBoolean(SCROLL, false))
+            scroll.set(
+                userPreferences.getBoolean(
+                    SCROLL,
+                    false
+                )
+            )
             lineHeight.set(userPreferences.getFloat(LINE_HEIGHT, 1.0f).toDouble())
 
             if (userPreferences.getString(TEXT_COLOR, null) != null) {
@@ -321,7 +360,7 @@ class EpubReaderFragment : Fragment() {
         navigator.submitPreferences(editor.preferences)
     }
 
-    suspend fun saveReadingProgression(bookId: Int) {
+    suspend fun saveReadingProgression(bookId: Long) {
 
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             navigator.currentLocator
@@ -406,7 +445,8 @@ class EpubReaderFragment : Fragment() {
 
                     if (!publication!!.positions().isEmpty()) {
 
-                        val currentPage = navigator.currentLocator.value.locations.position
+                        val currentPage = navigator.currentLocator.value.locations.position ?: 1
+
                         val totalPages = publication!!.positions().size
 
                         binding.textViewPageNumber.text = "$currentPage of $totalPages"
@@ -428,6 +468,7 @@ class EpubReaderFragment : Fragment() {
             menu?.findItem(R.id.underline)?.isVisible = true
             menu?.findItem(R.id.note)?.isVisible = true
             menu?.findItem(R.id.dictionary)?.isVisible = true
+            menu?.findItem(R.id.copy)?.isVisible = true
 
             return true
 
@@ -436,7 +477,11 @@ class EpubReaderFragment : Fragment() {
         override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
 
             when (item.itemId) {
+                R.id.highlight -> addHighlight(Highlight.Style.HIGHLIGHT, "#9CCC65".toColorInt())
+                R.id.underline -> addHighlight(Highlight.Style.UNDERLINE, "#9CCC65".toColorInt())
+                R.id.copy -> lifecycleScope.launch { copy() }
                 R.id.dictionary -> lifecycleScope.launch { dictionary() }
+
             }
 
 
@@ -462,6 +507,38 @@ class EpubReaderFragment : Fragment() {
             (navigator as? SelectableNavigator)?.clearSelection()
 
         }
+
+
+        private suspend fun copy() {
+            val clipboard =
+                requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+            val selectedText =
+                (navigator as SelectableNavigator).currentSelection()?.locator?.text?.highlight
+
+            clipboard.setPrimaryClip(ClipData.newPlainText("Selected text", selectedText))
+            (navigator as SelectableNavigator).clearSelection()
+
+        }
+
+        private fun addHighlight(style: Highlight.Style, @ColorInt tint: Int) {
+            viewLifecycleOwner.lifecycleScope.launch {
+
+                (navigator as? SelectableNavigator)?.let { navigator ->
+                    navigator.currentSelection()?.let { selection ->
+
+                        viewModel.addHighlight(
+                            locator = selection.locator,
+                            style = style,
+                            tint = tint,
+                            bookID = bookId!!
+                        )
+                    }
+                }
+
+            }
+        }
+
 
     }
 

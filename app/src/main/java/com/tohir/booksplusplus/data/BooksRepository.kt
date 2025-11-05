@@ -1,8 +1,11 @@
 package com.tohir.booksplusplus.data
 
+import android.support.annotation.ColorInt
 import com.tohir.booksplusplus.data.database.BookDao
 import com.tohir.booksplusplus.data.model.Book
+import com.tohir.booksplusplus.data.model.Highlight
 import kotlinx.coroutines.flow.Flow
+import org.readium.r2.shared.publication.Locator
 
 class BooksRepository(private val bookDao: BookDao) {
 
@@ -14,7 +17,7 @@ class BooksRepository(private val bookDao: BookDao) {
         bookDao.deleteBook(book)
     }
 
-    suspend fun saveReadingProgressAsDouble(value: Double, bookID: Int) {
+    suspend fun saveReadingProgressAsDouble(value: Double, bookID: Long) {
         bookDao.saveReadingProgressAsDouble(value, bookID)
     }
 
@@ -22,17 +25,30 @@ class BooksRepository(private val bookDao: BookDao) {
         bookDao.updateBook(book)
     }
 
+     fun getAllHighlights(bookID: Long): Flow<List<Highlight>> {
+        return bookDao.getAllHighlights(bookID)
+    }
+
+    suspend fun addHighlight(
+        bookId: Long,
+        style: Highlight.Style,
+        @ColorInt tint: Int,
+        locator: Locator,
+        annotation: String,
+    ): Long =
+        bookDao.addHighlight(Highlight(bookId, style, tint, locator, annotation))
+
     fun getAllBooks(): Flow<List<Book>> = bookDao.getAllBooksAsFlow()
 
-    suspend fun saveReadingProgress(locator: String?, bookID: Int?) {
+    suspend fun saveReadingProgress(locator: String?, bookID: Long?) {
         bookDao.saveReadingProgress(locator, bookID)
     }
 
-    suspend fun getReadingProgressAsDouble(bookID: Int): Double {
+    suspend fun getReadingProgressAsDouble(bookID: Long): Double {
         return bookDao.getReadingProgressDouble(bookID)
     }
 
-    suspend fun getReadingProgress(bookID: Int): String? {
+    suspend fun getReadingProgress(bookID: Long): String? {
         return bookDao.getReadingProgress(bookID)
     }
 
@@ -44,7 +60,7 @@ class BooksRepository(private val bookDao: BookDao) {
         return bookDao.getAllBooksAsList()
     }
 
-    suspend fun getBookById(id: Int): Book {
+    suspend fun getBookById(id: Long): Book {
         return bookDao.getBookById(id)
     }
 

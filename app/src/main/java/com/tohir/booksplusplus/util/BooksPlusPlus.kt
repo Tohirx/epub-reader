@@ -10,7 +10,7 @@ class BooksPlusPlus: Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val database = BooksPlusPlusDatabase.Companion.createDatabase(this)
+        val database = BooksPlusPlusDatabase.createDatabase(this)
         val bookDao = database.getBookDao()
 
         booksRepository = BooksRepository(bookDao)

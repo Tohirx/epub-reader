@@ -4,10 +4,13 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.tohir.booksplusplus.data.model.Book
+import com.tohir.booksplusplus.data.model.Highlight
+import com.tohir.booksplusplus.data.model.HighlightConverters
 
-@Database(entities = [Book::class], version = 3)
-
+@Database(entities = [Book::class, Highlight::class], version = 5)
+@TypeConverters(HighlightConverters::class)
 
 abstract class BooksPlusPlusDatabase : RoomDatabase() {
 
@@ -30,8 +33,5 @@ abstract class BooksPlusPlusDatabase : RoomDatabase() {
         }
 
     }
-
-
-
 
 }
