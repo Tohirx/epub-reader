@@ -185,10 +185,13 @@ class EpubReaderFragment : Fragment() {
             })
         }
 
-
         setupHighlights()
         setupPreferences()
         setPageNumber()
+    }
+
+    override fun onPause() {
+        super.onPause()
         saveReadingProgress()
     }
 
@@ -500,7 +503,7 @@ class EpubReaderFragment : Fragment() {
             } ?: ""
 
             val db = DictionaryProvider.getInstance(requireContext())
-            val definition = db.dictionaryDao().getDefinition(selectedWord) ?: "No available definitions"
+            val definition = db.dictionaryDao().getDefinition(selectedWord.lowercase()) ?: "No available definitions"
 
            val dialog = DictionaryBottomSheet.newInstance(selectedWord, definition = definition)
 

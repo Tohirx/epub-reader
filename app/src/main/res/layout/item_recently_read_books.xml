@@ -25,6 +25,8 @@
                     android:layout_width="45dp"
                     android:layout_height="68dp"
                     android:contentDescription="Book cover"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     android:scaleType="centerCrop"
                     tools:src="@drawable/ic_launcher_background" />
 
