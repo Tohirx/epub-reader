@@ -163,6 +163,18 @@ class ReaderViewModel : ViewModel() {
         return booksRepository.getAllHighlights(bookID)
     }
 
+    suspend fun deleteHighlightById(id: Long) {
+        booksRepository.deleteHighlightById(id)
+    }
+
+    suspend fun updateHighlight(id: Long, tint: Int) {
+        val highlight: Highlight = booksRepository.findHighlightById(id)
+        val highlightCopy = highlight.copy(tint = tint)
+
+        booksRepository.updateHighlight(highlightCopy)
+
+    }
+
     suspend fun restoreReadingProgression(bookID: Long): Locator? {
 
         val readingProgressLocator = booksRepository.getReadingProgress(bookID)

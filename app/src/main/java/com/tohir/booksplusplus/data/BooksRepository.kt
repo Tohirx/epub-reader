@@ -25,8 +25,20 @@ class BooksRepository(private val bookDao: BookDao) {
         bookDao.updateBook(book)
     }
 
-     fun getAllHighlights(bookID: Long): Flow<List<Highlight>> {
+    suspend fun deleteHighlightById(id: Long) {
+        bookDao.deleteHighlightById(id)
+    }
+
+    fun getAllHighlights(bookID: Long): Flow<List<Highlight>> {
         return bookDao.getAllHighlights(bookID)
+    }
+
+    suspend fun updateHighlight(highlight: Highlight) {
+        bookDao.updateHighlight(highlight)
+    }
+
+    suspend fun findHighlightById(id: Long): Highlight {
+        return bookDao.findHighlightById(id)
     }
 
     suspend fun addHighlight(
@@ -35,8 +47,7 @@ class BooksRepository(private val bookDao: BookDao) {
         @ColorInt tint: Int,
         locator: Locator,
         annotation: String,
-    ): Long =
-        bookDao.addHighlight(Highlight(bookId, style, tint, locator, annotation))
+    ) = bookDao.addHighlight(Highlight(bookId, style, tint, locator, annotation))
 
     fun getAllBooks(): Flow<List<Book>> = bookDao.getAllBooksAsFlow()
 
@@ -52,9 +63,6 @@ class BooksRepository(private val bookDao: BookDao) {
         return bookDao.getReadingProgress(bookID)
     }
 
-    suspend fun getBookByIdentifier(identifier: String?): Book? {
-        return bookDao.getBookByIdentifier(identifier = identifier)
-    }
 
     suspend fun getAllBooksAsList(): List<Book> {
         return bookDao.getAllBooksAsList()
@@ -67,10 +75,6 @@ class BooksRepository(private val bookDao: BookDao) {
     fun getRecentBooks(): Flow<List<Book>> {
         return bookDao.getRecentBooks()
     }
-
-
-
-
 
 
 }

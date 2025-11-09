@@ -4,8 +4,11 @@ package com.tohir.booksplusplus.ui.books
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.graphics.Color
+import android.graphics.RectF
 import android.os.Bundle
 import android.view.ActionMode
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -13,6 +16,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.LinearLayout
+import android.widget.PopupWindow
 import androidx.annotation.ColorInt
 import androidx.core.content.edit
 import androidx.core.graphics.toColorInt
@@ -36,6 +41,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.readium.r2.navigator.DecorableNavigator
 import org.readium.r2.navigator.Decoration
 import org.readium.r2.navigator.SelectableNavigator
 import org.readium.r2.navigator.VisualNavigator
@@ -70,8 +76,11 @@ class EpubReaderFragment : Fragment() {
     private var bookId: Long? = null
     private var publication: Publication? = null
 
+    private val decorableListener by lazy {DecorableListener()}
+
     val FontFamily.Companion.ROBOTO get() = FontFamily("Roboto")
     val FontFamily.Companion.OPEN_SANS get() = FontFamily("OpenSans")
+
 
     @OptIn(ExperimentalReadiumApi::class)
     private val editor: EpubPreferencesEditor by lazy {
@@ -185,6 +194,7 @@ class EpubReaderFragment : Fragment() {
             })
         }
 
+
         setupHighlights()
         setupPreferences()
         setPageNumber()
@@ -201,15 +211,17 @@ class EpubReaderFragment : Fragment() {
 
                 val decorations = highlightList.map { highlight ->
                     Decoration(
-                        id = "decoration-${highlight.id}",
+                        id = "${highlight.id}",
                         highlight.locator,
                         Decoration.Style.Highlight(highlight.tint)
                     )
 
                 }
 
-
-                navigator.applyDecorations(decorations, "user-highlights")
+                (navigator as DecorableNavigator).apply {
+                    applyDecorations(decorations, "user-highlights")
+                    addDecorationListener("user-highlights", decorableListener)
+                }
 
             }
 
@@ -295,6 +307,12 @@ class EpubReaderFragment : Fragment() {
 
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        (navigator as DecorableNavigator).removeDecorationListener(decorableListener)
+    }
+
     fun setInitialValuesForSettings(
         dialogBinding: BottomSheetDialogLayoutBinding,
         itemsAdapter1: ArrayAdapter<String>
@@ -363,7 +381,6 @@ class EpubReaderFragment : Fragment() {
 
         navigator.submitPreferences(editor.preferences)
     }
-
 
 
     suspend fun saveReadingProgression(bookId: Long) {
@@ -462,6 +479,18 @@ class EpubReaderFragment : Fragment() {
         }
     }
 
+    private var popupWindow: PopupWindow? = null
+    private var mode: ActionMode? = null
+
+
+    private val highlightTints = mapOf(
+        R.id.red to Color.rgb(247, 124, 124),
+        R.id.green to Color.rgb(173, 247, 123),
+        R.id.blue to Color.rgb(124, 198, 247),
+        R.id.yellow to Color.rgb(249, 239, 125),
+        R.id.purple to Color.rgb(182, 153, 255)
+    )
+
     val customSelectionActionModeCallback: ActionMode.Callback by lazy { SelectionActionModeCallBack() }
 
     private inner class SelectionActionModeCallBack : BaseActionModeCallback() {
@@ -479,69 +508,168 @@ class EpubReaderFragment : Fragment() {
 
         }
 
+
         override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
 
             when (item.itemId) {
-                R.id.highlight -> addHighlight(Highlight.Style.HIGHLIGHT, "#9CCC65".toColorInt())
-                R.id.underline -> addHighlight(Highlight.Style.UNDERLINE, "#9CCC65".toColorInt())
+                R.id.highlight -> showHighlightPopupWithStyle(Highlight.Style.HIGHLIGHT)
+                R.id.underline -> showHighlightPopupWithStyle(Highlight.Style.UNDERLINE)
                 R.id.copy -> lifecycleScope.launch { copy() }
                 R.id.dictionary -> lifecycleScope.launch { dictionary() }
 
             }
 
-
             mode.finish()
-
 
             return true
         }
 
-        suspend fun dictionary() {
 
-            val selectedWord = (navigator as? SelectableNavigator).let { navigator ->
-                navigator?.currentSelection()?.locator?.text?.highlight
-            } ?: ""
+    }
 
-            val db = DictionaryProvider.getInstance(requireContext())
-            val definition = db.dictionaryDao().getDefinition(selectedWord.lowercase()) ?: "No available definitions"
+    private fun selectHighlightTint(
+        highlightId: Long? = null,
+        style: Highlight.Style,
+        @ColorInt tint: Int,
+    ) =
+        viewLifecycleOwner.lifecycleScope.launch {
 
-           val dialog = DictionaryBottomSheet.newInstance(selectedWord, definition = definition)
-
-            dialog.show(parentFragmentManager, "DictionaryBottomSheet")
-            (navigator as? SelectableNavigator)?.clearSelection()
-
-        }
-
-        private suspend fun copy() {
-            val clipboard =
-                requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-
-            val selectedText =
-                (navigator as SelectableNavigator).currentSelection()?.locator?.text?.highlight
-
-            clipboard.setPrimaryClip(ClipData.newPlainText("Selected text", selectedText))
-            (navigator as SelectableNavigator).clearSelection()
-
-        }
-
-        private fun addHighlight(style: Highlight.Style, @ColorInt tint: Int) {
-            viewLifecycleOwner.lifecycleScope.launch {
+            if (highlightId != null) {
+                viewModel.updateHighlight(highlightId, tint)
+            } else {
 
                 (navigator as? SelectableNavigator)?.let { navigator ->
                     navigator.currentSelection()?.let { selection ->
-
                         viewModel.addHighlight(
+                            bookID = bookId!!,
                             locator = selection.locator,
                             style = style,
-                            tint = tint,
-                            bookID = bookId!!
+                            tint = tint
                         )
                     }
+                    navigator.clearSelection()
                 }
 
             }
+
+            popupWindow?.dismiss()
+            mode?.finish()
+
+        }
+
+
+    suspend fun dictionary() {
+
+        val selectedWord = (navigator as? SelectableNavigator).let { navigator ->
+            navigator?.currentSelection()?.locator?.text?.highlight
+        } ?: ""
+
+        val db = DictionaryProvider.getInstance(requireContext())
+        val definition = db.dictionaryDao().getDefinition(selectedWord.lowercase())
+            ?: "No available definitions"
+
+
+        val dialog = DictionaryBottomSheet.newInstance(selectedWord, definition = definition)
+
+        dialog.show(parentFragmentManager, "DictionaryBottomSheet")
+        (navigator as? SelectableNavigator)?.clearSelection()
+
+    }
+
+    private suspend fun copy() {
+        val clipboard =
+            requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+        val selectedText =
+            (navigator as SelectableNavigator).currentSelection()?.locator?.text?.highlight
+
+        clipboard.setPrimaryClip(ClipData.newPlainText("Selected text", selectedText))
+        (navigator as SelectableNavigator).clearSelection()
+
+    }
+
+    private fun showHighlightPopupWithStyle(style: Highlight.Style) {
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            (navigator as SelectableNavigator).currentSelection()?.rect?.let { rectF ->
+                showHighlightPopUp(rectF, style)
+            }
         }
     }
+
+    fun showHighlightPopUp(rectF: RectF, style: Highlight.Style, highlightId: Long? = null) {
+
+        viewLifecycleOwner.lifecycleScope.launch {
+
+            if (popupWindow?.isShowing == true) return@launch
+
+            val popupView = layoutInflater.inflate(
+                R.layout.color_action_mode,
+                null,
+                false
+            )
+
+            popupView.measure(
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            )
+
+
+            popupWindow = PopupWindow(
+                popupView,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                isFocusable = true
+            }
+
+            val isReverse = (rectF.top > 60)
+            val x = rectF.left
+            val y = if (isReverse) rectF.top else rectF.bottom + rectF.height()
+
+            popupWindow?.showAtLocation(popupView, Gravity.NO_GRAVITY, x.toInt(), y.toInt())
+
+            fun selectTint(view: View) {
+                val tint = highlightTints[view.id] ?: return
+                selectHighlightTint(highlightId, style, tint)
+            }
+
+            popupView.findViewById<View>(R.id.red).setOnClickListener(::selectTint)
+            popupView.findViewById<View>(R.id.green).setOnClickListener(::selectTint)
+            popupView.findViewById<View>(R.id.blue).setOnClickListener(::selectTint)
+            popupView.findViewById<View>(R.id.yellow).setOnClickListener(::selectTint)
+            popupView.findViewById<View>(R.id.purple).setOnClickListener(::selectTint)
+            popupView.findViewById<View>(R.id.del).apply {
+                visibility = if (highlightId != null) View.VISIBLE else View.GONE
+                setOnClickListener {
+                    if (highlightId != null) {
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            viewModel.deleteHighlightById(highlightId)
+                            popupWindow?.dismiss()
+                            mode?.finish()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    inner class DecorableListener : DecorableNavigator.Listener {
+        override fun onDecorationActivated(event: DecorableNavigator.OnActivatedEvent): Boolean {
+            val decoration = event.decoration
+
+            val id = decoration.id.toLong()
+
+            event.rect?.let { rectF ->
+                showHighlightPopUp(rectF, Highlight.Style.HIGHLIGHT, id)
+
+            }
+
+            return true
+        }
+
+    }
+
 
     fun setThemes(textColor: String, backgroundColor: String, fontFamily: String) {
         editor.apply {

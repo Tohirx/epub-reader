@@ -13,12 +13,14 @@ import com.tohir.booksplusplus.R
 class DictionaryBottomSheet : BottomSheetDialogFragment() {
 
     companion object {
-        fun newInstance(word: String, definition: String): DictionaryBottomSheet  {
+        fun newInstance(word: String, pronunciation: String = "", definition: String = "", usages: String = ""): DictionaryBottomSheet  {
 
             val sheet = DictionaryBottomSheet()
             val args = Bundle().apply {
                 putString("word", word)
+                putString("pronunciation", pronunciation)
                 putString("definition", definition)
+                putString("usages", usages)
             }
 
             sheet.arguments = args

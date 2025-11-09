@@ -28,6 +28,15 @@ interface BookDao {
     @Query("UPDATE book SET readingProgressDouble = :value WHERE id = :bookID")
     suspend fun saveReadingProgressAsDouble(value: Double, bookID: Long)
 
+    @Query("DELETE FROM highlight WHERE ID =:id")
+    suspend fun deleteHighlightById(id: Long)
+
+    @Update
+    suspend fun updateHighlight(highlight: Highlight)
+
+    @Query("SELECT * FROM highlight WHERE ID = :id")
+    suspend fun findHighlightById(id: Long): Highlight
+
     @Delete
     suspend fun deleteBook(book: Book)
 
@@ -41,10 +50,7 @@ interface BookDao {
     fun getAllHighlights(bookID: Long): Flow<List<Highlight>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addHighlight(highlight: Highlight): Long
-
-    @Query("SELECT * FROM book WHERE identifier = :identifier LIMIT 1")
-    suspend fun getBookByIdentifier(identifier: String?): Book?
+    suspend fun addHighlight(highlight: Highlight)
 
     @Query("SELECT * FROM book")
     suspend fun getAllBooksAsList(): List<Book>
