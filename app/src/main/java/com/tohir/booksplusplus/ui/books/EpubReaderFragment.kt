@@ -508,7 +508,6 @@ class EpubReaderFragment : Fragment() {
            val dialog = DictionaryBottomSheet.newInstance(selectedWord, definition = definition)
 
             dialog.show(parentFragmentManager, "DictionaryBottomSheet")
-
             (navigator as? SelectableNavigator)?.clearSelection()
 
         }
