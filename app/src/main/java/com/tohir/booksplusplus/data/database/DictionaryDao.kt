@@ -23,22 +23,22 @@ interface DictionaryDao {
     @RawQuery
     suspend fun getExamplesRaw(query: SupportSQLiteQuery): List<ExampleResult>
 
-     // Returns all possible definitions for a given word.
+    // Returns all possible definitions for a given word.
 
     suspend fun getDefinitions(word: String): List<String> {
         val w = lemmatize(word)
         val query = SimpleSQLiteQuery(
             """
-        SELECT DISTINCT s.definition
-        FROM (
-            SELECT wordid FROM words WHERE word = ?
-            UNION
-            SELECT wordid FROM casedwords WHERE casedword = ?
-        ) AS allwords
-        JOIN senses se ON allwords.wordid = se.wordid
-        JOIN synsets s ON se.synsetid = s.synsetid
-        LIMIT 10
-        """,
+    SELECT DISTINCT s.definition AS definition
+    FROM (
+        SELECT wordid FROM words WHERE word = ?
+        UNION
+        SELECT wordid FROM casedwords WHERE casedword = ?
+    ) AS allwords
+    JOIN senses se ON allwords.wordid = se.wordid
+    JOIN synsets s ON se.synsetid = s.synsetid
+    LIMIT 10
+    """,
             arrayOf(w, word)
         )
 
@@ -85,7 +85,6 @@ interface DictionaryDao {
 
         return getExamplesRaw(query).mapNotNull { it.sample }
     }
-
 
 
     // Very simple lemmatizer to normalize plural or inflected forms.
