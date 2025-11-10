@@ -6,21 +6,28 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tohir.booksplusplus.R
 
 class DictionaryBottomSheet : BottomSheetDialogFragment() {
 
+
     companion object {
-        fun newInstance(word: String, pronunciation: String = "", definition: String = "", usages: String = ""): DictionaryBottomSheet  {
+        fun newInstance(
+            word: String,
+            definition: List<String>,
+            pos: String?,
+            usages: List<String>
+        ): DictionaryBottomSheet {
 
             val sheet = DictionaryBottomSheet()
             val args = Bundle().apply {
                 putString("word", word)
-                putString("pronunciation", pronunciation)
-                putString("definition", definition)
-                putString("usages", usages)
+                putString("pos", pos)
+                putStringArrayList("definition", ArrayList(definition))
+                putStringArrayList("usages", ArrayList(usages))
             }
 
             sheet.arguments = args
@@ -40,22 +47,37 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
     ): View? {
         val view = inflater.inflate(R.layout.dictionary_bottom_sheet, container, false)
 
-        val wordText: TextView = view.findViewById(R.id.text_view_word_text)
-        val definitionText: TextView = view.findViewById(R.id.text_view_definition_text)
+        view.findViewById<TextView>(R.id.text_view_word_text).text = arguments?.getString("word")
 
-        val word = arguments?.getString("word")
-        val definition = arguments?.getString("definition")
+        view.findViewById<RecyclerView>(R.id.recycler_view_definition).apply {
+            adapter = WordAdapter().apply {
+                setWords(
+                    arguments?.getStringArrayList("definition")
+                        ?: listOf("No available definitions")
+                )
+            }
+        }
 
-        wordText.text = word
-        definitionText.text = definition
+
+        view.findViewById<RecyclerView>(R.id.recycler_view_examples).apply {
+            val examplesAdapter = WordAdapter().apply {
+                setWords(
+                    arguments?.getStringArrayList("usages") ?: listOf("")
+                )
+            }
+            adapter = examplesAdapter
+        }
+
+
+        val pos = arguments?.getString("pos")
+
+
+        if ( pos != null)
+            view.findViewById<TextView>(R.id.text_view_pos_text).text = "($pos)"
 
 
         return view
 
-
-
     }
-
-
 
 }

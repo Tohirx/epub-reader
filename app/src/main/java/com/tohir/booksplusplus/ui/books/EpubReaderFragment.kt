@@ -565,11 +565,13 @@ class EpubReaderFragment : Fragment() {
         } ?: ""
 
         val db = DictionaryProvider.getInstance(requireContext())
-        val definition = db.dictionaryDao().getDefinition(selectedWord.lowercase())
-            ?: "No available definitions"
+        val definition = db.dictionaryDao().getDefinitions(selectedWord)
 
+        val pos = db.dictionaryDao().getPos(selectedWord)
 
-        val dialog = DictionaryBottomSheet.newInstance(selectedWord, definition = definition)
+        val usages = db.dictionaryDao().getUsageExamples(selectedWord)
+
+        val dialog = DictionaryBottomSheet.newInstance(selectedWord, definition, pos = pos, usages = usages)
 
         dialog.show(parentFragmentManager, "DictionaryBottomSheet")
         (navigator as? SelectableNavigator)?.clearSelection()
