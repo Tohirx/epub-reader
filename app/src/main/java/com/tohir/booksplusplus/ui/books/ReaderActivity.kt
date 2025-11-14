@@ -1,8 +1,6 @@
 package com.tohir.booksplusplus.ui.books
 
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.core.view.WindowCompat
@@ -23,34 +21,24 @@ class ReaderActivity : AppCompatActivity() {
         binding = ActivityReaderBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val bookIdFromLibraryFragmentOrHomeFragment = intent.getLongExtra(LibraryFragment.BOOK_ID, 0)
-        val bookUriFromLibraryFragmentOrHomeFragment = intent.getStringExtra(LibraryFragment.BOOK_URI)
+        val bookIdFromLibraryFragmentOrHomeFragment =
+            intent.getLongExtra(LibraryFragment.BOOK_ID, 0)
+        val bookUriFromLibraryFragmentOrHomeFragment =
+            intent.getStringExtra(LibraryFragment.BOOK_URI)
 
-        Log.d("tohir", "Reader Activity gotten $bookUriFromLibraryFragmentOrHomeFragment from Library Fragment")
 
-        val uriFromFileManager: Uri? = intent?.data
-
-        if (uriFromFileManager != null) {
-            Log.d("tohir", "Reader Activity Gotten Uri: $uriFromFileManager from file manager")
-
-            val fragment = EpubReaderFragment().apply {
-                arguments = bundleOf(BOOK_PATH to uriFromFileManager.toString())
-            }
-
-            supportFragmentManager.commit {
-                replace(R.id.reader_container, fragment)
-            }
-        } else {
-            val fragment = EpubReaderFragment().apply {
-                arguments = bundleOf(BOOK_URI to bookUriFromLibraryFragmentOrHomeFragment, "BOOK_ID" to bookIdFromLibraryFragmentOrHomeFragment)
-            }
-
-            supportFragmentManager.commit {
-                replace(R.id.reader_container, fragment)
-            }
+        val fragment = EpubReaderFragment().apply {
+            arguments = bundleOf(
+                BOOK_URI to bookUriFromLibraryFragmentOrHomeFragment,
+                "BOOK_ID" to bookIdFromLibraryFragmentOrHomeFragment
+            )
         }
 
+        supportFragmentManager.commit {
+            replace(R.id.reader_container, fragment)
+        }
     }
+
 
     private fun toggleFullScreen() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -63,7 +51,6 @@ class ReaderActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val BOOK_PATH = "BOOK_PATH"
         const val BOOK_URI = "BOOK_URI"
     }
 

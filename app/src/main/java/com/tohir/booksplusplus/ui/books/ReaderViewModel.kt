@@ -114,33 +114,38 @@ class ReaderViewModel : ViewModel() {
         } else {
             return publicationCache[bookId]
         }
+        
         return null
     }
 
-    fun copyUriToInternalStorage(sourceUri: Uri, context: Context): File? {
+    companion object {
+        fun copyUriToInternalStorage(sourceUri: Uri, context: Context): File? {
 
-        val existingFile = File(context.filesDir, sourceUri.lastPathSegment ?: "book.epub")
+            val existingFile = File(context.filesDir, sourceUri.lastPathSegment ?: "book.epub")
 
-        if (existingFile.exists()) return existingFile
+            if (existingFile.exists()) return existingFile
 
-        try {
-            val fileName = "file_${System.currentTimeMillis()}.epub"
-            val destinationFile = File(context.filesDir, fileName)
+            try {
+                val fileName = "file_${System.currentTimeMillis()}.epub"
+                val destinationFile = File(context.filesDir, fileName)
 
-            context.contentResolver.openInputStream(sourceUri)?.use { inputStream ->
-                FileOutputStream(destinationFile).use { outputStream ->
-                    inputStream.copyTo(outputStream)
+                context.contentResolver.openInputStream(sourceUri)?.use { inputStream ->
+                    FileOutputStream(destinationFile).use { outputStream ->
+                        inputStream.copyTo(outputStream)
+                    }
                 }
+                return destinationFile
+
+            } catch (e: Exception) {
+                println(e.message)
+                println(e.printStackTrace())
             }
-            return destinationFile
 
-        } catch (e: Exception) {
-            println(e.message)
-            println(e.printStackTrace())
+            return null
         }
-
-        return null
     }
+
+
 
 
     suspend fun saveReadingProgression(locator: Locator, bookID: Long) {
@@ -155,11 +160,17 @@ class ReaderViewModel : ViewModel() {
 
     }
 
-    suspend fun addHighlight(bookID: Long, style: Highlight.Style, @ColorInt tint: Int, locator: Locator, annotation: String = "") {
+    suspend fun addHighlight(
+        bookID: Long,
+        style: Highlight.Style,
+        @ColorInt tint: Int,
+        locator: Locator,
+        annotation: String = ""
+    ) {
         booksRepository.addHighlight(bookID, style, tint, locator, annotation)
     }
 
-     fun getAllHighlights(bookID: Long): Flow<List<Highlight>> {
+    fun getAllHighlights(bookID: Long): Flow<List<Highlight>> {
         return booksRepository.getAllHighlights(bookID)
     }
 

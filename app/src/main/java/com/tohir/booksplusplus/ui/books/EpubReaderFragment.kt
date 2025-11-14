@@ -114,7 +114,6 @@ class EpubReaderFragment : Fragment() {
                 )
             }
 
-
             if (publication != null) {
                 val navigatorFactory = EpubNavigatorFactory(publication = publication!!)
 
@@ -564,6 +563,14 @@ class EpubReaderFragment : Fragment() {
             navigator?.currentSelection()?.locator?.text?.highlight
         } ?: ""
 
+        val dialog = showDictionaryIfUserIsOffline(selectedWord)
+
+        dialog.show(parentFragmentManager, "DictionaryBottomSheet")
+        (navigator as? SelectableNavigator)?.clearSelection()
+
+    }
+
+    private suspend fun showDictionaryIfUserIsOffline(selectedWord: String): DictionaryBottomSheet {
         val db = DictionaryProvider.getInstance(requireContext())
         val definition = db.dictionaryDao().getDefinitions(selectedWord)
 
@@ -572,10 +579,7 @@ class EpubReaderFragment : Fragment() {
         val usages = db.dictionaryDao().getUsageExamples(selectedWord)
 
         val dialog = DictionaryBottomSheet.newInstance(selectedWord, definition, pos = pos, usages = usages)
-
-        dialog.show(parentFragmentManager, "DictionaryBottomSheet")
-        (navigator as? SelectableNavigator)?.clearSelection()
-
+        return dialog
     }
 
     private suspend fun copy() {

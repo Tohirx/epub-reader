@@ -13,7 +13,6 @@ interface DictionaryDao {
     data class PosResult(val pos: String?)
     data class ExampleResult(val sample: String?)
 
-    // --- Raw query methods ---
     @RawQuery
     suspend fun getDefinitionsRaw(query: SupportSQLiteQuery): List<DefinitionResult>
 
@@ -22,8 +21,6 @@ interface DictionaryDao {
 
     @RawQuery
     suspend fun getExamplesRaw(query: SupportSQLiteQuery): List<ExampleResult>
-
-    // Returns all possible definitions for a given word.
 
     suspend fun getDefinitions(word: String): List<String> {
         val w = lemmatize(word)
@@ -70,38 +67,36 @@ interface DictionaryDao {
         val w = lemmatize(word)
         val query = SimpleSQLiteQuery(
             """
-        SELECT DISTINCT sm.sample
-        FROM (
-            SELECT wordid FROM words WHERE word = ?
-            UNION
-            SELECT wordid FROM casedwords WHERE casedword = ?
-        ) AS allwords
-        JOIN senses se ON allwords.wordid = se.wordid
-        JOIN samples sm ON se.synsetid = sm.synsetid
-        LIMIT 5
+            SELECT DISTINCT sm.sample
+            FROM (
+                SELECT wordid FROM words WHERE word = ?
+                UNION
+                SELECT wordid FROM casedwords WHERE casedword = ?
+            ) AS allwords
+            JOIN senses se ON allwords.wordid = se.wordid
+            JOIN samples sm ON se.synsetid = sm.synsetid
+            LIMIT 5
         """,
             arrayOf(w, word)
         )
 
         return getExamplesRaw(query).mapNotNull { it.sample }
+
     }
 
 
-    // Very simple lemmatizer to normalize plural or inflected forms.
     fun lemmatize(word: String): String {
-        var w = word.lowercase()
 
-        when {
-            w.endsWith("ies") -> w = w.dropLast(3) + "y" // bodies → body
-            w.endsWith("es") && w.length > 3 -> w = w.dropLast(2) // boxes → box
-            w.endsWith("s") && w.length > 2 -> w = w.dropLast(1) // books → book
+        val w = word.lowercase()
+
+        return when {
+            w.endsWith("ies") -> w.dropLast(3) + "y"
+            w.endsWith("es") && w.length > 3 -> w.dropLast(2)
+            w.endsWith("s") && w.length > 2 -> w.dropLast(1)
+            w.endsWith("ing") && w.length > 4 -> w.dropLast(3)
+            w.endsWith("ed") && w.length > 3 -> w.dropLast(2)
+            else -> w
         }
 
-        when {
-            w.endsWith("ing") && w.length > 4 -> w = w.dropLast(3) // running → run
-            w.endsWith("ed") && w.length > 3 -> w = w.dropLast(2) // walked → walk
-        }
-
-        return w
     }
 }
