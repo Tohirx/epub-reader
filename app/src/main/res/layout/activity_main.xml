@@ -8,7 +8,6 @@
     tools:context=".ui.MainActivity">
 
 
-
     <androidx.fragment.app.FragmentContainerView
         android:name="com.tohir.booksplusplus.ui.books.HomeFragment"
         android:id="@+id/fragment_container"

@@ -1,5 +1,6 @@
 package com.tohir.booksplusplus.ui.books
 
+import android.R.attr.apiKey
 import android.app.Dialog
 import android.content.Context
 import android.media.MediaPlayer
@@ -28,7 +29,8 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
             word: String,
             definition: List<String>,
             pos: String?,
-            usages: List<String>
+            usages: List<String>,
+            audioUrl: String?
         ): DictionaryBottomSheet {
 
             val sheet = DictionaryBottomSheet()
@@ -37,6 +39,7 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
                 putString("pos", pos)
                 putStringArrayList("definition", ArrayList(definition))
                 putStringArrayList("usages", ArrayList(usages))
+                putString("audio", audioUrl)
             }
 
             sheet.arguments = args
@@ -72,6 +75,7 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
             binding.textViewWordText.text = "No available definitions"
             binding.buttonPlayPronunciation.visibility = View.INVISIBLE
             binding.textViewExamplesTitle.visibility = View.INVISIBLE
+            binding.textViewExamplesTitle.visibility = View.INVISIBLE
 
         } else {
 
@@ -99,57 +103,29 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
 
             val pos = arguments?.getString("pos")
 
-
             if (pos != null)
                 binding.textViewPosText.text = "($pos)"
 
-            binding.buttonPlayPronunciation.apply {
-                visibility = View.VISIBLE
-                setOnClickListener {
+            val audioUrl = arguments?.getString("audio")
 
-                    viewLifecycleOwner.lifecycleScope.launch {
+            if (audioUrl != null) {
 
-                        val cm =
-                            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                binding.buttonPlayPronunciation.apply {
+                    visibility = View.VISIBLE
+                    setOnClickListener {
 
-                        val network = cm.activeNetwork
-
-                        if (network != null)
-                            playPronunciation(word!!, "d90f7c8c-f886-4306-8ae2-8417947a653c")
-                        else
-                            Toast.makeText(requireContext(), "Network error", Toast.LENGTH_LONG)
-                                .show()
+                        audioUrl.let { url ->
+                            val mediaPlayer = MediaPlayer()
+                            mediaPlayer.setDataSource(url)
+                            mediaPlayer.prepareAsync()
+                            mediaPlayer.setOnPreparedListener { mp -> mp.start() }
+                        }
 
                     }
-
                 }
-            }
 
-        }
-
-
-    }
-
-    suspend fun playPronunciation(word: String, apiKey: String) {
-        withContext(Dispatchers.IO) {
-            val response =
-                URL("https://dictionaryapi.com/api/v3/references/collegiate/json/$word?key=$apiKey").readText()
-            val jsonArray = JSONArray(response)
-            val first = jsonArray.getJSONObject(0)
-            val soundObj = first.getJSONObject("hwi")
-                .getJSONArray("prs")
-                .getJSONObject(0)
-                .getJSONObject("sound")
-
-            val audioName = soundObj.getString("audio")
-            val subfolder = audioName.first().toString()
-            val audioUrl =
-                "https://media.merriam-webster.com/audio/prons/en/us/mp3/$subfolder/$audioName.mp3"
-
-            val player = MediaPlayer().apply {
-                setDataSource(audioUrl)
-                prepare()
-                start()
+            } else {
+                binding.buttonPlayPronunciation.visibility = View.INVISIBLE
             }
         }
     }

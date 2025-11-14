@@ -6,6 +6,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Color
 import android.graphics.RectF
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.ActionMode
 import android.view.Gravity
@@ -36,6 +37,7 @@ import com.tohir.booksplusplus.data.database.DictionaryProvider
 import com.tohir.booksplusplus.data.model.Highlight
 import com.tohir.booksplusplus.databinding.BottomSheetDialogLayoutBinding
 import com.tohir.booksplusplus.databinding.FragmentReaderBinding
+import com.tohir.booksplusplus.dictionary.DictionaryApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -76,7 +78,7 @@ class EpubReaderFragment : Fragment() {
     private var bookId: Long? = null
     private var publication: Publication? = null
 
-    private val decorableListener by lazy {DecorableListener()}
+    private val decorableListener by lazy { DecorableListener() }
 
     val FontFamily.Companion.ROBOTO get() = FontFamily("Roboto")
     val FontFamily.Companion.OPEN_SANS get() = FontFamily("OpenSans")
@@ -563,14 +565,75 @@ class EpubReaderFragment : Fragment() {
             navigator?.currentSelection()?.locator?.text?.highlight
         } ?: ""
 
-        val dialog = showDictionaryIfUserIsOffline(selectedWord)
 
-        dialog.show(parentFragmentManager, "DictionaryBottomSheet")
+        val onlineLookup = showDictionaryIfOnline(selectedWord)
+
+        if (onlineLookup != null)
+            onlineLookup.show(parentFragmentManager, "DictionaryBottomSheet")
+        else {
+            showDictionaryIfOffline(selectedWord).show(parentFragmentManager, "DictionaryBottomSheet")
+        }
+
+
+
         (navigator as? SelectableNavigator)?.clearSelection()
 
     }
 
-    private suspend fun showDictionaryIfUserIsOffline(selectedWord: String): DictionaryBottomSheet {
+    private suspend fun showDictionaryIfOnline(selectedWord: String): DictionaryBottomSheet? {
+
+        val api = DictionaryApi()
+        val result = api.lookup(selectedWord)
+
+        if (result.isSuccess) {
+
+            val entries = result.getOrNull()!!
+            val entry = entries[0]
+
+
+            val definitions = arrayListOf<String>()
+            val pos = arrayListOf<String>()
+            val usages = arrayListOf<String>()
+
+            var audioUrl: String? = null
+            entries.forEach { entry ->
+                entry.phonetics.forEach { phonetic ->
+                    if (!phonetic.audio.isNullOrEmpty()) {
+                        audioUrl = phonetic.audio
+                        return@forEach // stop at first available audio
+                    }
+                }
+            }
+
+
+            entry.meanings.forEach { meaning ->
+
+
+                pos.add(meaning.partOfSpeech)
+
+                meaning.definitions.forEach { def ->
+
+                    definitions.add(def.definition)
+
+                    def.example?.let { usages.add(it) }
+                }
+            }
+
+
+            return DictionaryBottomSheet.newInstance(
+                selectedWord,
+                definition = definitions,
+                pos = pos[0],
+                usages = usages,
+                audioUrl
+            )
+        }
+
+        return null
+    }
+
+
+    private suspend fun showDictionaryIfOffline(selectedWord: String): DictionaryBottomSheet {
         val db = DictionaryProvider.getInstance(requireContext())
         val definition = db.dictionaryDao().getDefinitions(selectedWord)
 
@@ -578,7 +641,14 @@ class EpubReaderFragment : Fragment() {
 
         val usages = db.dictionaryDao().getUsageExamples(selectedWord)
 
-        val dialog = DictionaryBottomSheet.newInstance(selectedWord, definition, pos = pos, usages = usages)
+        val dialog =
+            DictionaryBottomSheet.newInstance(
+                selectedWord,
+                definition,
+                pos = pos,
+                usages = usages,
+                null
+            )
         return dialog
     }
 

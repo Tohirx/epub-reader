@@ -59,10 +59,10 @@ class RecentBookAdapter(private val listener : OnRecentBooksClickedListener) : R
 
             if (book.readingProgressDouble != null ) {
                 if (book.readingProgressDouble * 100 < 1) {
-                    binding.textViewProgress.text = "Progress 1%"
+                    binding.progressBarReading.setProgress(1, true)
                 } else {
                     val value =  ceil(book.readingProgressDouble * 100)
-                    binding.textViewProgress.text = "Progress ${value.toInt()}%"
+                    binding.progressBarReading.setProgress(value.toInt(), true)
                 }
             }
 

@@ -1,72 +1,69 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="280dp"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:layout_marginStart="12dp"
-    android:paddingVertical="4dp">
+    android:layout_marginStart="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    style="?attr/materialCardViewElevatedStyle">
 
-    <com.google.android.material.card.MaterialCardView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="4dp"
-        app:cardBackgroundColor="@color/md_theme_background"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="0dp"
-        app:strokeColor="?attr/colorOutline">
+        android:padding="16dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/image_view_recently_read_book_cover"
+            android:layout_width="60dp"
+            android:layout_height="90dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Small"
+            tools:src="@drawable/ic_launcher_background" />
+
+        <TextView
+            android:id="@+id/text_view_book_title"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="8dp">
-                <ImageView
-                    android:id="@+id/image_view_recently_read_book_cover"
-                    android:layout_width="45dp"
-                    android:layout_height="68dp"
-                    android:contentDescription="Book cover"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:scaleType="centerCrop"
-                    tools:src="@drawable/ic_launcher_background" />
+            android:layout_marginStart="16dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/image_view_recently_read_book_cover"
+            app:layout_constraintTop_toTopOf="@id/image_view_recently_read_book_cover"
+            tools:text="The Great Gatsby" />
 
-            <TextView
-                android:id="@+id/text_view_book_title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="4dp"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/image_view_recently_read_book_cover"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="The Great Gatsby" />
+        <TextView
+            android:id="@+id/text_view_author_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?android:attr/textColorSecondary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/text_view_book_title"
+            app:layout_constraintTop_toBottomOf="@id/text_view_book_title"
+            tools:text="by F. Scott Fitzgerald" />
 
-            <TextView
-                android:id="@+id/text_view_author_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textColor="@color/grey_700"
-                android:textSize="13sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@id/text_view_book_title"
-                app:layout_constraintTop_toBottomOf="@id/text_view_book_title"
-                tools:text="by F. Scott Fitzgerald" />
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:layout_marginBottom="12dp"
+            android:id="@+id/progress_bar_reading"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/image_view_recently_read_book_cover"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/text_view_author_name"
+            app:layout_constraintTop_toBottomOf="@id/text_view_author_name"
+            app:layout_constraintVertical_bias="1.0"
+            tools:progress="48" />
 
-            <TextView
-                android:id="@+id/text_view_progress"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textColor="@color/grey_600"
-                android:textSize="11sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@id/text_view_author_name"
-                app:layout_constraintTop_toBottomOf="@id/text_view_author_name"
-                tools:text="Progress 48%" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
-</LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>
