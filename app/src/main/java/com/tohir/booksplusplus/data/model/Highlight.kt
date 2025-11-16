@@ -1,6 +1,7 @@
 package com.tohir.booksplusplus.data.model
 
 import androidx.annotation.ColorInt
+import androidx.navigation.NavType
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -14,6 +15,7 @@ import org.json.JSONObject
 import org.readium.r2.shared.publication.Locator
 import org.readium.r2.shared.util.Url
 import org.readium.r2.shared.util.mediatype.MediaType
+import java.io.Serializable
 
 
 @Entity(
@@ -54,7 +56,7 @@ data class Highlight(
     var text: Locator.Text = Locator.Text(),
     @ColumnInfo(name = ANNOTATION, defaultValue = "")
     var annotation: String = "",
-) {
+): Serializable {
 
     constructor(
         bookId: Long,

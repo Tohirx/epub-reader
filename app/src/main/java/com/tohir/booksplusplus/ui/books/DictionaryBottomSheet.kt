@@ -1,24 +1,14 @@
 package com.tohir.booksplusplus.ui.books
 
-import android.R.attr.apiKey
 import android.app.Dialog
-import android.content.Context
 import android.media.MediaPlayer
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tohir.booksplusplus.databinding.DictionaryBottomSheetBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.json.JSONArray
-import java.net.URL
 
 class DictionaryBottomSheet : BottomSheetDialogFragment() {
 
@@ -69,9 +59,9 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
 
 
         val word = arguments?.getString("word")
-        val definition = arguments?.getStringArrayList("definition")
+        val definitions = arguments?.getStringArrayList("definition")
 
-        if (definition!!.isEmpty()) {
+        if (definitions!!.isEmpty()) {
             binding.textViewWordText.text = "No available definitions"
             binding.buttonPlayPronunciation.visibility = View.INVISIBLE
             binding.textViewExamplesTitle.visibility = View.INVISIBLE
@@ -83,21 +73,21 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
 
             binding.recyclerViewDefinition.apply {
                 adapter = WordAdapter().apply {
-                    setWords(
-                        arguments?.getStringArrayList("definition")
-                            ?: listOf("No available definitions")
-                    )
+                    setWords(definitions)
                 }
             }
 
+            val examples = arguments?.getStringArrayList("usages")
 
-            binding.recyclerViewExamples.apply {
-                val examplesAdapter = WordAdapter().apply {
-                    setWords(
-                        arguments?.getStringArrayList("usages") ?: listOf("")
-                    )
+            if (examples != null && !examples.isEmpty()) {
+                binding.recyclerViewExamples.apply {
+                    val examplesAdapter = WordAdapter().apply {
+                        setWords(arguments?.getStringArrayList("usages") ?: listOf(""))
+                    }
+                    adapter = examplesAdapter
                 }
-                adapter = examplesAdapter
+            } else {
+                binding.textViewExamplesTitle.visibility = View.INVISIBLE
             }
 
 
@@ -105,6 +95,10 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
 
             if (pos != null)
                 binding.textViewPosText.text = "($pos)"
+            else
+                binding.textViewPosText.visibility = View.INVISIBLE
+
+
 
             val audioUrl = arguments?.getString("audio")
 

@@ -146,7 +146,17 @@
     <color name="warm_white">#FAF8F5</color>
     <color name="dark_grey">#2E2E2E</color>
     <color name="dark_brown">#423b30</color>
-    <color name="oasis">#feefcc</color>
+    <color name="oasis">#FEEFCC</color>
     <color name="almost_dark">#222222</color>
     <color name="cream">#504B38</color>
+    <color name="black">#000000</color>
+    <color name="off_white">#FAFAFA</color>
+    <color name="very_dark_grey">#121212</color>
+    <color name="soft_off_white">#E0E0E0</color>
+    <color name="medium_dark_grey">#2C2C2C</color>
+    <color name="light_grey">#D6D6D6</color>
+    <color name="very_dark_navy">#0D1117</color>
+    <color name="light_bluish_white">#C9D1D9</color>
+
+
 </resources>
