@@ -45,7 +45,9 @@ class OptionsFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.imageButtonCancel.setOnClickListener {
-            parentFragmentManager.popBackStack()
+            parentFragmentManager.beginTransaction()
+                .remove(this)
+                .commitNow()
         }
 
         binding.cardViewThemesAndSettingsContainer.setOnClickListener {

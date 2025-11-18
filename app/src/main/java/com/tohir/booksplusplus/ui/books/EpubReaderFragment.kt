@@ -277,8 +277,7 @@ class EpubReaderFragment : Fragment() {
 
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_options, fragment)
-            .addToBackStack(null)
-            .commit()
+            .commitNow()
     }
 
 
