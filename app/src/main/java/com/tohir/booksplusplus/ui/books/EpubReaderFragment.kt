@@ -7,6 +7,8 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.RectF
 import android.os.Bundle
+import android.os.SystemClock
+import android.os.SystemClock.elapsedRealtime
 import android.view.ActionMode
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -70,6 +72,8 @@ class EpubReaderFragment : Fragment() {
     private lateinit var binding: FragmentReaderBinding
     private var bookUri: String? = null
     private var bookId: Long? = null
+    
+    private var readingStartTime: Long? = null
     private var publication: Publication? = null
 
     private val prefs by lazy {
@@ -103,6 +107,8 @@ class EpubReaderFragment : Fragment() {
 
         EpubNavigatorFactory(publication!!).createPreferencesEditor(preferences)
     }
+
+
 
     @OptIn(ExperimentalReadiumApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -220,6 +226,9 @@ class EpubReaderFragment : Fragment() {
         setupClickListeners()
         setupObservers()
 
+        readingStartTime = elapsedRealtime()
+        
+
         setupHighlights()
         setupPreferences()
         setPageNumber()
@@ -227,6 +236,14 @@ class EpubReaderFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
+
+        val elapsedMillis = elapsedRealtime() - readingStartTime!!
+        val minutesRead = (elapsedMillis / 1000 / 60).toInt()
+
+        val currentValue = prefs.getInt("MINUTES", minutesRead)
+
+        prefs.edit { putInt("MINUTES", currentValue + minutesRead) }
+
         saveReadingProgress()
     }
 
@@ -372,6 +389,12 @@ class EpubReaderFragment : Fragment() {
             if (link != null) {
                 navigator.go(link, true)
             }
+        }
+
+        readerViewModel.locator.observe(viewLifecycleOwner) { locator ->
+            if (locator != null)
+                navigator.go(locator, true)
+
         }
 
         readerViewModel.selectedHighlight.observe(viewLifecycleOwner) { highlight ->

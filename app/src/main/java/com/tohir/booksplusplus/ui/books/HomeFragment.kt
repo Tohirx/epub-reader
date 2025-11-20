@@ -1,5 +1,6 @@
 package com.tohir.booksplusplus.ui.books
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,6 +21,12 @@ class HomeFragment : Fragment(), RecentBookAdapter.OnRecentBooksClickedListener 
     private val viewModel: HomeViewModel by viewModels()
     private val adapter = RecentBookAdapter(this)
     private lateinit var binding: FragmentHomeBinding
+    private val prefs by lazy {
+        requireContext().getSharedPreferences(
+            "user_pref",
+            Context.MODE_PRIVATE
+        )
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -33,10 +40,18 @@ class HomeFragment : Fragment(), RecentBookAdapter.OnRecentBooksClickedListener 
         binding.recyclerViewPreviouslyRead.layoutManager = LinearLayoutManager(requireContext(),
             LinearLayoutManager.HORIZONTAL, false)
 
+        binding.textViewMinutesReadValue.text = prefs.getInt("MINUTES", 0).toString()
+
         binding.recyclerViewPreviouslyRead.adapter = adapter
 
         fetchAllBooks()
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        binding.textViewMinutesReadValue.text = prefs.getInt("MINUTES", 0).toString()
     }
 
     fun fetchAllBooks() {
@@ -47,6 +62,8 @@ class HomeFragment : Fragment(), RecentBookAdapter.OnRecentBooksClickedListener 
         }
 
     }
+
+
 
 
     override fun onRecentBookClicked(book: Book) {

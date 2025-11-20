@@ -6,11 +6,11 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:fitsSystemWindows="true"
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorSurface">
+        android:background="?attr/colorSurface"
+        android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/home_toolbar"
@@ -28,7 +28,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:padding="16dp">
 
             <TextView
@@ -39,6 +39,7 @@
                 android:textAppearance="?attr/textAppearanceTitleLarge"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view_previously_read"
@@ -51,9 +52,41 @@
                 tools:itemCount="3"
                 tools:listitem="@layout/item_recently_read_books" />
 
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/text_view_todays_reading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Today's Reading"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/recycler_view_previously_read" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/text_view_minutes_read_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="2:00"
+                android:textSize="84sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_view_todays_reading" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="minutes"
+                app:layout_constraintBottom_toBottomOf="@id/text_view_minutes_read_value"
+                app:layout_constraintTop_toTopOf="@id/text_view_minutes_read_value"
+                app:layout_constraintStart_toEndOf="@id/text_view_minutes_read_value"
+                android:layout_marginTop="28dp"
+                android:layout_marginStart="12dp"/>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

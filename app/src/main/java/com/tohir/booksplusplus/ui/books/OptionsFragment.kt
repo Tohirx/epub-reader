@@ -7,9 +7,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.databinding.FragmentOptionsBinding
-import org.readium.r2.shared.publication.services.search.SearchService
 import kotlin.getValue
 
 
@@ -38,26 +36,14 @@ class OptionsFragment : Fragment() {
 
         setupClickListeners()
 
-        readerViewModel.selectedHighlight.observe(viewLifecycleOwner) { _ ->
-            parentFragmentManager.beginTransaction()
-                .remove(this)
-                .commit()
-        }
-
-        readerViewModel.link.observe(viewLifecycleOwner) { _ ->
-            parentFragmentManager.beginTransaction()
-                .remove(this)
-                .commit()
-
-        }
-
     }
+
 
     private fun setupClickListeners() {
         binding.imageButtonCancel.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .remove(this)
-                .commitNow()
+                .commit()
         }
 
         binding.cardViewThemesAndSettingsContainer.setOnClickListener {

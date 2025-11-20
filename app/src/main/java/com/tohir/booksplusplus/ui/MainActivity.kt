@@ -1,5 +1,9 @@
 package com.tohir.booksplusplus.ui
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
@@ -12,7 +16,9 @@ import com.tohir.booksplusplus.ui.books.HomeFragment
 import com.tohir.booksplusplus.ui.books.LibraryFragment
 import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.databinding.ActivityMainBinding
+import com.tohir.booksplusplus.ui.books.ReadingResetReceiver
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener {
 
@@ -26,6 +32,8 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         binding.bottomNav.setOnItemSelectedListener(this)
 
         setContentView(binding.root)
+
+        scheduleDailyReset(this)
 
         val uriFromFileManager: Uri? = intent?.data
 
@@ -58,5 +66,38 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             replace(R.id.fragment_container, HomeFragment())
         }
     }
+
+    fun scheduleDailyReset(context: Context) {
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+
+            // If it's already past midnight today, schedule for tomorrow
+            if (before(Calendar.getInstance())) {
+                add(Calendar.DAY_OF_YEAR, 1)
+            }
+        }
+
+        val intent = Intent(context, ReadingResetReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        alarmManager.setInexactRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
+            pendingIntent
+        )
+    }
+
 
 }

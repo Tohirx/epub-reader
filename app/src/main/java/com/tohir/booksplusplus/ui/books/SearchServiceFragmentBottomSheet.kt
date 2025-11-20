@@ -13,16 +13,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tohir.booksplusplus.databinding.FragmentSearchServiceBottomSheetBinding
 import kotlinx.coroutines.launch
+import org.readium.r2.shared.publication.Locator
 import org.readium.r2.shared.publication.Publication
 import org.readium.r2.shared.publication.services.search.SearchIterator
 import org.readium.r2.shared.publication.services.search.search
 
-class SearchServiceFragmentBottomSheet : BottomSheetDialogFragment() {
+class SearchServiceFragmentBottomSheet : BottomSheetDialogFragment(), OnSearchResultClickListener {
     private lateinit var binding: FragmentSearchServiceBottomSheetBinding
     private var iterator: SearchIterator? = null
     private val readerViewModel: ReaderViewModel by activityViewModels()
 
-    private val adapter = SearchResultAdapter()
+    private val adapter = SearchResultAdapter(this)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -84,9 +85,8 @@ class SearchServiceFragmentBottomSheet : BottomSheetDialogFragment() {
 
                         val result = iterator?.next()?.getOrNull()
 
-                        val locators = result?.locators.orEmpty()
-
-                        adapter.setLocators(locators)
+                        val locators = ArrayList( result?.locators.orEmpty())
+                        adapter.addLocators(locators)
 
                     }
 
@@ -105,10 +105,17 @@ class SearchServiceFragmentBottomSheet : BottomSheetDialogFragment() {
             iterator = publication.search(text)
             val result = iterator?.next()?.getOrNull()
 
-            val locators = result?.locators.orEmpty()
+            val locators = ArrayList(result?.locators.orEmpty())
 
             adapter.setLocators(locators)
         }
+    }
+
+    override fun onSearchResultClicked(locator: Locator) {
+
+        readerViewModel.setLocator(locator)
+        dialog?.dismiss()
+
     }
 
 }

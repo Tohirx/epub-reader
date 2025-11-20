@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.tohir.booksplusplus.data.model.Highlight
 import org.readium.r2.shared.publication.Link
+import org.readium.r2.shared.publication.Locator
 import org.readium.r2.shared.publication.Publication
 
 class ReaderViewModel : ViewModel() {
@@ -29,10 +30,11 @@ class ReaderViewModel : ViewModel() {
     private val _selectedLineSpacing = MutableLiveData<Double>()
     val selectedLineSpacing: LiveData<Double> = _selectedLineSpacing
 
-    private val _selectedHighlight = MutableLiveData<Highlight>()
-    val selectedHighlight: LiveData<Highlight> = _selectedHighlight
+    private val _selectedHighlight = MutableLiveData<Highlight?>()
 
-
+    private val _locator = MutableLiveData<Locator>()
+    val locator: LiveData<Locator> = _locator
+    var selectedHighlight: LiveData<Highlight?> = _selectedHighlight
 
     fun setFontFamily(fontFamily: String) {
         this._selectedFontFamily.value = fontFamily
@@ -40,6 +42,10 @@ class ReaderViewModel : ViewModel() {
 
     fun setLink(link: Link) {
         _link.value = link
+    }
+
+    fun setLocator(locator: Locator) {
+        _locator.value = locator
     }
 
     fun setFontSize(fontSize: Double) {
@@ -64,7 +70,7 @@ class ReaderViewModel : ViewModel() {
     }
 
 
-    fun setHighlight(highlight: Highlight) {
+    fun setHighlight(highlight: Highlight?) {
         _selectedHighlight.value = highlight
     }
 }

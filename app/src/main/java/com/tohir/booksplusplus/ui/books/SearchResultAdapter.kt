@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.tohir.booksplusplus.databinding.ItemSearchResultBinding
 import org.readium.r2.shared.publication.Locator
 
-class SearchResultAdapter : RecyclerView.Adapter<SearchResultAdapter.ViewHolder>() {
+class SearchResultAdapter(private val listener: OnSearchResultClickListener) : RecyclerView.Adapter<SearchResultAdapter.ViewHolder>() {
 
-    private var locators: List<Locator> = listOf()
+    private var locators: ArrayList<Locator> = arrayListOf()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -31,8 +31,16 @@ class SearchResultAdapter : RecyclerView.Adapter<SearchResultAdapter.ViewHolder>
         holder.bind(locators[position])
     }
 
-    fun setLocators(locators: List<Locator>) {
+    fun setLocators(locators: ArrayList<Locator>) {
         this.locators = locators
+        notifyDataSetChanged()
+    }
+
+    fun addLocators(locators: List<Locator>) {
+
+        for (locator in locators)
+            this.locators.add(locator)
+
         notifyDataSetChanged()
     }
 
@@ -60,9 +68,19 @@ class SearchResultAdapter : RecyclerView.Adapter<SearchResultAdapter.ViewHolder>
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
 
+            binding.root.setOnClickListener {
+                listener.onSearchResultClicked(locator)
+            }
+
+            binding.textViewTitle.text = locator.title
+
             binding.textViewSearchResult.text = spannable
 
 
         }
     }
+}
+
+interface OnSearchResultClickListener {
+    fun onSearchResultClicked(locator: Locator)
 }
