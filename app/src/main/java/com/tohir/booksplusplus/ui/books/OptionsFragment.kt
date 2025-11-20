@@ -9,13 +9,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.databinding.FragmentOptionsBinding
+import org.readium.r2.shared.publication.services.search.SearchService
 import kotlin.getValue
 
 
 class OptionsFragment : Fragment() {
 
     private lateinit var binding: FragmentOptionsBinding
-    private val sharedViewModel: SharedHighlightViewModel by activityViewModels()
+    private val readerViewModel: ReaderViewModel by activityViewModels()
     private var bookId: Long? = null
 
 
@@ -37,8 +38,17 @@ class OptionsFragment : Fragment() {
 
         setupClickListeners()
 
-        sharedViewModel.selectedHighlight.observe(viewLifecycleOwner) { _ ->
-            parentFragmentManager.popBackStack()
+        readerViewModel.selectedHighlight.observe(viewLifecycleOwner) { _ ->
+            parentFragmentManager.beginTransaction()
+                .remove(this)
+                .commit()
+        }
+
+        readerViewModel.link.observe(viewLifecycleOwner) { _ ->
+            parentFragmentManager.beginTransaction()
+                .remove(this)
+                .commit()
+
         }
 
     }
@@ -64,8 +74,16 @@ class OptionsFragment : Fragment() {
 
             fragment.show(parentFragmentManager, "BookmarkAndHighlightFragment")
 
-
         }
+
+        binding.cardViewContents.setOnClickListener {
+            ContentsBottomSheetFragment().show(parentFragmentManager, "ContentBottomSheetFragment")
+        }
+
+        binding.cardViewSearch.setOnClickListener {
+            SearchServiceFragmentBottomSheet().show(parentFragmentManager, "SearchServiceBottomSheet")
+        }
+
 
 
     }

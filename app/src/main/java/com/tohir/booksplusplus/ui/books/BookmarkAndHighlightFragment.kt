@@ -18,7 +18,7 @@ import kotlin.getValue
 class BookmarkAndHighlightFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentBookmarkAndHighlightBinding
-    private val sharedViewModel: SharedHighlightViewModel by activityViewModels()
+    private val readerViewModel: ReaderViewModel by activityViewModels()
     private var bookId: Long? = null
 
     override fun onCreateView(
@@ -48,7 +48,7 @@ class BookmarkAndHighlightFragment : BottomSheetDialogFragment() {
 
         }.attach()
 
-        sharedViewModel.selectedHighlight.observe(viewLifecycleOwner) { _ ->
+        readerViewModel.selectedHighlight.observe(viewLifecycleOwner) { _ ->
             dialog?.dismiss()
         }
 

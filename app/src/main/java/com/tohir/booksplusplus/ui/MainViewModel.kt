@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tohir.booksplusplus.data.BooksRepository
 import com.tohir.booksplusplus.data.model.Book
+import com.tohir.booksplusplus.ui.books.EpubReaderViewModel
 import com.tohir.booksplusplus.ui.books.ReaderViewModel
 import com.tohir.booksplusplus.util.BooksPlusPlus
 import kotlinx.coroutines.launch
@@ -30,7 +31,7 @@ class MainViewModel : ViewModel() {
 
     suspend fun addBookPublicationToDatabase(uri: Uri, context: Context) {
 
-        val fileFromStorage = ReaderViewModel.copyUriToInternalStorage(uri, context)
+        val fileFromStorage = EpubReaderViewModel.copyUriToInternalStorage(uri, context)
 
         if (fileFromStorage != null) {
 

@@ -18,7 +18,7 @@ import com.tohir.booksplusplus.databinding.ThemesAndSettingsLayoutBinding
 class ThemesAndSettingsFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding: ThemesAndSettingsLayoutBinding
-    private val shareViewModel: SharedThemesViewModel by activityViewModels()
+    private val readerViewModel: ReaderViewModel by activityViewModels()
     private val userPreferences by lazy {
         requireContext().getSharedPreferences(
             "user_pref",
@@ -51,7 +51,7 @@ class ThemesAndSettingsFragment : BottomSheetDialogFragment() {
         binding.imageButtonCancel.setOnClickListener { dialog?.dismiss() }
         binding.cardViewCustomTheme1.setOnClickListener {
 
-            shareViewModel.setTheme(
+            readerViewModel.setTheme(
                 Theme(
                     backgroundColor = "#FFFFFF",
                     textColor = "#000000",
@@ -66,7 +66,7 @@ class ThemesAndSettingsFragment : BottomSheetDialogFragment() {
         }
 
         binding.cardViewCustomTheme2.setOnClickListener {
-            shareViewModel.setTheme(Theme("#000000", textColor = "#FFFFFF", fontFamily = "Roboto"))
+            readerViewModel.setTheme(Theme("#000000", textColor = "#FFFFFF", fontFamily = "Roboto"))
 
             binding.fontFamilyChipGroup.check(R.id.chip_font_roboto)
             userPreferences.edit {
@@ -75,7 +75,7 @@ class ThemesAndSettingsFragment : BottomSheetDialogFragment() {
         }
 
         binding.cardViewCustomTheme3.setOnClickListener {
-            shareViewModel.setTheme(
+            readerViewModel.setTheme(
                 Theme(
                     "#423b30",
                     textColor = "#FEEFCC",
@@ -90,7 +90,7 @@ class ThemesAndSettingsFragment : BottomSheetDialogFragment() {
         }
 
         binding.cardViewCustomTheme4.setOnClickListener {
-            shareViewModel.setTheme(Theme("#504B38", textColor = "#FEEFCC", fontFamily = "Serif"))
+            readerViewModel.setTheme(Theme("#504B38", textColor = "#FEEFCC", fontFamily = "Serif"))
 
             binding.fontFamilyChipGroup.check(R.id.chip_font_serif)
             userPreferences.edit {
@@ -99,7 +99,7 @@ class ThemesAndSettingsFragment : BottomSheetDialogFragment() {
         }
 
         binding.cardViewCustomTheme5.setOnClickListener {
-            shareViewModel.setTheme(Theme("#FAFAFA", textColor = "#2E2E2E", fontFamily = "Lexend"))
+            readerViewModel.setTheme(Theme("#FAFAFA", textColor = "#2E2E2E", fontFamily = "Lexend"))
 
             binding.fontFamilyChipGroup.check(R.id.chip_font_lexend)
             userPreferences.edit {
@@ -108,7 +108,7 @@ class ThemesAndSettingsFragment : BottomSheetDialogFragment() {
         }
 
         binding.cardViewCustomTheme6.setOnClickListener {
-            shareViewModel.setTheme(
+            readerViewModel.setTheme(
                 Theme(
                     "#121212",
                     textColor = "#E0E0E0",
@@ -123,7 +123,7 @@ class ThemesAndSettingsFragment : BottomSheetDialogFragment() {
         }
 
         binding.cardViewCustomTheme7.setOnClickListener {
-            shareViewModel.setTheme(
+            readerViewModel.setTheme(
                 Theme(
                     "#2C2C2C",
                     textColor = "#D6D6D6",
@@ -138,7 +138,7 @@ class ThemesAndSettingsFragment : BottomSheetDialogFragment() {
         }
 
         binding.cardViewCustomTheme8.setOnClickListener {
-            shareViewModel.setTheme(Theme("#0D1117", textColor = "#C9D1D9", fontFamily = "Casual"))
+            readerViewModel.setTheme(Theme("#0D1117", textColor = "#C9D1D9", fontFamily = "Casual"))
 
             binding.fontFamilyChipGroup.check(R.id.chip_font_casual)
             userPreferences.edit {
@@ -158,17 +158,17 @@ class ThemesAndSettingsFragment : BottomSheetDialogFragment() {
                 }
 
 
-                shareViewModel.setFontFamily(formattedText)
+                readerViewModel.setFontFamily(formattedText)
 
             }
         }
 
         binding.sliderFontSize.addOnChangeListener { _, value, _  ->
-            shareViewModel.setFontSize(value.toDouble())
+            readerViewModel.setFontSize(value.toDouble())
         }
 
         binding.sliderLineSpacing.addOnChangeListener { _, value, _ ->
-            shareViewModel.setLineSpacing(value.toDouble())
+            readerViewModel.setLineSpacing(value.toDouble())
         }
     }
 

@@ -30,6 +30,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.data.database.DictionaryProvider
 import com.tohir.booksplusplus.data.model.Highlight
@@ -61,10 +62,9 @@ import org.readium.r2.shared.publication.Publication
 import org.readium.r2.shared.publication.services.positions
 
 class EpubReaderFragment : Fragment() {
-    private val viewModel: ReaderViewModel by viewModels()
+    private val viewModel: EpubReaderViewModel by viewModels()
 
-    private val sharedThemeViewModel: SharedThemesViewModel by activityViewModels()
-    private val sharedViewModel: SharedHighlightViewModel by activityViewModels()
+    private val readerViewModel: ReaderViewModel by activityViewModels()
     private lateinit var navigator: EpubNavigatorFragment
     private lateinit var binding: FragmentReaderBinding
     private var bookUri: String? = null
@@ -121,6 +121,8 @@ class EpubReaderFragment : Fragment() {
 
             if (publication != null) {
                 val navigatorFactory = EpubNavigatorFactory(publication = publication!!)
+
+                readerViewModel.setPublication(publication!!)
 
 
                 childFragmentManager.fragmentFactory = navigatorFactory.createFragmentFactory(
@@ -267,6 +269,12 @@ class EpubReaderFragment : Fragment() {
             showOptionsFragment()
         }
 
+        binding.cardViewPageNumberContainer.setOnClickListener {
+            val pageNumberBottomSheetFragment = PageNumberBottomSheetFragment()
+            pageNumberBottomSheetFragment.show(parentFragmentManager, "PageNumberBottomSheet")
+
+        }
+
     }
 
     private fun showOptionsFragment() {
@@ -333,7 +341,7 @@ class EpubReaderFragment : Fragment() {
     }
 
     fun setupObservers() {
-        sharedThemeViewModel.selectedFontFamily.observe(viewLifecycleOwner) { font ->
+        readerViewModel.selectedFontFamily.observe(viewLifecycleOwner) { font ->
             if (!font.isNullOrEmpty()) {
                 editor.apply {
                     this.fontFamily.set(FontFamily(font))
@@ -344,7 +352,26 @@ class EpubReaderFragment : Fragment() {
 
         }
 
-        sharedViewModel.selectedHighlight.observe(viewLifecycleOwner) { highlight ->
+        readerViewModel.page.observe(viewLifecycleOwner) { page ->
+
+            if (page > 0) {
+                lifecycleScope.launch {
+                    if (page <= publication!!.positions().size)
+                        navigator.go(publication!!.positions()[page - 1])
+                }
+
+
+            }
+
+        }
+
+        readerViewModel.link.observe(viewLifecycleOwner) { link ->
+            if (link != null) {
+                navigator.go(link, true)
+            }
+        }
+
+        readerViewModel.selectedHighlight.observe(viewLifecycleOwner) { highlight ->
             if (highlight != null) {
                 navigator.go(highlight.locator, true)
             }
@@ -360,7 +387,7 @@ class EpubReaderFragment : Fragment() {
             })
         }
 
-        sharedThemeViewModel.selectedTheme.observe(viewLifecycleOwner) { theme ->
+        readerViewModel.selectedTheme.observe(viewLifecycleOwner) { theme ->
 
             if (theme != null) {
                 editor.apply {
@@ -379,7 +406,7 @@ class EpubReaderFragment : Fragment() {
             }
         }
 
-        sharedThemeViewModel.selectedFontSize.observe(viewLifecycleOwner) { size ->
+        readerViewModel.selectedFontSize.observe(viewLifecycleOwner) { size ->
             editor.apply {
                 this.fontSize.set(size)
             }
@@ -387,7 +414,7 @@ class EpubReaderFragment : Fragment() {
             navigator.submitPreferences(editor.preferences)
         }
 
-        sharedThemeViewModel.selectedLineSpacing.observe(viewLifecycleOwner) { spacing ->
+        readerViewModel.selectedLineSpacing.observe(viewLifecycleOwner) { spacing ->
 
             editor.apply {
                 this.lineHeight.set(spacing)
@@ -437,6 +464,7 @@ class EpubReaderFragment : Fragment() {
                     if (!publication!!.positions().isEmpty()) {
 
                         val currentPage = navigator.currentLocator.value.locations.position ?: 1
+
 
                         val totalPages = publication!!.positions().size
 
@@ -541,8 +569,6 @@ class EpubReaderFragment : Fragment() {
                 "DictionaryBottomSheet"
             )
         }
-
-
 
         (navigator as? SelectableNavigator)?.clearSelection()
 

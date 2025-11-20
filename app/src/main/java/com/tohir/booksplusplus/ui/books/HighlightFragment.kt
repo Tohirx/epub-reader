@@ -24,7 +24,7 @@ class HighlightFragment() : Fragment(), HighlightClickedListener {
     private lateinit var binding: FragmentHighlightsBinding
     private val adapter = HighlightsAdapter(this)
     private val viewModel: HighlightFragmentViewModel by viewModels()
-    private val sharedViewModel: SharedHighlightViewModel by activityViewModels()
+    private val readerViewModel: ReaderViewModel by activityViewModels()
 
 
     override fun onCreateView(
@@ -76,7 +76,7 @@ class HighlightFragment() : Fragment(), HighlightClickedListener {
     }
 
     override fun onHighlightClicked(highlight: Highlight) {
-        sharedViewModel.setHighlight(highlight)
+        readerViewModel.setHighlight(highlight)
     }
 
 }
