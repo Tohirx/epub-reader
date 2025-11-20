@@ -9,7 +9,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tohir.booksplusplus.databinding.FragmentContentsBottomSheetBinding
 import org.readium.r2.shared.publication.Link
 
-class ContentsBottomSheetFragment : BottomSheetDialogFragment(), ContentsAdapter.OnTableOfContentsClickListener {
+class ContentsBottomSheetFragment : BottomSheetDialogFragment(),
+    ContentsAdapter.OnTableOfContentsClickListener {
 
     private lateinit var binding: FragmentContentsBottomSheetBinding
     private val adapter = ContentsAdapter(this)
@@ -29,10 +30,9 @@ class ContentsBottomSheetFragment : BottomSheetDialogFragment(), ContentsAdapter
         super.onViewCreated(view, savedInstanceState)
 
         readerViewModel.publication.observe(viewLifecycleOwner) { publication ->
-            if (publication != null) {
-                val links = publication.tableOfContents
-                adapter.setToc(links)
-            }
+
+            val links = publication.tableOfContents
+            adapter.setToc(links)
         }
 
         binding.recyclerViewContents.adapter = adapter

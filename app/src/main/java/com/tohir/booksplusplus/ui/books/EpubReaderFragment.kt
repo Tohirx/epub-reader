@@ -60,6 +60,7 @@ import org.readium.r2.navigator.util.BaseActionModeCallback
 import org.readium.r2.shared.ExperimentalReadiumApi
 import org.readium.r2.shared.publication.Publication
 import org.readium.r2.shared.publication.services.positions
+import org.readium.r2.shared.publication.services.search.search
 
 class EpubReaderFragment : Fragment() {
     private val viewModel: EpubReaderViewModel by viewModels()
@@ -118,6 +119,8 @@ class EpubReaderFragment : Fragment() {
                     bookId
                 )
             }
+
+
 
             if (publication != null) {
                 val navigatorFactory = EpubNavigatorFactory(publication = publication!!)
