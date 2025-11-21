@@ -118,4 +118,9 @@ class SearchServiceFragmentBottomSheet : BottomSheetDialogFragment(), OnSearchRe
 
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        iterator?.close()
+    }
+
 }
