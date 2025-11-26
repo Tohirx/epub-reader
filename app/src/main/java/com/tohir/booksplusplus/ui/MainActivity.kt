@@ -35,11 +35,12 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
         scheduleDailyReset(this)
 
-        val uriFromFileManager: Uri? = intent?.data
+        handleIncomingUri(intent)
+    }
 
-        if (uriFromFileManager != null)
-            lifecycleScope.launch { viewModel.addBookPublicationToDatabase(uriFromFileManager, this@MainActivity) }
-
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleIncomingUri(intent)
     }
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
@@ -97,6 +98,16 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             AlarmManager.INTERVAL_DAY,
             pendingIntent
         )
+    }
+
+    private fun handleIncomingUri(intent: Intent?) {
+        val uriFromFileManager: Uri? = intent?.data
+
+        if (uriFromFileManager != null) {
+            lifecycleScope.launch {
+                viewModel.addBookPublicationToDatabase(uriFromFileManager, this@MainActivity)
+            }
+        }
     }
 
 

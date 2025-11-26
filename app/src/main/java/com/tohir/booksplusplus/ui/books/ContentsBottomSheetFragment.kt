@@ -32,7 +32,12 @@ class ContentsBottomSheetFragment : BottomSheetDialogFragment(),
         readerViewModel.publication.observe(viewLifecycleOwner) { publication ->
 
             val links = publication.tableOfContents
-            adapter.setToc(links)
+
+            if (!links.isEmpty())
+                adapter.setToc(links)
+            else
+                binding.textViewNoContents.visibility = View.VISIBLE
+
         }
 
         binding.recyclerViewContents.adapter = adapter

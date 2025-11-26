@@ -2,15 +2,12 @@ package com.tohir.booksplusplus.ui.books
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.os.IResultReceiver
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.edit
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
 import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.databinding.ThemesAndSettingsLayoutBinding
@@ -163,7 +160,7 @@ class ThemesAndSettingsFragment : BottomSheetDialogFragment() {
             }
         }
 
-        binding.sliderFontSize.addOnChangeListener { _, value, _  ->
+        binding.sliderFontSize.addOnChangeListener { _, value, _ ->
             readerViewModel.setFontSize(value.toDouble())
         }
 

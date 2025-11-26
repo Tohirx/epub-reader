@@ -19,6 +19,8 @@
 
         <activity
             android:name=".ui.MainActivity"
+            android:launchMode="singleTask"
+            android:taskAffinity="com.tohir.booksplusplus"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,11 +29,10 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data android:mimeType="application/epub+zip" />
+                <data android:scheme="content"/>
             </intent-filter>
         </activity>
         <activity

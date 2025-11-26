@@ -7,7 +7,6 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.RectF
 import android.os.Bundle
-import android.os.SystemClock
 import android.os.SystemClock.elapsedRealtime
 import android.view.ActionMode
 import android.view.Gravity
@@ -32,7 +31,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.data.database.DictionaryProvider
 import com.tohir.booksplusplus.data.model.Highlight
@@ -62,7 +60,6 @@ import org.readium.r2.navigator.util.BaseActionModeCallback
 import org.readium.r2.shared.ExperimentalReadiumApi
 import org.readium.r2.shared.publication.Publication
 import org.readium.r2.shared.publication.services.positions
-import org.readium.r2.shared.publication.services.search.search
 
 class EpubReaderFragment : Fragment() {
     private val viewModel: EpubReaderViewModel by viewModels()
@@ -718,11 +715,10 @@ class EpubReaderFragment : Fragment() {
                 isFocusable = true
             }
 
-            val isReverse = (rectF.top > 60)
             val x = rectF.left
-            val y = if (isReverse) rectF.top else rectF.bottom + rectF.height()
+            val y = rectF.top
 
-            popupWindow?.showAtLocation(popupView, Gravity.NO_GRAVITY, x.toInt(), y.toInt())
+            popupWindow?.showAtLocation(popupView, Gravity.NO_GRAVITY, x.toInt(), y.toInt() - 150)
 
             fun selectTint(view: View) {
                 val tint = highlightTints[view.id] ?: return

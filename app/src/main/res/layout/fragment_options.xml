@@ -14,14 +14,14 @@
         android:spacing="16dp">
 
         <ImageButton
-            android:tint="?attr/colorOnSurfaceVariant"
             android:id="@+id/image_button_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="12dp"
-            android:src="@drawable/icon_cancel1" />
+            android:src="@drawable/icon_cancel1"
+            app:tint="?attr/colorOnSurfaceVariant" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_view_themes_and_settings_container"
@@ -56,11 +56,11 @@
                     android:id="@+id/image_themes"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:tint="?attr/colorOnSurfaceVariant"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:srcCompat="@drawable/icon_paint_brush" />
+                    app:srcCompat="@drawable/icon_paint_brush"
+                    app:tint="?attr/colorOnSurfaceVariant" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -91,18 +91,17 @@
                     android:textAppearance="?attr/textAppearanceBodyLarge"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/image_arrow" />
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
                 <ImageView
                     android:id="@+id/image_highlight"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:tint="?attr/colorOnSurfaceVariant"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:srcCompat="@drawable/icon_highlight" />
+                    app:srcCompat="@drawable/icon_highlight"
+                    app:tint="?attr/colorOnSurfaceVariant" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -140,11 +139,11 @@
                     android:id="@+id/image_search"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:tint="?attr/colorOnSurfaceVariant"
                     app:srcCompat="@drawable/icon_search"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:tint="?attr/colorOnSurfaceVariant" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -182,11 +181,11 @@
                     android:id="@+id/image_contents"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:tint="?attr/colorOnSurfaceVariant"
                     app:srcCompat="@drawable/icon_contents"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:tint="?attr/colorOnSurfaceVariant" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>

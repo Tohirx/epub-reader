@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.tohir.booksplusplus.data.BooksRepository
 import com.tohir.booksplusplus.data.model.Book
 import com.tohir.booksplusplus.ui.books.EpubReaderViewModel
-import com.tohir.booksplusplus.ui.books.ReaderViewModel
 import com.tohir.booksplusplus.util.BooksPlusPlus
 import kotlinx.coroutines.launch
 import org.readium.adapter.pdfium.document.PdfiumDocumentFactory

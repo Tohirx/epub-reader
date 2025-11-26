@@ -11,7 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.tohir.booksplusplus.data.model.Book
 import com.tohir.booksplusplus.databinding.FragmentLibraryBinding
-import com.tohir.booksplusplus.ui.BookAdapter
+import com.tohir.booksplusplus.ui.books.BookAdapter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime

@@ -4,15 +4,24 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    
-
 
         <com.google.android.material.imageview.ShapeableImageView
+            android:src="@color/md_theme_primary"
+            app:layout_constraintTop_toTopOf="parent"
             android:id="@+id/image_view_book_cover"
             android:layout_width="match_parent"
             android:layout_height="250dp"
             app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Small"
             android:scaleType="centerCrop"/>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintEnd_toEndOf="@id/image_view_book_cover"
+        app:layout_constraintTop_toBottomOf="@id/image_view_book_cover"
+        android:src="@drawable/icon_options"/>
+
 
 
 

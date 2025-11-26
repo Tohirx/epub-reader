@@ -2,7 +2,6 @@ package com.tohir.booksplusplus.ui.books
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -68,8 +67,6 @@ class HighlightFragment() : Fragment(), HighlightClickedListener {
 
             viewModel.getAllHighlights(bookId = bookId).collectLatest { highlights ->
                 adapter.setHighlights(highlights)
-
-                Log.d("tohir", highlights.size.toString())
             }
 
         }
