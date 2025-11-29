@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.tohir.booksplusplus.data.model.Book
+import com.tohir.booksplusplus.data.model.Bookmark
 import com.tohir.booksplusplus.data.model.Highlight
 import kotlinx.coroutines.flow.Flow
 
@@ -16,8 +17,21 @@ interface BookDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addBook(book: Book)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addBookmark(bookmark: Bookmark)
+
+
+    @Query("SELECT * FROM bookmark WHERE bookmark.ID = :id" )
+    suspend fun findBookmarkById(id: Long): Bookmark
+
+    @Query("DELETE FROM BOOKMARK WHERE bookmark.ID = :id")
+    suspend fun deleteBookmarkById(id: Long)
+
     @Update
     suspend fun updateBook(book: Book)
+
+    @Query("SELECT * FROM bookmark WHERE bookmark.BOOK_ID = :bookID")
+     fun getAllBookmarks(bookID: Long): Flow<List<Bookmark>>
 
     @Query("UPDATE book SET readingProgressJSON = :locator WHERE id = :bookID")
     suspend fun saveReadingProgress(locator: String?, bookID: Long?)
@@ -56,7 +70,7 @@ interface BookDao {
     suspend fun getAllBooksAsList(): List<Book>
 
     @Query("SELECT * FROM book WHERE id = :id")
-    fun getBookById(id: Long): Book
+    fun findBookById(id: Long): Book
 
     @Query("SELECT * FROM book ORDER BY lastDateOpened DESC LIMIT 5")
     fun getRecentBooks(): Flow<List<Book>>

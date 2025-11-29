@@ -71,13 +71,24 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
         val popup = PopupMenu(requireContext(), view )
         popup.menuInflater.inflate(R.menu.menu_library_book, popup.menu)
 
+        popup.show()
+
         popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.mark_as_completed -> markAsCompleted(book)
+
+
+            }
+
+            true
 
         }
 
-        popup.show()
 
+    }
 
+    fun markAsCompleted(book: Book) {
+        val bookCopy = book.copy(isComplete = true)
     }
 
     fun showAlertDialog(book: Book) {

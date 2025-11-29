@@ -7,6 +7,7 @@ import android.support.annotation.ColorInt
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tohir.booksplusplus.data.model.Book
+import com.tohir.booksplusplus.data.model.Bookmark
 import com.tohir.booksplusplus.data.model.Highlight
 import com.tohir.booksplusplus.util.BooksPlusPlus
 import kotlinx.coroutines.flow.Flow
@@ -146,9 +147,6 @@ class EpubReaderViewModel : ViewModel() {
         }
     }
 
-
-
-
     suspend fun saveReadingProgression(locator: Locator, bookID: Long) {
         val locatorString = locator.toJSON().toString()
 
@@ -159,6 +157,11 @@ class EpubReaderViewModel : ViewModel() {
         if (progressValue != null)
             booksRepository.saveReadingProgressAsDouble(progressValue, bookID)
 
+    }
+
+    suspend fun addBookmark(bookId: Long, locator: Locator) {
+        val bookmark = Bookmark(bookId, locator)
+        booksRepository.addBookmark(bookmark)
     }
 
     suspend fun addHighlight(

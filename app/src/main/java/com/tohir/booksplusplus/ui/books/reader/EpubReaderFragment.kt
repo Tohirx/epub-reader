@@ -33,6 +33,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.data.database.DictionaryProvider
+import com.tohir.booksplusplus.data.model.Bookmark
 import com.tohir.booksplusplus.data.model.Highlight
 import com.tohir.booksplusplus.databinding.FragmentReaderBinding
 import com.tohir.booksplusplus.dictionary.DictionaryApi
@@ -224,11 +225,9 @@ class EpubReaderFragment : Fragment() {
         setupObservers()
 
         readingStartTime = elapsedRealtime()
-        
 
         setupHighlights()
         setupPreferences()
-        setPageNumber()
     }
 
     override fun onPause() {
@@ -292,6 +291,18 @@ class EpubReaderFragment : Fragment() {
 
         }
 
+        binding.imageButtonBookmark.setOnClickListener {
+            addToBookmark()
+        }
+
+    }
+
+    fun addToBookmark() {
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val locator = navigator.currentLocator.value
+            viewModel.addBookmark(bookId!!, locator)
+        }
     }
 
     private fun showOptionsFragment() {
@@ -369,6 +380,10 @@ class EpubReaderFragment : Fragment() {
 
         }
 
+        readerViewModel.bookmark.observe(viewLifecycleOwner) { bookmark ->
+            navigator.go(bookmark.locator)
+        }
+
         readerViewModel.page.observe(viewLifecycleOwner) { page ->
 
             if (page > 0) {
@@ -408,6 +423,25 @@ class EpubReaderFragment : Fragment() {
                     return true
                 }
             })
+        }
+
+        lifecycleScope.launch {
+
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                navigator.currentLocator.collect {
+
+                    if (!publication!!.positions().isEmpty()) {
+
+                        val currentPage = navigator.currentLocator.value.locations.position ?: 1
+
+
+                        val totalPages = publication!!.positions().size
+
+                        binding.textViewPageNumber.text = "$currentPage of $totalPages"
+
+                    }
+                }
+            }
         }
 
         readerViewModel.selectedTheme.observe(viewLifecycleOwner) { theme ->
@@ -463,38 +497,17 @@ class EpubReaderFragment : Fragment() {
 
         binding.apply {
 
-            if (imageViewCancelButton.isVisible && imageViewOptions.isVisible) {
+            if ((imageViewCancelButton.isVisible && imageViewOptions.isVisible) && (cardViewPageNumberContainer.isVisible && imageButtonBookmark.isVisible)) {
                 imageViewCancelButton.visibility = View.INVISIBLE
                 imageViewOptions.visibility = View.INVISIBLE
                 cardViewPageNumberContainer.visibility = View.INVISIBLE
+                imageButtonBookmark.visibility = View.INVISIBLE
 
-            } else if (imageViewCancelButton.isInvisible && imageViewOptions.isInvisible) {
+            } else {
                 imageViewCancelButton.visibility = View.VISIBLE
                 imageViewOptions.visibility = View.VISIBLE
                 cardViewPageNumberContainer.visibility = View.VISIBLE
-            }
-        }
-
-    }
-
-    fun setPageNumber() {
-
-        lifecycleScope.launch {
-
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                navigator.currentLocator.collect {
-
-                    if (!publication!!.positions().isEmpty()) {
-
-                        val currentPage = navigator.currentLocator.value.locations.position ?: 1
-
-
-                        val totalPages = publication!!.positions().size
-
-                        binding.textViewPageNumber.text = "$currentPage of $totalPages"
-
-                    }
-                }
+                imageButtonBookmark.visibility = View.VISIBLE
             }
         }
     }

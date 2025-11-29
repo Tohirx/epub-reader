@@ -3,6 +3,7 @@ package com.tohir.booksplusplus.ui.books.reader
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.tohir.booksplusplus.data.model.Bookmark
 import com.tohir.booksplusplus.data.model.Highlight
 import org.readium.r2.shared.publication.Link
 import org.readium.r2.shared.publication.Locator
@@ -12,6 +13,8 @@ class ReaderViewModel : ViewModel() {
 
     private val _selectedTheme = MutableLiveData<Theme>()
     val selectedTheme: LiveData<Theme> = _selectedTheme
+    private val _bookmark = MutableLiveData<Bookmark>()
+    val bookmark: LiveData<Bookmark> = _bookmark
     private val _page = MutableLiveData<Int>()
     val page: LiveData<Int> = _page
 
@@ -40,6 +43,10 @@ class ReaderViewModel : ViewModel() {
         this._selectedFontFamily.value = fontFamily
     }
 
+    fun setBookmark(bookmark: Bookmark) {
+        _bookmark.value = bookmark
+    }
+
     fun setLink(link: Link) {
         _link.value = link
     }
@@ -49,11 +56,11 @@ class ReaderViewModel : ViewModel() {
     }
 
     fun setFontSize(fontSize: Double) {
-        this._selectedFontSize.value = fontSize
+        _selectedFontSize.value = fontSize
     }
 
     fun setLineSpacing(lineSpacing: Double) {
-        this._selectedLineSpacing.value = lineSpacing
+        _selectedLineSpacing.value = lineSpacing
     }
 
 

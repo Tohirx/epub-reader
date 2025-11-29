@@ -6,7 +6,7 @@ import com.tohir.booksplusplus.data.model.Highlight
 import com.tohir.booksplusplus.util.BooksPlusPlus
 import kotlinx.coroutines.flow.Flow
 
-class HighlightFragmentViewModel : ViewModel() {
+class HighlightViewModel : ViewModel() {
     private val booksRepository: BooksRepository = BooksPlusPlus.booksRepository
 
 

@@ -23,7 +23,7 @@ class HighlightFragment() : Fragment(), HighlightClickedListener {
 
     private lateinit var binding: FragmentHighlightsBinding
     private val adapter = HighlightsAdapter(this)
-    private val viewModel: HighlightFragmentViewModel by viewModels()
+    private val viewModel: HighlightViewModel by viewModels()
     private val readerViewModel: ReaderViewModel by activityViewModels()
 
 

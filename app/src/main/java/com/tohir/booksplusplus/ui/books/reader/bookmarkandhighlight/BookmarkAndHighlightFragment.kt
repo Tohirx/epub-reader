@@ -49,10 +49,6 @@ class BookmarkAndHighlightFragment : BottomSheetDialogFragment() {
 
         }.attach()
 
-        readerViewModel.selectedHighlight.observe(viewLifecycleOwner) { _ ->
-            dialog?.dismiss()
-        }
-
     }
 
     override fun onStart() {

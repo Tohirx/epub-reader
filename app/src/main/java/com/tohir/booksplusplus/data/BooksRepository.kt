@@ -3,6 +3,7 @@ package com.tohir.booksplusplus.data
 import android.support.annotation.ColorInt
 import com.tohir.booksplusplus.data.database.BookDao
 import com.tohir.booksplusplus.data.model.Book
+import com.tohir.booksplusplus.data.model.Bookmark
 import com.tohir.booksplusplus.data.model.Highlight
 import kotlinx.coroutines.flow.Flow
 import org.readium.r2.shared.publication.Locator
@@ -68,8 +69,20 @@ class BooksRepository(private val bookDao: BookDao) {
         return bookDao.getAllBooksAsList()
     }
 
-    suspend fun getBookById(id: Long): Book {
-        return bookDao.getBookById(id)
+    suspend fun findBookById(id: Long): Book {
+        return bookDao.findBookById(id)
+    }
+
+    suspend fun addBookmark(bookmark: Bookmark) {
+        bookDao.addBookmark(bookmark)
+    }
+
+    suspend fun deleteBookmark(id: Long) {
+        bookDao.deleteBookmarkById(id)
+    }
+
+    suspend fun getAllBookmarks(bookID: Long): Flow<List<Bookmark>> {
+        return bookDao.getAllBookmarks(bookID)
     }
 
     fun getRecentBooks(): Flow<List<Book>> {

@@ -6,10 +6,11 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.tohir.booksplusplus.data.model.Book
+import com.tohir.booksplusplus.data.model.Bookmark
 import com.tohir.booksplusplus.data.model.Highlight
 import com.tohir.booksplusplus.data.model.HighlightConverters
 
-@Database(entities = [Book::class, Highlight::class], version = 5)
+@Database(entities = [Book::class, Highlight::class, Bookmark::class], version = 6)
 @TypeConverters(HighlightConverters::class)
 
 abstract class BooksPlusPlusDatabase : RoomDatabase() {
