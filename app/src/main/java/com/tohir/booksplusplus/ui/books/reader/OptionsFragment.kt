@@ -1,4 +1,4 @@
-package com.tohir.booksplusplus.ui.books
+package com.tohir.booksplusplus.ui.books.reader
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.tohir.booksplusplus.databinding.FragmentOptionsBinding
+import com.tohir.booksplusplus.ui.books.reader.bookmarkandhighlight.BookmarkAndHighlightFragment
+import com.tohir.booksplusplus.ui.books.reader.search.SearchServiceFragmentBottomSheet
 
 
 class OptionsFragment : Fragment() {

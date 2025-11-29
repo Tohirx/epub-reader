@@ -2,6 +2,7 @@ package com.tohir.booksplusplus.ui.books
 
 import android.net.Uri
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
@@ -50,6 +51,13 @@ class BookAdapter(private val listener: BookClickListener) : RecyclerView.Adapte
                 true
             }
 
+
+
+            binding.imageButtonOptions.setOnClickListener {
+                listener.onThreeDotsClicked(it, book)
+
+            }
+
             binding.root.setOnClickListener {
                 listener.onBookOpened(book)
             }
@@ -60,6 +68,8 @@ class BookAdapter(private val listener: BookClickListener) : RecyclerView.Adapte
     interface BookClickListener {
         fun onBookDeleted(book: Book)
         fun onBookOpened(book: Book)
+
+        fun onThreeDotsClicked(view: View, book: Book)
 
     }
 }

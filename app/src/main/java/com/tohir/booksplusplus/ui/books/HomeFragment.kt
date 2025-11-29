@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tohir.booksplusplus.data.model.Book
 import com.tohir.booksplusplus.databinding.FragmentHomeBinding
+import com.tohir.booksplusplus.ui.books.reader.ReaderActivity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime

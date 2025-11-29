@@ -1,10 +1,12 @@
-package com.tohir.booksplusplus.ui.books
+package com.tohir.booksplusplus.ui.books.reader.search
 
 import android.content.Context
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -12,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tohir.booksplusplus.databinding.FragmentSearchServiceBottomSheetBinding
+import com.tohir.booksplusplus.ui.books.reader.ReaderViewModel
 import kotlinx.coroutines.launch
 import org.readium.r2.shared.publication.Locator
 import org.readium.r2.shared.publication.Publication
@@ -50,8 +53,8 @@ class SearchServiceFragmentBottomSheet : BottomSheetDialogFragment(), OnSearchRe
     private fun setupClickListeners() {
         binding.editTextSearch.setOnEditorActionListener { _, actionId, event ->
             // Check if the action is the "Done" key (IME_ACTION_DONE)
-            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE ||
-                (event != null && event.keyCode == android.view.KeyEvent.KEYCODE_ENTER && event.action == android.view.KeyEvent.ACTION_DOWN)
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)
             ) {
                 val text = binding.editTextSearch.text.toString()
 

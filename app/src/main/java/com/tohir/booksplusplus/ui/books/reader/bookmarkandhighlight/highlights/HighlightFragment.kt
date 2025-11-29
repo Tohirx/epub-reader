@@ -1,4 +1,4 @@
-package com.tohir.booksplusplus.ui.books
+package com.tohir.booksplusplus.ui.books.reader.bookmarkandhighlight.highlights
 
 
 import android.os.Bundle
@@ -15,6 +15,7 @@ import com.google.android.material.divider.MaterialDividerItemDecoration
 import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.data.model.Highlight
 import com.tohir.booksplusplus.databinding.FragmentHighlightsBinding
+import com.tohir.booksplusplus.ui.books.reader.ReaderViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

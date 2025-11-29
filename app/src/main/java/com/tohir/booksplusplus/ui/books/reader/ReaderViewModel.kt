@@ -1,4 +1,4 @@
-package com.tohir.booksplusplus.ui.books
+package com.tohir.booksplusplus.ui.books.reader
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

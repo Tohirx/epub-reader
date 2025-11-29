@@ -5,13 +5,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.data.model.Book
 import com.tohir.booksplusplus.databinding.FragmentLibraryBinding
-import com.tohir.booksplusplus.ui.books.BookAdapter
+import com.tohir.booksplusplus.ui.books.reader.ReaderActivity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -62,6 +64,19 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
         intent.putExtra(BOOK_URI, book.uri)
         intent.putExtra(BOOK_ID, book.id)
         startActivity(intent)
+    }
+
+    override fun onThreeDotsClicked(view: View, book: Book) {
+
+        val popup = PopupMenu(requireContext(), view )
+        popup.menuInflater.inflate(R.menu.menu_library_book, popup.menu)
+
+        popup.setOnMenuItemClickListener { item ->
+
+        }
+
+        popup.show()
+
 
     }
 

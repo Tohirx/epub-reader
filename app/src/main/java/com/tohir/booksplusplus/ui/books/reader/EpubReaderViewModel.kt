@@ -1,4 +1,4 @@
-package com.tohir.booksplusplus.ui.books
+package com.tohir.booksplusplus.ui.books.reader
 
 import android.content.Context
 import android.graphics.Bitmap

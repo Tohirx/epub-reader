@@ -1,4 +1,4 @@
-package com.tohir.booksplusplus.ui.books
+package com.tohir.booksplusplus.ui.books.reader
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -9,6 +9,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.commit
 import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.databinding.ActivityReaderBinding
+import com.tohir.booksplusplus.ui.books.LibraryFragment
 
 class ReaderActivity : AppCompatActivity() {
     private lateinit var binding: ActivityReaderBinding
@@ -22,9 +23,9 @@ class ReaderActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val bookIdFromLibraryFragmentOrHomeFragment =
-            intent.getLongExtra(LibraryFragment.BOOK_ID, 0)
+            intent.getLongExtra(LibraryFragment.Companion.BOOK_ID, 0)
         val bookUriFromLibraryFragmentOrHomeFragment =
-            intent.getStringExtra(LibraryFragment.BOOK_URI)
+            intent.getStringExtra(LibraryFragment.Companion.BOOK_URI)
 
 
         val fragment = EpubReaderFragment().apply {

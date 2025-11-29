@@ -1,4 +1,4 @@
-package com.tohir.booksplusplus.ui.books
+package com.tohir.booksplusplus.ui.books.reader
 
 
 import android.content.ClipData
@@ -636,7 +636,7 @@ class EpubReaderFragment : Fragment() {
             }
 
 
-            return DictionaryBottomSheet.newInstance(
+            return DictionaryBottomSheet.Companion.newInstance(
                 selectedWord,
                 definition = definitions,
                 pos = pos[0],
@@ -658,7 +658,7 @@ class EpubReaderFragment : Fragment() {
         val usages = db.dictionaryDao().getUsageExamples(selectedWord)
 
         val dialog =
-            DictionaryBottomSheet.newInstance(
+            DictionaryBottomSheet.Companion.newInstance(
                 selectedWord,
                 definition,
                 pos = pos,

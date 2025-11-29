@@ -1,4 +1,4 @@
-package com.tohir.booksplusplus.ui.books
+package com.tohir.booksplusplus.ui.books.reader.bookmarkandhighlight
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,12 +8,13 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.google.android.material.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.tabs.TabLayoutMediator
-import com.tohir.booksplusplus.data.model.Highlight
 import com.tohir.booksplusplus.databinding.FragmentBookmarkAndHighlightBinding
-import kotlin.getValue
-
+import com.tohir.booksplusplus.ui.books.reader.bookmarkandhighlight.bookmarks.BookmarkFragment
+import com.tohir.booksplusplus.ui.books.reader.ReaderViewModel
+import com.tohir.booksplusplus.ui.books.reader.bookmarkandhighlight.highlights.HighlightFragment
 
 class BookmarkAndHighlightFragment : BottomSheetDialogFragment() {
 
@@ -58,7 +59,7 @@ class BookmarkAndHighlightFragment : BottomSheetDialogFragment() {
         super.onStart()
         dialog?.let {
             val bottomSheet = it.findViewById<View>(
-                com.google.android.material.R.id.design_bottom_sheet
+                R.id.design_bottom_sheet
             )
             bottomSheet?.layoutParams?.height = ViewGroup.LayoutParams.MATCH_PARENT
         }

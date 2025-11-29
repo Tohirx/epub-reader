@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/delete"
+        android:title="Delete"/>
+
+    <item android:id="@+id/mark_as_completed"
+        android:title="Mark as completed"/>
+
+    <item android:id="@+id/mark_as_favourite"
+        android:title="Mark as favourite"/>
+
+    <item android:id="@+id/details"
+        android:title="Show details"/>
+
+</menu>

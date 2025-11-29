@@ -1,4 +1,4 @@
-package com.tohir.booksplusplus.ui.books
+package com.tohir.booksplusplus.ui.books.reader.search
 
 import android.text.Spannable
 import android.text.SpannableString
