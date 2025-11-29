@@ -48,7 +48,8 @@ class BooksRepository(private val bookDao: BookDao) {
         @ColorInt tint: Int,
         locator: Locator,
         annotation: String,
-    ) = bookDao.addHighlight(Highlight(bookId, style, tint, locator, annotation))
+        date: String
+    ) = bookDao.addHighlight(Highlight(bookId, style, tint, locator, annotation, date))
 
     fun getAllBooks(): Flow<List<Book>> = bookDao.getAllBooksAsFlow()
 

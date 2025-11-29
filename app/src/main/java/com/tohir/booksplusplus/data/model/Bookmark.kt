@@ -27,7 +27,7 @@ data class Bookmark(
     @ColumnInfo(name = ID)
     var id: Long = 0,
     @ColumnInfo(name = CREATION_DATE, defaultValue = "CURRENT_TIMESTAMP")
-    var creation: Long? = null,
+    var creation: String? = null,
     @ColumnInfo(name = BOOK_ID)
     val bookId: Long,
     @ColumnInfo(name = Highlight.HREF)
@@ -47,6 +47,7 @@ data class Bookmark(
     constructor(
         bookId: Long,
         locator: Locator,
+        date: String
     ) :
             this(
                 href = locator.href.toString(),
@@ -56,6 +57,7 @@ data class Bookmark(
                 locations = locator.locations,
                 text = locator.text,
                 type = locator.mediaType.toString(),
+                creation = date
             )
 
     val locator: Locator

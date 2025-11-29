@@ -36,6 +36,7 @@ class BookmarkAdapter(val listener: OnBookmarkClickListener) : RecyclerView.Adap
 
              binding.textViewBookmarkText.text = bookmark.title ?: bookmark.href
              binding.textViewPageNumber.text = bookmark.locations.position.toString()
+             binding.textViewDateAdded.text = bookmark.creation
 
              binding.root.setOnClickListener {
                  listener.onBookmarkClicked(bookmark)

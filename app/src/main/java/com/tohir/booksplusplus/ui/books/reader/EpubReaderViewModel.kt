@@ -26,6 +26,9 @@ import org.readium.r2.streamer.parser.DefaultPublicationParser
 import java.io.File
 import java.io.FileOutputStream
 import java.time.LocalDateTime
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import kotlin.collections.get
 
 class EpubReaderViewModel : ViewModel() {
@@ -160,8 +163,15 @@ class EpubReaderViewModel : ViewModel() {
     }
 
     suspend fun addBookmark(bookId: Long, locator: Locator) {
-        val bookmark = Bookmark(bookId, locator)
+        val bookmark = Bookmark(bookId, locator, getCurrentFormattedDate())
         booksRepository.addBookmark(bookmark)
+    }
+
+    fun getCurrentFormattedDate(): String {
+        val now = ZonedDateTime.now()
+        val format = "EEEE, d MMMM, YYYY"
+        val formatter = DateTimeFormatter.ofPattern(format).withLocale(Locale.ENGLISH)
+        return now.format(formatter)
     }
 
     suspend fun addHighlight(
@@ -169,9 +179,9 @@ class EpubReaderViewModel : ViewModel() {
         style: Highlight.Style,
         @ColorInt tint: Int,
         locator: Locator,
-        annotation: String = ""
+        annotation: String = "",
     ) {
-        booksRepository.addHighlight(bookID, style, tint, locator, annotation)
+        booksRepository.addHighlight(bookID, style, tint, locator, annotation, getCurrentFormattedDate())
     }
 
     fun getAllHighlights(bookID: Long): Flow<List<Highlight>> {

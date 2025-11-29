@@ -34,7 +34,7 @@ data class Highlight(
     @ColumnInfo(name = ID)
     var id: Long = 0,
     @ColumnInfo(name = CREATION_DATE, defaultValue = "CURRENT_TIMESTAMP")
-    var creation: Long? = null,
+    var creation: String? = null,
     @ColumnInfo(name = BOOK_ID)
     val bookId: Long,
     @ColumnInfo(name = STYLE)
@@ -64,6 +64,7 @@ data class Highlight(
         @ColorInt tint: Int,
         locator: Locator,
         annotation: String,
+        creation: String
     ) :
             this(
                 bookId = bookId,
@@ -75,7 +76,8 @@ data class Highlight(
                 totalProgression = locator.locations.totalProgression ?: 0.0,
                 locations = locator.locations,
                 text = locator.text,
-                annotation = annotation
+                annotation = annotation,
+                creation = creation
             )
 
     val locator: Locator

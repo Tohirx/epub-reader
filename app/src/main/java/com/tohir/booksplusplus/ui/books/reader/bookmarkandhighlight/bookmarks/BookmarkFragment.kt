@@ -44,6 +44,8 @@ class BookmarkFragment : Fragment(), OnBookmarkClickListener {
         divider.dividerThickness = resources.getDimensionPixelSize(R.dimen.divider_thickness)
         divider.dividerColor = MaterialColors.getColor(binding.recyclerViewBookmark, com.google.android.material.R.attr.colorOutline)
 
+        binding.recyclerViewBookmark.addItemDecoration(divider)
+
         binding.recyclerViewBookmark.adapter = adapter
         binding.recyclerViewBookmark.layoutManager = LinearLayoutManager(requireContext())
 

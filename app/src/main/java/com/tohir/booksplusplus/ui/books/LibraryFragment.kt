@@ -51,9 +51,6 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
         }
     }
 
-    override fun onBookDeleted(book: Book) {
-        showAlertDialog(book)
-    }
 
     override fun onBookOpened(book: Book) {
 
@@ -68,7 +65,7 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
 
     override fun onThreeDotsClicked(view: View, book: Book) {
 
-        val popup = PopupMenu(requireContext(), view )
+        val popup = PopupMenu(requireContext(), view)
         popup.menuInflater.inflate(R.menu.menu_library_book, popup.menu)
 
         popup.show()
@@ -76,22 +73,31 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.mark_as_completed -> markAsCompleted(book)
-
-
+                R.id.delete -> deleteBook(book)
+                R.id.mark_as_favourite -> markAsFavourite(book)
             }
 
             true
 
         }
-
-
     }
+
+    fun deleteBook(book: Book) {
+        showAlertDeleteDialog(book)
+    }
+
+    fun markAsFavourite(book: Book) {
+        val bookCopy = book.copy(isFavourite = true)
+        viewModel.updateBook(bookCopy)
+    }
+
 
     fun markAsCompleted(book: Book) {
         val bookCopy = book.copy(isComplete = true)
+        viewModel.updateBook(bookCopy)
     }
 
-    fun showAlertDialog(book: Book) {
+    fun showAlertDeleteDialog(book: Book) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Warning")
             .setMessage("Are you sure you want to delete this book?")

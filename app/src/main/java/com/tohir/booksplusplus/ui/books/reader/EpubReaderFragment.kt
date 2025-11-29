@@ -22,7 +22,6 @@ import androidx.core.content.edit
 import androidx.core.graphics.toColorInt
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -33,7 +32,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.data.database.DictionaryProvider
-import com.tohir.booksplusplus.data.model.Bookmark
 import com.tohir.booksplusplus.data.model.Highlight
 import com.tohir.booksplusplus.databinding.FragmentReaderBinding
 import com.tohir.booksplusplus.dictionary.DictionaryApi
@@ -70,7 +68,7 @@ class EpubReaderFragment : Fragment() {
     private lateinit var binding: FragmentReaderBinding
     private var bookUri: String? = null
     private var bookId: Long? = null
-    
+
     private var readingStartTime: Long? = null
     private var publication: Publication? = null
 
@@ -105,7 +103,6 @@ class EpubReaderFragment : Fragment() {
 
         EpubNavigatorFactory(publication!!).createPreferencesEditor(preferences)
     }
-
 
 
     @OptIn(ExperimentalReadiumApi::class)
@@ -649,7 +646,7 @@ class EpubReaderFragment : Fragment() {
             }
 
 
-            return DictionaryBottomSheet.Companion.newInstance(
+            return DictionaryBottomSheet.newInstance(
                 selectedWord,
                 definition = definitions,
                 pos = pos[0],

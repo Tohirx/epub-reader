@@ -4,31 +4,39 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:padding="12dp">
+    android:padding="8dp">
 
 
     <com.google.android.material.textview.MaterialTextView
-        android:textColor="@color/md_theme_outline"
         android:id="@+id/text_view_page_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="13sp"
         tools:text="3"
+        android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/text_view_highlight"
         app:layout_constraintBottom_toBottomOf="@id/text_view_highlight"/>
 
-
     <com.google.android.material.textview.MaterialTextView
-        android:layout_marginLeft="11dp"
+        android:layout_marginStart="12dp"
         tools:text="Jesus Christ Dexter Morgan you are the Bay Harbour Butcher"
         android:id="@+id/text_view_highlight"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@id/text_view_page_number"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/text_view_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/text_view_highlight"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:textColor="?android:attr/textColorSecondary"
+        android:layout_marginTop="8dp"
+        tools:text="Thursday, 6 November 2025"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.tohir.booksplusplus.data.model.Highlight
 import com.tohir.booksplusplus.databinding.ItemHighlightsBinding
+import org.readium.r2.navigator.html.HtmlDecorationTemplate.Companion.highlight
 
 class HighlightsAdapter(private val listener: HighlightClickedListener) : RecyclerView.Adapter<HighlightsAdapter.ViewHolder>() {
 
@@ -48,7 +49,7 @@ class HighlightsAdapter(private val listener: HighlightClickedListener) : Recycl
              val color = highlight.tint
 
 
-             val fullText = "${highlight.text.before} $highlightedText ${highlight.text.after}".trim()
+             val fullText = "${highlight.text.before} $highlightedText".trim()
 
              val spannable = SpannableString(fullText)
 
@@ -64,6 +65,7 @@ class HighlightsAdapter(private val listener: HighlightClickedListener) : Recycl
 
              binding.textViewHighlight.text = spannable
              binding.textViewPageNumber.text = highlight.locations.position.toString()
+             binding.textViewDate.text = highlight.creation
 
              binding.root.setOnClickListener {
 

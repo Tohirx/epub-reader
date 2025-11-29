@@ -46,13 +46,6 @@ class BookAdapter(private val listener: BookClickListener) : RecyclerView.Adapte
                 .placeholder(R.drawable.gradient_background)
                 .into(binding.imageViewBookCover)
 
-            binding.root.setOnLongClickListener {
-                listener.onBookDeleted(book)
-                true
-            }
-
-
-
             binding.imageButtonOptions.setOnClickListener {
                 listener.onThreeDotsClicked(it, book)
 
@@ -66,7 +59,6 @@ class BookAdapter(private val listener: BookClickListener) : RecyclerView.Adapte
     }
 
     interface BookClickListener {
-        fun onBookDeleted(book: Book)
         fun onBookOpened(book: Book)
 
         fun onThreeDotsClicked(view: View, book: Book)
