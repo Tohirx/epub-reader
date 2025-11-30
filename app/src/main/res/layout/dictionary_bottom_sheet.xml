@@ -7,9 +7,21 @@
     android:background="?attr/colorSurface"
     android:padding="16dp">
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <ProgressBar
+            android:id="@+id/loading_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:visibility="visible"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <TextView
             android:id="@+id/text_view_word_text"
@@ -47,7 +59,6 @@
             app:layout_constraintStart_toEndOf="@id/text_view_pos_text"
             app:layout_constraintTop_toTopOf="@id/text_view_word_text" />
 
-        <!-- Divider -->
         <View
             android:id="@+id/divider"
             android:layout_width="0dp"
@@ -100,6 +111,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_view_examples_title" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/result_content_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:constraint_referenced_ids="text_view_word_text, text_view_pos_text, button_play_pronunciation, divider, text_view_definition_text, recycler_view_definition, text_view_examples_title, recycler_view_examples"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

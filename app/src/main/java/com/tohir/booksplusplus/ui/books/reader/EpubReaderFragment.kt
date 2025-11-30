@@ -31,10 +31,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.tohir.booksplusplus.R
-import com.tohir.booksplusplus.data.database.DictionaryProvider
 import com.tohir.booksplusplus.data.model.Highlight
 import com.tohir.booksplusplus.databinding.FragmentReaderBinding
-import com.tohir.booksplusplus.dictionary.DictionaryApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -591,7 +589,11 @@ class EpubReaderFragment : Fragment() {
             navigator?.currentSelection()?.locator?.text?.highlight
         } ?: ""
 
+        DictionaryBottomSheet.newInstance(selectedWord)
+            .show(parentFragmentManager, "DictionaryBottomSheet")
 
+
+        /*
         val onlineLookup = showDictionaryIfOnline(selectedWord)
 
         if (onlineLookup != null)
@@ -603,10 +605,13 @@ class EpubReaderFragment : Fragment() {
             )
         }
 
+         */
+
         (navigator as? SelectableNavigator)?.clearSelection()
 
     }
 
+    /*
     private suspend fun showDictionaryIfOnline(selectedWord: String): DictionaryBottomSheet? {
 
         val api = DictionaryApi()
@@ -677,6 +682,8 @@ class EpubReaderFragment : Fragment() {
             )
         return dialog
     }
+
+     */
 
     private suspend fun copy() {
         val clipboard =
