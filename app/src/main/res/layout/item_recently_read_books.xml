@@ -65,5 +65,16 @@
             app:layout_constraintVertical_bias="1.0"
             tools:progress="48" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_mark_as_completed"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintTop_toBottomOf="@id/progress_bar_reading"
+            app:layout_constraintStart_toStartOf="@id/progress_bar_reading"
+            android:layout_marginTop="8dp"
+            android:text="Mark as completed"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

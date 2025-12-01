@@ -2,6 +2,7 @@ package com.tohir.booksplusplus.ui.books
 
 import android.net.Uri
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
@@ -66,6 +67,18 @@ class RecentBookAdapter(private val listener : OnRecentBooksClickedListener) : R
                 }
             }
 
+               if (binding.progressBarReading.progress >= 95 && !book.isComplete) {
+                   binding.buttonMarkAsCompleted.visibility = View.VISIBLE
+                   binding.buttonMarkAsCompleted.setOnClickListener {
+                       listener.onMarkAsCompleted(book)
+                       binding.buttonMarkAsCompleted.visibility = View.GONE
+                   }
+
+           }
+
+            if (book.isComplete)
+                binding.progressBarReading.setProgress(100, true)
+
             binding.root.setOnClickListener {
                 listener.onRecentBookClicked(book)
             }
@@ -76,5 +89,6 @@ class RecentBookAdapter(private val listener : OnRecentBooksClickedListener) : R
 
     interface OnRecentBooksClickedListener {
         fun onRecentBookClicked(book: Book)
+        fun onMarkAsCompleted(book: Book)
     }
 }

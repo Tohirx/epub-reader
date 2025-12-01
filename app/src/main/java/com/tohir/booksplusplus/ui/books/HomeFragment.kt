@@ -65,8 +65,6 @@ class HomeFragment : Fragment(), RecentBookAdapter.OnRecentBooksClickedListener 
     }
 
 
-
-
     override fun onRecentBookClicked(book: Book) {
 
         val bookCopy = book.copy(lastDateOpened = LocalDateTime.now().toString())
@@ -76,5 +74,10 @@ class HomeFragment : Fragment(), RecentBookAdapter.OnRecentBooksClickedListener 
         intent.putExtra("BOOK_URI", book.uri)
         intent.putExtra("BOOK_ID", book.id)
         startActivity(intent)
+    }
+
+    override fun onMarkAsCompleted(book: Book) {
+        val bookCopy = book.copy(isComplete = true)
+        viewModel.updateBook(bookCopy)
     }
 }
