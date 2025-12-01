@@ -17,6 +17,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupWindow
+import android.widget.Toast
 import androidx.annotation.ColorInt
 import androidx.core.content.edit
 import androidx.core.graphics.toColorInt
@@ -34,6 +35,7 @@ import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.data.model.Highlight
 import com.tohir.booksplusplus.databinding.FragmentReaderBinding
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -295,8 +297,27 @@ class EpubReaderFragment : Fragment() {
     fun addToBookmark() {
 
         viewLifecycleOwner.lifecycleScope.launch {
+
             val locator = navigator.currentLocator.value
-            viewModel.addBookmark(bookId!!, locator)
+
+            val bookmarks = viewModel.getAllBookmarks(bookId!!).first()
+
+            val exists = bookmarks.any { it.locator == locator }
+
+            if (!exists) {
+                viewModel.addBookmark(bookId!!, locator)
+                Toast.makeText(
+                    requireContext(),
+                    "Bookmark added",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Bookmark already exists",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 
@@ -592,98 +613,10 @@ class EpubReaderFragment : Fragment() {
         DictionaryBottomSheet.newInstance(selectedWord)
             .show(parentFragmentManager, "DictionaryBottomSheet")
 
-
-        /*
-        val onlineLookup = showDictionaryIfOnline(selectedWord)
-
-        if (onlineLookup != null)
-            onlineLookup.show(parentFragmentManager, "DictionaryBottomSheet")
-        else {
-            showDictionaryIfOffline(selectedWord).show(
-                parentFragmentManager,
-                "DictionaryBottomSheet"
-            )
-        }
-
-         */
-
         (navigator as? SelectableNavigator)?.clearSelection()
 
     }
 
-    /*
-    private suspend fun showDictionaryIfOnline(selectedWord: String): DictionaryBottomSheet? {
-
-        val api = DictionaryApi()
-        val result = api.lookup(selectedWord)
-
-        if (result.isSuccess) {
-
-            val entries = result.getOrNull()!!
-            val entry = entries[0]
-
-
-            val definitions = arrayListOf<String>()
-            val pos = arrayListOf<String>()
-            val usages = arrayListOf<String>()
-
-            var audioUrl: String? = null
-            entries.forEach { entry ->
-                entry.phonetics.forEach { phonetic ->
-                    if (!phonetic.audio.isNullOrEmpty()) {
-                        audioUrl = phonetic.audio
-                        return@forEach
-                    }
-                }
-            }
-
-
-            entry.meanings.forEach { meaning ->
-
-                pos.add(meaning.partOfSpeech)
-
-                meaning.definitions.forEach { def ->
-
-                    definitions.add(def.definition)
-
-                    def.example?.let { usages.add(it) }
-                }
-            }
-
-
-            return DictionaryBottomSheet.newInstance(
-                selectedWord,
-                definition = definitions,
-                pos = pos[0],
-                usages = usages,
-                audioUrl
-            )
-        }
-
-        return null
-    }
-
-
-    private suspend fun showDictionaryIfOffline(selectedWord: String): DictionaryBottomSheet {
-        val db = DictionaryProvider.getInstance(requireContext())
-        val definition = db.dictionaryDao().getDefinitions(selectedWord)
-
-        val pos = db.dictionaryDao().getPos(selectedWord)
-
-        val usages = db.dictionaryDao().getUsageExamples(selectedWord)
-
-        val dialog =
-            DictionaryBottomSheet.Companion.newInstance(
-                selectedWord,
-                definition,
-                pos = pos,
-                usages = usages,
-                null
-            )
-        return dialog
-    }
-
-     */
 
     private suspend fun copy() {
         val clipboard =

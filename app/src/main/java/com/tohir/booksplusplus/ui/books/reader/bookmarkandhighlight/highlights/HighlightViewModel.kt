@@ -13,4 +13,8 @@ class HighlightViewModel : ViewModel() {
     fun getAllHighlights(bookId: Long): Flow<List<Highlight>> {
        return booksRepository.getAllHighlights(bookId)
     }
+
+    suspend fun deleteHighlight(id: Long) {
+        booksRepository.deleteHighlightById(id)
+    }
 }

@@ -82,13 +82,15 @@ class BooksRepository(private val bookDao: BookDao) {
         bookDao.deleteBookmarkById(id)
     }
 
-    suspend fun getAllBookmarks(bookID: Long): Flow<List<Bookmark>> {
+     fun getAllBookmarks(bookID: Long): Flow<List<Bookmark>> {
         return bookDao.getAllBookmarks(bookID)
     }
 
     fun getRecentBooks(): Flow<List<Book>> {
         return bookDao.getRecentBooks()
     }
+
+
 
 
 }

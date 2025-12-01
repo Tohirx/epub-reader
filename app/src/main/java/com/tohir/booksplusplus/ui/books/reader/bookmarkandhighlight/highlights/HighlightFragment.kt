@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.color.MaterialColors
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.divider.MaterialDividerItemDecoration
 import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.data.model.Highlight
@@ -75,6 +76,19 @@ class HighlightFragment() : Fragment(), HighlightClickedListener {
 
     override fun onHighlightClicked(highlight: Highlight) {
         readerViewModel.setHighlight(highlight)
+    }
+
+    override fun onHighlightLongClicked(highlight: Highlight): Boolean {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Highlight about to be deleted")
+            .setMessage("Are you sure you want to delete this highlight")
+            .setPositiveButton("Yes"
+            ) { _, _ -> lifecycleScope.launch { viewModel.deleteHighlight(highlight.id) }  }
+            .setNegativeButton("No") {dialog, _ -> dialog.dismiss()}
+            .show()
+
+        return true
+
     }
 
 }

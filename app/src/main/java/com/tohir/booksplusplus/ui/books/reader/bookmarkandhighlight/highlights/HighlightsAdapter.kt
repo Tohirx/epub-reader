@@ -72,6 +72,10 @@ class HighlightsAdapter(private val listener: HighlightClickedListener) : Recycl
                  listener.onHighlightClicked(highlight)
 
              }
+
+             binding.root.setOnLongClickListener {
+                 listener.onHighlightLongClicked(highlight)
+             }
          }
 
     }
@@ -80,5 +84,6 @@ class HighlightsAdapter(private val listener: HighlightClickedListener) : Recycl
 
 interface HighlightClickedListener {
     fun onHighlightClicked(highlight: Highlight)
+    fun onHighlightLongClicked(highlight: Highlight): Boolean
 
 }

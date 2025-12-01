@@ -8,8 +8,12 @@ import kotlinx.coroutines.flow.Flow
 class BookmarkViewModel : ViewModel() {
     private val booksRepository = BooksPlusPlus.booksRepository
 
-     suspend fun getAllBookmarks(bookId: Long): Flow<List<Bookmark>> {
+      fun getAllBookmarks(bookId: Long): Flow<List<Bookmark>> {
 
         return booksRepository.getAllBookmarks(bookId)
+    }
+
+     suspend fun deleteBookMark(id: Long) {
+        booksRepository.deleteBookmark(id)
     }
 }

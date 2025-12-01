@@ -42,6 +42,10 @@ class BookmarkAdapter(val listener: OnBookmarkClickListener) : RecyclerView.Adap
                  listener.onBookmarkClicked(bookmark)
              }
 
+             binding.root.setOnLongClickListener {
+                 listener.onBookmarkLongPressed(bookmark)
+             }
+
          }
 
     }
@@ -49,4 +53,5 @@ class BookmarkAdapter(val listener: OnBookmarkClickListener) : RecyclerView.Adap
 
 interface OnBookmarkClickListener {
     fun onBookmarkClicked(bookmark: Bookmark)
+    fun onBookmarkLongPressed(bookmark: Bookmark): Boolean
 }

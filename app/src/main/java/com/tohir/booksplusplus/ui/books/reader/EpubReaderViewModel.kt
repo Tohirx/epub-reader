@@ -29,7 +29,6 @@ import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-import kotlin.collections.get
 
 class EpubReaderViewModel : ViewModel() {
 
@@ -162,9 +161,16 @@ class EpubReaderViewModel : ViewModel() {
 
     }
 
+
     suspend fun addBookmark(bookId: Long, locator: Locator) {
+
         val bookmark = Bookmark(bookId, locator, getCurrentFormattedDate())
         booksRepository.addBookmark(bookmark)
+
+    }
+
+     fun getAllBookmarks(bookID: Long): Flow<List<Bookmark>> {
+        return booksRepository.getAllBookmarks(bookID)
     }
 
     fun getCurrentFormattedDate(): String {
@@ -181,7 +187,14 @@ class EpubReaderViewModel : ViewModel() {
         locator: Locator,
         annotation: String = "",
     ) {
-        booksRepository.addHighlight(bookID, style, tint, locator, annotation, getCurrentFormattedDate())
+        booksRepository.addHighlight(
+            bookID,
+            style,
+            tint,
+            locator,
+            annotation,
+            getCurrentFormattedDate()
+        )
     }
 
     fun getAllHighlights(bookID: Long): Flow<List<Highlight>> {
