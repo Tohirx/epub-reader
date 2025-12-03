@@ -70,6 +70,7 @@ class BookmarkFragment : Fragment(), OnBookmarkClickListener {
     }
 
     override fun onBookmarkClicked(bookmark: Bookmark) {
+
         readerViewModel.setBookmark(bookmark)
     }
 
