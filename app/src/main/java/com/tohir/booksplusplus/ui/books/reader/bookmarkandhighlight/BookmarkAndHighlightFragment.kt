@@ -6,20 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.tabs.TabLayoutMediator
 import com.tohir.booksplusplus.databinding.FragmentBookmarkAndHighlightBinding
 import com.tohir.booksplusplus.ui.books.reader.bookmarkandhighlight.bookmarks.BookmarkFragment
-import com.tohir.booksplusplus.ui.books.reader.ReaderViewModel
 import com.tohir.booksplusplus.ui.books.reader.bookmarkandhighlight.highlights.HighlightFragment
 
 class BookmarkAndHighlightFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentBookmarkAndHighlightBinding
-    private val readerViewModel: ReaderViewModel by activityViewModels()
     private var bookId: Long? = null
 
     override fun onCreateView(
@@ -73,6 +70,8 @@ class BookmarkAndHighlightFragment : BottomSheetDialogFragment() {
             val bookmarkFragment = BookmarkFragment().apply {
                 arguments = bundleOf("bookId" to bookId)
             }
+
+
 
             return when (position) {
                 0 -> highlightFragment

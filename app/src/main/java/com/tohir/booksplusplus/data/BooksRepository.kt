@@ -5,6 +5,7 @@ import com.tohir.booksplusplus.data.database.BookDao
 import com.tohir.booksplusplus.data.model.Book
 import com.tohir.booksplusplus.data.model.Bookmark
 import com.tohir.booksplusplus.data.model.Highlight
+import com.tohir.booksplusplus.data.model.Note
 import kotlinx.coroutines.flow.Flow
 import org.readium.r2.shared.publication.Locator
 
@@ -90,7 +91,27 @@ class BooksRepository(private val bookDao: BookDao) {
         return bookDao.getRecentBooks()
     }
 
+    suspend fun findLastHighlightAdded(): Highlight {
+        return bookDao.findLastHighlightAdded()
+    }
 
+    suspend fun findNoteById(id: Long): Note {
+        return bookDao.findNoteById(id)
+    }
+
+    suspend fun addNote(note: Note) = bookDao.addNote(note)
+
+     fun getAllNotes(bookId: Long) : Flow<List<Note>> {
+        return bookDao.getAllNotes(bookId)
+    }
+
+    suspend fun updateNote(note: Note) {
+        bookDao.updateNote(note)
+    }
+
+    suspend fun deleteNoteById(id: Long) {
+        bookDao.deleteNoteById(id)
+    }
 
 
 }

@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.tohir.booksplusplus.data.model.Book
 import com.tohir.booksplusplus.data.model.Bookmark
 import com.tohir.booksplusplus.data.model.Highlight
+import com.tohir.booksplusplus.data.model.Note
 import com.tohir.booksplusplus.util.BooksPlusPlus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -169,7 +170,11 @@ class EpubReaderViewModel : ViewModel() {
 
     }
 
-     fun getAllBookmarks(bookID: Long): Flow<List<Bookmark>> {
+    suspend fun getAllNotes(bookID: Long): Flow<List<Note>> {
+        return booksRepository.getAllNotes(bookID)
+    }
+
+    fun getAllBookmarks(bookID: Long): Flow<List<Bookmark>> {
         return booksRepository.getAllBookmarks(bookID)
     }
 

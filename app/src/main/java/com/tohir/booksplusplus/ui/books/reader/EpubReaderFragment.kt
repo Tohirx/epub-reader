@@ -34,6 +34,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.data.model.Highlight
 import com.tohir.booksplusplus.databinding.FragmentReaderBinding
+import com.tohir.booksplusplus.ui.books.reader.note.NoteBottomSheetDialogFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
@@ -224,6 +225,7 @@ class EpubReaderFragment : Fragment() {
         readingStartTime = elapsedRealtime()
 
         setupHighlights()
+        setupNotes()
         setupPreferences()
     }
 
@@ -267,6 +269,31 @@ class EpubReaderFragment : Fragment() {
 
             }
         }
+    }
+
+    private fun setupNotes() {
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getAllNotes(bookId!!).collectLatest { notesList ->
+
+
+                val decorations = notesList.map { note ->
+
+                    Decoration(
+                        id = note.id.toString(),
+                        locator = note.locator,
+                        style = Decoration.Style.Highlight("#E040FB".toColorInt())
+                    )
+                }
+
+                (navigator as DecorableNavigator).apply {
+                    applyDecorations(decorations, "user-notes")
+                    addDecorationListener("user-notes", decorableListener)
+                }
+
+            }
+        }
+
     }
 
     private fun saveReadingProgress() {
@@ -565,11 +592,33 @@ class EpubReaderFragment : Fragment() {
                 R.id.underline -> showHighlightPopupWithStyle(Highlight.Style.UNDERLINE)
                 R.id.copy -> lifecycleScope.launch { copy() }
                 R.id.dictionary -> lifecycleScope.launch { dictionary() }
+                R.id.note -> lifecycleScope.launch { note() }
 
             }
             mode.finish()
 
             return true
+        }
+
+    }
+
+    private suspend fun note(noteId: Long? = null) {
+        if (noteId == null) {
+
+            navigator.currentSelection()?.let { selection ->
+                val noteFragment = NoteBottomSheetDialogFragment()
+                noteFragment.arguments =
+                    bundleOf("locator" to selection.locator, "bookId" to bookId)
+                noteFragment.show(parentFragmentManager, "NoteBottomSheetDialogFragment")
+            }
+
+        } else {
+
+            val noteFragment = NoteBottomSheetDialogFragment()
+            noteFragment.arguments =
+                bundleOf( "bookId" to bookId, "noteId" to noteId)
+            noteFragment.show(parentFragmentManager, "NoteBottomSheetDialogFragment")
+
         }
     }
 
@@ -699,14 +748,22 @@ class EpubReaderFragment : Fragment() {
         override fun onDecorationActivated(event: DecorableNavigator.OnActivatedEvent): Boolean {
             val decoration = event.decoration
 
-            val id = decoration.id.toLong()
+            if (event.group == "user-highlights") {
 
-            event.rect?.let { rectF ->
-                showHighlightPopUp(rectF, Highlight.Style.HIGHLIGHT, id)
+                val id = decoration.id.toLong()
 
+                event.rect?.let { rectF ->
+                    showHighlightPopUp(rectF, Highlight.Style.HIGHLIGHT, id)
+
+                }
+                return true
             }
 
+            val id = decoration.id.toLong()
+
+            runBlocking { note(id) }
             return true
+
         }
 
     }

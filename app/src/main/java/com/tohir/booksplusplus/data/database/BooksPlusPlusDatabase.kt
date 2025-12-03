@@ -9,8 +9,9 @@ import com.tohir.booksplusplus.data.model.Book
 import com.tohir.booksplusplus.data.model.Bookmark
 import com.tohir.booksplusplus.data.model.Highlight
 import com.tohir.booksplusplus.data.model.HighlightConverters
+import com.tohir.booksplusplus.data.model.Note
 
-@Database(entities = [Book::class, Highlight::class, Bookmark::class], version = 11)
+@Database(entities = [Book::class, Note::class, Highlight::class, Bookmark::class], version = 13)
 @TypeConverters(HighlightConverters::class)
 
 abstract class BooksPlusPlusDatabase : RoomDatabase() {
