@@ -17,18 +17,12 @@ import org.readium.r2.shared.util.mediatype.MediaType
         entity = Book::class,
         parentColumns = [Book.ID],
         childColumns = ["book_id"]
-    ), ForeignKey(
-        entity = Highlight::class,
-        parentColumns = [Highlight.ID],
-        childColumns = ["highlight_id"]
     )]
 )
 data class Note(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo("id")
     val id: Long = 0,
-    @ColumnInfo("highlight_id")
-    val highlightId: Long = 0,
     @ColumnInfo(name = "book_id")
     val bookId: Long = 0,
     @ColumnInfo("locations")
@@ -43,18 +37,20 @@ data class Note(
     var href: String,
     @ColumnInfo(name = "type")
     var type: String,
+    @ColumnInfo(name = "date")
+    var date: String
 ) {
 
-    constructor(locator: Locator, content: String, bookId: Long, highlightId: Long) :
+    constructor(locator: Locator, content: String, bookId: Long, date: String) :
             this(
-                highlightId = highlightId,
                 bookId = bookId,
                 locations = locator.locations,
                 content = content,
                 text = locator.text,
                 href = locator.href.toString(),
                 title = locator.title,
-                type = locator.mediaType.toString()
+                type = locator.mediaType.toString(),
+                date = date
 
             )
 

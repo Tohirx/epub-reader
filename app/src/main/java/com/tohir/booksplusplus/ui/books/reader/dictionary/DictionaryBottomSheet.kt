@@ -1,4 +1,4 @@
-package com.tohir.booksplusplus.ui.books.reader
+package com.tohir.booksplusplus.ui.books.reader.dictionary
 
 import android.app.Dialog
 import android.media.MediaPlayer
@@ -13,7 +13,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tohir.booksplusplus.data.database.DictionaryProvider
 import com.tohir.booksplusplus.databinding.DictionaryBottomSheetBinding
 import com.tohir.booksplusplus.dictionary.DictionaryApi
-import com.tohir.booksplusplus.ui.books.reader.dictionary.DictionaryResult
+import com.tohir.booksplusplus.ui.books.reader.WordAdapter
 import kotlinx.coroutines.launch
 
 class DictionaryBottomSheet : BottomSheetDialogFragment() {

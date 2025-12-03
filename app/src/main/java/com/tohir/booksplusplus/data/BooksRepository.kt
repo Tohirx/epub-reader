@@ -91,9 +91,6 @@ class BooksRepository(private val bookDao: BookDao) {
         return bookDao.getRecentBooks()
     }
 
-    suspend fun findLastHighlightAdded(): Highlight {
-        return bookDao.findLastHighlightAdded()
-    }
 
     suspend fun findNoteById(id: Long): Note {
         return bookDao.findNoteById(id)

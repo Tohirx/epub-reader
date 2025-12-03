@@ -1,4 +1,4 @@
-package com.tohir.booksplusplus.ui.books.reader
+package com.tohir.booksplusplus.ui.books.reader.toc
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tohir.booksplusplus.databinding.FragmentContentsBottomSheetBinding
+import com.tohir.booksplusplus.ui.books.reader.ReaderViewModel
 import org.readium.r2.shared.publication.Link
 
 class ContentsBottomSheetFragment : BottomSheetDialogFragment(),

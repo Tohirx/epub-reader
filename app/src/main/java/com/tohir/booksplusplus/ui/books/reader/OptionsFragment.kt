@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.tohir.booksplusplus.databinding.FragmentOptionsBinding
 import com.tohir.booksplusplus.ui.books.reader.bookmarkandhighlight.BookmarkAndHighlightFragment
 import com.tohir.booksplusplus.ui.books.reader.search.SearchServiceFragmentBottomSheet
+import com.tohir.booksplusplus.ui.books.reader.toc.ContentsBottomSheetFragment
 
 
 class OptionsFragment : Fragment() {
@@ -49,6 +50,10 @@ class OptionsFragment : Fragment() {
 
            val fragment = ThemesAndSettingsFragment()
             fragment.show(parentFragmentManager, "ThemesAndSettingsFragment")
+            parentFragmentManager.beginTransaction()
+                .remove(this)
+                .commit()
+
         }
 
         binding.cardViewBookmarkAndHighlights.setOnClickListener {
@@ -58,15 +63,24 @@ class OptionsFragment : Fragment() {
             }
 
             fragment.show(parentFragmentManager, "BookmarkAndHighlightFragment")
+            parentFragmentManager.beginTransaction()
+                .remove(this)
+                .commit()
 
         }
 
         binding.cardViewContents.setOnClickListener {
             ContentsBottomSheetFragment().show(parentFragmentManager, "ContentBottomSheetFragment")
+            parentFragmentManager.beginTransaction()
+                .remove(this)
+                .commit()
         }
 
         binding.cardViewSearch.setOnClickListener {
             SearchServiceFragmentBottomSheet().show(parentFragmentManager, "SearchServiceBottomSheet")
+            parentFragmentManager.beginTransaction()
+                .remove(this)
+                .commit()
         }
 
 

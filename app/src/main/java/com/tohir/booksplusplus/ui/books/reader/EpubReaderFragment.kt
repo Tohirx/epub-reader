@@ -34,6 +34,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.data.model.Highlight
 import com.tohir.booksplusplus.databinding.FragmentReaderBinding
+import com.tohir.booksplusplus.ui.books.reader.dictionary.DictionaryBottomSheet
 import com.tohir.booksplusplus.ui.books.reader.note.NoteBottomSheetDialogFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -282,7 +283,7 @@ class EpubReaderFragment : Fragment() {
                     Decoration(
                         id = note.id.toString(),
                         locator = note.locator,
-                        style = Decoration.Style.Highlight("#E040FB".toColorInt())
+                        style = Decoration.Style.Highlight("#FFD700".toColorInt())
                     )
                 }
 

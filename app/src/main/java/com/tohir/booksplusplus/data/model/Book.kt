@@ -19,7 +19,8 @@ data class Book(
     val readingProgressDouble: Double?,
     val mediaType: String?,
     val isComplete: Boolean = false,
-    val isFavourite: Boolean = false
+    val isFavourite: Boolean = false,
+    val wantToRead: Boolean = false
 ) {
     companion object {
         const val ID = "id"

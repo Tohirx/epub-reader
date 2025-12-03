@@ -1,15 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?><androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- App Bar -->
     <com.google.android.material.appbar.AppBarLayout
-        android:fitsSystemWindows="true"
         android:id="@+id/app_bar_layout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="?attr/colorSurface">
+        android:fitsSystemWindows="true"
+        android:background="?attr/colorSurface"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/library_toolbar"
@@ -20,17 +26,68 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <com.google.android.material.chip.ChipGroup
+        app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
+        android:id="@+id/category_chip_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        app:chipSpacingHorizontal="12dp"
+        app:chipSpacingVertical="4dp"
+        app:singleSelection="true">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_favorite"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Favorite"
+            android:checkable="true"
+            app:chipStrokeWidth="1dp"
+            app:chipIconTint="@color/white"/>
+
+        <!-- Completed -->
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_completed"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Completed"
+            android:checkable="true"
+            app:chipStrokeWidth="1dp"
+            app:chipIconTint="@color/white"/>
+
+        <!-- Want to Read -->
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_want_to_read"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Want to Read"
+            android:checkable="true"
+            app:chipStrokeWidth="1dp"
+            app:chipIconTint="@color/white"/>
+
+    </com.google.android.material.chip.ChipGroup>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/library_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:clipToPadding="false"
         android:paddingHorizontal="8dp"
         android:paddingTop="8dp"
         android:paddingBottom="16dp"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:spanCount="2"
+        app:layout_constraintTop_toBottomOf="@id/category_chip_group"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         tools:listitem="@layout/item_book" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

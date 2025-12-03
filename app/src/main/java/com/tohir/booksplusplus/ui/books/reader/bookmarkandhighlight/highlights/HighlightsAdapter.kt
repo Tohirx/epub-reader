@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.tohir.booksplusplus.data.model.Highlight
 import com.tohir.booksplusplus.databinding.ItemHighlightsBinding
-import org.readium.r2.navigator.html.HtmlDecorationTemplate.Companion.highlight
 
 class HighlightsAdapter(private val listener: HighlightClickedListener) : RecyclerView.Adapter<HighlightsAdapter.ViewHolder>() {
 

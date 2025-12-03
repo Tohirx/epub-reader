@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.graphics.toColorInt
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -17,8 +18,11 @@ import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.data.model.Highlight
 import com.tohir.booksplusplus.databinding.FragmentHighlightsBinding
 import com.tohir.booksplusplus.ui.books.reader.ReaderViewModel
+import com.tohir.booksplusplus.ui.books.reader.bookmarkandhighlight.BookmarkAndHighlightFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.readium.r2.navigator.Decoration
+import org.readium.r2.navigator.Decoration.Style
 
 class HighlightFragment() : Fragment(), HighlightClickedListener {
 
@@ -66,16 +70,22 @@ class HighlightFragment() : Fragment(), HighlightClickedListener {
 
     fun getHighlights(bookId: Long) {
         lifecycleScope.launch {
+            viewModel.getAllHighlights(bookId).collectLatest { highlights ->
+                viewModel.getAllNotes(bookId).collectLatest { notes ->
 
-            viewModel.getAllHighlights(bookId = bookId).collectLatest { highlights ->
-                adapter.setHighlights(highlights)
+                    val noteHighlights = notes.map { note ->
+                        Highlight(bookId, Highlight.Style.HIGHLIGHT, "#FFD700".toColorInt(), note.locator, annotation = "", creation = note.date)
+                    }
+                    val combined = highlights + noteHighlights
+                    adapter.setHighlights(combined)
+                }
             }
-
         }
     }
 
     override fun onHighlightClicked(highlight: Highlight) {
         readerViewModel.setHighlight(highlight)
+        (requireParentFragment() as? BookmarkAndHighlightFragment)?.dismiss()
     }
 
     override fun onHighlightLongClicked(highlight: Highlight): Boolean {

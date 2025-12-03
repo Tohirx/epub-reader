@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -24,6 +26,7 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
     private val viewModel: LibraryFragmentViewModel by viewModels()
     private val adapter = BookAdapter(this)
     private lateinit var binding: FragmentLibraryBinding
+    private lateinit var books: List<Book>
 
 
     override fun onCreateView(
@@ -41,12 +44,29 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
 
         binding.libraryRecyclerView.adapter = adapter
         fetchAllBooks()
+
+        val chipGroup = binding.categoryChipGroup
+        chipGroup.setOnCheckedStateChangeListener { _, checkedId ->
+            val filteredBooks = if (checkedId.isNotEmpty()) {
+                when (checkedId.first()) {
+                    R.id.chip_favorite -> books.filter { it.isFavourite }
+                    R.id.chip_completed -> books.filter { it.isComplete }
+                    R.id.chip_want_to_read -> books.filter { it.wantToRead }
+                    else -> books
+                }
+            } else {
+                books
+            }
+            adapter.setBooks(filteredBooks)
+
+        }
     }
 
     fun fetchAllBooks() {
         lifecycleScope.launch {
             viewModel.getAllBooks().collectLatest { books ->
                 adapter.setBooks(books)
+                 this@LibraryFragment.books = books
             }
         }
     }
@@ -74,7 +94,8 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
             when (item.itemId) {
                 R.id.mark_as_completed -> markAsCompleted(book)
                 R.id.delete -> deleteBook(book)
-                R.id.mark_as_favourite -> markAsFavourite(book)
+                R.id.add_to_favourites -> addToFavourites(book)
+                R.id.want_to_read -> addToWantToRead(book)
             }
 
             true
@@ -82,11 +103,16 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
         }
     }
 
+    private fun addToWantToRead(book: Book) {
+        val bookCopy = book.copy(wantToRead = true)
+        viewModel.updateBook(bookCopy)
+    }
+
     fun deleteBook(book: Book) {
         showAlertDeleteDialog(book)
     }
 
-    fun markAsFavourite(book: Book) {
+    fun addToFavourites(book: Book) {
         val bookCopy = book.copy(isFavourite = true)
         viewModel.updateBook(bookCopy)
     }

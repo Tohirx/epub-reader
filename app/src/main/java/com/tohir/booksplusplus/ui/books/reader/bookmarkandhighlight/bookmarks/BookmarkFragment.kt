@@ -18,6 +18,7 @@ import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.data.model.Bookmark
 import com.tohir.booksplusplus.databinding.FragmentBookmarkBinding
 import com.tohir.booksplusplus.ui.books.reader.ReaderViewModel
+import com.tohir.booksplusplus.ui.books.reader.bookmarkandhighlight.BookmarkAndHighlightFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -72,6 +73,7 @@ class BookmarkFragment : Fragment(), OnBookmarkClickListener {
     override fun onBookmarkClicked(bookmark: Bookmark) {
 
         readerViewModel.setBookmark(bookmark)
+        (requireParentFragment() as? BookmarkAndHighlightFragment)?.dismiss()
     }
 
     override fun onBookmarkLongPressed(bookmark: Bookmark): Boolean {
