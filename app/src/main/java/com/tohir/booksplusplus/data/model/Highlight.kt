@@ -56,6 +56,8 @@ data class Highlight(
     var text: Locator.Text = Locator.Text(),
     @ColumnInfo(name = ANNOTATION, defaultValue = "")
     var annotation: String = "",
+    @ColumnInfo(name = PAGE_NUMBER)
+    var pageNumber: Int?
 ): Serializable {
 
     constructor(
@@ -77,7 +79,8 @@ data class Highlight(
                 locations = locator.locations,
                 text = locator.text,
                 annotation = annotation,
-                creation = creation
+                creation = creation,
+                pageNumber = locator.locations.position
             )
 
     val locator: Locator
@@ -119,6 +122,7 @@ data class Highlight(
         const val LOCATIONS = "LOCATIONS"
         const val TEXT = "TEXT"
         const val ANNOTATION = "ANNOTATION"
+        const val PAGE_NUMBER= "PAGE_NUMBER"
     }
 }
 

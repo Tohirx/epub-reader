@@ -30,7 +30,7 @@ interface BookDao {
     @Update
     suspend fun updateBook(book: Book)
 
-    @Query("SELECT * FROM bookmark WHERE bookmark.BOOK_ID = :bookID")
+    @Query("SELECT * FROM bookmark WHERE bookmark.BOOK_ID = :bookID ORDER BY PAGE_NUMBER ASC")
      fun getAllBookmarks(bookID: Long): Flow<List<Bookmark>>
 
     @Query("UPDATE book SET readingProgressJSON = :locator WHERE id = :bookID")
@@ -60,7 +60,7 @@ interface BookDao {
     @Query("SELECT readingProgressDouble FROM book WHERE id = :bookID")
     suspend fun getReadingProgressDouble(bookID: Long): Double
 
-    @Query("SELECT * FROM highlight WHERE BOOK_ID = :bookID")
+    @Query("SELECT * FROM highlight WHERE BOOK_ID = :bookID ORDER BY PAGE_NUMBER ASC")
     fun getAllHighlights(bookID: Long): Flow<List<Highlight>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
