@@ -77,7 +77,7 @@ class HomeFragment : Fragment(), RecentBookAdapter.OnRecentBooksClickedListener 
     }
 
     override fun onMarkAsCompleted(book: Book) {
-        val bookCopy = book.copy(isComplete = true)
+        val bookCopy = book.copy(isFinished = true)
         viewModel.updateBook(bookCopy)
     }
 }

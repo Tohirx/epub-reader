@@ -102,8 +102,6 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
                 binding.textViewExamplesTitle.visibility = View.INVISIBLE
             }
 
-
-
             binding.textViewPosText.text = "(${data.partOfSpeech})"
 
 

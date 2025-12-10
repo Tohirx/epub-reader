@@ -50,7 +50,7 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
             val filteredBooks = if (checkedId.isNotEmpty()) {
                 when (checkedId.first()) {
                     R.id.chip_favorite -> books.filter { it.isFavourite }
-                    R.id.chip_completed -> books.filter { it.isComplete }
+                    R.id.chip_finished-> books.filter { it.isFinished }
                     R.id.chip_want_to_read -> books.filter { it.wantToRead }
                     else -> books
                 }
@@ -88,11 +88,20 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
         val popup = PopupMenu(requireContext(), view)
         popup.menuInflater.inflate(R.menu.menu_library_book, popup.menu)
 
+        if (book.isFinished)
+            popup.menu.findItem(R.id.mark_as_finished).title = "Mark as unfinished"
+
+        if (book.isFavourite)
+            popup.menu.findItem(R.id.add_to_favourites).title = "Remove from favourites"
+
+        if (book.wantToRead)
+            popup.menu.findItem(R.id.want_to_read).title = "Remove from want to read"
+
         popup.show()
 
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
-                R.id.mark_as_completed -> markAsCompleted(book)
+                R.id.mark_as_finished-> markAsFinished(book)
                 R.id.delete -> deleteBook(book)
                 R.id.add_to_favourites -> addToFavourites(book)
                 R.id.want_to_read -> addToWantToRead(book)
@@ -104,6 +113,15 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
     }
 
     private fun addToWantToRead(book: Book) {
+
+        if (book.wantToRead) {
+            val bookCopy = book.copy(wantToRead = false)
+            viewModel.updateBook(bookCopy)
+        } else {
+            val bookCopy = book.copy(wantToRead = true)
+            viewModel.updateBook(bookCopy)
+        }
+
         val bookCopy = book.copy(wantToRead = true)
         viewModel.updateBook(bookCopy)
     }
@@ -113,14 +131,29 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
     }
 
     fun addToFavourites(book: Book) {
+
+        if (book.isFavourite) {
+            val bookCopy = book.copy(isFavourite = false)
+            viewModel.updateBook(bookCopy)
+        }
+
         val bookCopy = book.copy(isFavourite = true)
         viewModel.updateBook(bookCopy)
+
     }
 
 
-    fun markAsCompleted(book: Book) {
-        val bookCopy = book.copy(isComplete = true)
-        viewModel.updateBook(bookCopy)
+    fun markAsFinished(book: Book) {
+
+        if (book.isFinished) {
+            val bookCopy = book.copy(isFinished = false)
+            viewModel.updateBook(bookCopy)
+        } else {
+            val bookCopy = book.copy(isFinished = true)
+            viewModel.updateBook(bookCopy)
+        }
+
+
     }
 
     fun showAlertDeleteDialog(book: Book) {

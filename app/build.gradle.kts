@@ -10,6 +10,8 @@ android {
     namespace = "com.tohir.booksplusplus"
     compileSdk = 36
 
+
+
     defaultConfig {
         applicationId = "com.tohir.booksplusplus"
         minSdk = 24
@@ -26,17 +28,34 @@ android {
         viewBinding = true
     }
 
+    signingConfigs {
+        // Use create("release") instead just release
+        create("release") {
+            storeFile = file("C:/Users/thinkpad/key-stor")
+            storePassword = "Tohir564"
+            keyAlias = "key0"
+            keyPassword = "Tohir564"
+        }
+    }
+
+
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            isShrinkResources = false
+            isDebuggable = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
 
-            isDebuggable = true
+            isDebuggable = false
             signingConfig = signingConfigs.getByName("debug")
+
+
         }
+
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

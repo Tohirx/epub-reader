@@ -67,7 +67,7 @@ class RecentBookAdapter(private val listener : OnRecentBooksClickedListener) : R
                 }
             }
 
-               if (binding.progressBarReading.progress >= 95 && !book.isComplete) {
+               if (binding.progressBarReading.progress >= 95 && !book.isFinished) {
                    binding.buttonMarkAsCompleted.visibility = View.VISIBLE
                    binding.buttonMarkAsCompleted.setOnClickListener {
                        listener.onMarkAsCompleted(book)
@@ -76,7 +76,7 @@ class RecentBookAdapter(private val listener : OnRecentBooksClickedListener) : R
 
            }
 
-            if (book.isComplete)
+            if (book.isFinished)
                 binding.progressBarReading.setProgress(100, true)
 
             binding.root.setOnClickListener {

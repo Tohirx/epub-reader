@@ -14,6 +14,7 @@
             android:scaleType="centerCrop"/>
 
     <ImageButton
+        app:tint="@color/md_theme_onSurface"
         android:id="@+id/image_button_options"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -43,7 +43,6 @@ class BookAdapter(private val listener: BookClickListener) : RecyclerView.Adapte
 
             Picasso.get()
                 .load(uri)
-                .placeholder(R.drawable.gradient_background)
                 .into(binding.imageViewBookCover)
 
             binding.imageButtonOptions.setOnClickListener {
