@@ -40,7 +40,8 @@ class OptionsFragment : Fragment() {
 
 
     private fun setupClickListeners() {
-        binding.imageButtonCancel.setOnClickListener {
+
+        binding.touchInterceptor.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .remove(this)
                 .commit()
