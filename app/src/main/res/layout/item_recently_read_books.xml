@@ -1,14 +1,13 @@
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="?attr/materialCardViewElevatedStyle"
     android:layout_width="280dp"
     android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
     android:layout_marginVertical="8dp"
+    android:layout_marginStart="16dp"
     app:cardCornerRadius="12dp"
-    app:cardElevation="2dp"
-    style="?attr/materialCardViewElevatedStyle">
+    app:cardElevation="2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -25,6 +24,21 @@
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Small"
             tools:src="@drawable/ic_launcher_background" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/text_view_finished"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:drawableStart="@drawable/icon_check_circle"
+            android:drawablePadding="4dp"
+            android:gravity="center_vertical"
+            android:text="Finished"
+            android:textSize="14sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/button_mark_as_finished"
+            app:layout_constraintStart_toStartOf="@id/text_view_book_title" />
+
 
         <TextView
             android:id="@+id/text_view_book_title"
@@ -54,10 +68,11 @@
             tools:text="by F. Scott Fitzgerald" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:layout_marginBottom="12dp"
             android:id="@+id/progress_bar_reading"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@id/image_view_recently_read_book_cover"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/text_view_author_name"
@@ -66,15 +81,23 @@
             tools:progress="48" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_mark_as_completed"
-            android:layout_width="wrap_content"
-            android:layout_height="42dp"
             android:visibility="gone"
-            tools:visibility="visible"
-            app:layout_constraintTop_toBottomOf="@id/progress_bar_reading"
+            android:id="@+id/button_mark_as_finished"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginTop="12dp"
+            android:text="Mark as finished"
+            android:textAllCaps="false"
+            android:textSize="13sp"
+            app:cornerRadius="12dp"
+            app:icon="@drawable/icon_check_circle"
+            app:iconGravity="textStart"
+            app:iconPadding="8dp"
+            app:iconSize="16dp"
+            app:layout_constraintEnd_toEndOf="@id/progress_bar_reading"
             app:layout_constraintStart_toStartOf="@id/progress_bar_reading"
-            android:layout_marginTop="8dp"
-            android:text="Mark as completed"/>
+            app:layout_constraintTop_toBottomOf="@id/progress_bar_reading" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

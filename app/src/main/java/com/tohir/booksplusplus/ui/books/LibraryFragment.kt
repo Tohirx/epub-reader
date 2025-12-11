@@ -121,9 +121,6 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
             val bookCopy = book.copy(wantToRead = true)
             viewModel.updateBook(bookCopy)
         }
-
-        val bookCopy = book.copy(wantToRead = true)
-        viewModel.updateBook(bookCopy)
     }
 
     fun deleteBook(book: Book) {
