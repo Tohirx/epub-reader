@@ -52,10 +52,15 @@ class HomeFragment : Fragment(), RecentBookAdapter.BookClickListener {
 
         val finishedBooksAdapter = RecentBookAdapter(this)
 
+
+
         binding.recyclerViewFinished.adapter = finishedBooksAdapter.apply {
            lifecycleScope.launch {
                viewModel.getFinishedBooks().collectLatest { books ->
                    setBooks(books)
+
+                   if (books.isEmpty())
+                       binding.textViewFinished.visibility = View.GONE
                }
            }
         }

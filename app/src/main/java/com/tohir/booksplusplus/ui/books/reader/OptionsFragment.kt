@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
+import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.databinding.FragmentOptionsBinding
 import com.tohir.booksplusplus.ui.books.reader.bookmarkandhighlight.BookmarkAndHighlightFragment
 import com.tohir.booksplusplus.ui.books.reader.search.SearchServiceFragmentBottomSheet
@@ -42,9 +44,7 @@ class OptionsFragment : Fragment() {
     private fun setupClickListeners() {
 
         binding.touchInterceptor.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .remove(this)
-                .commit()
+            parentFragmentManager.popBackStack()
         }
 
         binding.cardViewThemesAndSettingsContainer.setOnClickListener {

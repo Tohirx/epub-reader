@@ -26,6 +26,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -355,9 +356,17 @@ class EpubReaderFragment : Fragment() {
             arguments = bundleOf("bookId" to bookId)
         }
 
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_options, fragment)
-            .commitNow()
+        parentFragmentManager.commit {
+            setCustomAnimations(
+                R.anim.slide_in, // enter
+                R.anim.fade_out, // exit
+                R.anim.fade_in, // popEnter
+                R.anim.slide_out // popExit
+            )
+            replace(R.id.fragment_options, fragment)
+            addToBackStack(null)
+        }
+
     }
 
 
