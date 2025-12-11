@@ -5,9 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -45,12 +44,11 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
         binding.libraryRecyclerView.adapter = adapter
         fetchAllBooks()
 
-        val chipGroup = binding.categoryChipGroup
-        chipGroup.setOnCheckedStateChangeListener { _, checkedId ->
+        binding.categoryChipGroup.setOnCheckedStateChangeListener { _, checkedId ->
             val filteredBooks = if (checkedId.isNotEmpty()) {
                 when (checkedId.first()) {
-                    R.id.chip_favorite -> books.filter { it.isFavourite }
-                    R.id.chip_finished-> books.filter { it.isFinished }
+                    R.id.chip_favorites -> books.filter { it.isFavourite }
+                    R.id.chip_finished -> books.filter { it.isFinished }
                     R.id.chip_want_to_read -> books.filter { it.wantToRead }
                     else -> books
                 }
@@ -65,8 +63,18 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
     fun fetchAllBooks() {
         lifecycleScope.launch {
             viewModel.getAllBooks().collectLatest { books ->
-                adapter.setBooks(books)
-                 this@LibraryFragment.books = books
+                this@LibraryFragment.books = books   // store full list
+
+                val checkedId = binding.categoryChipGroup.checkedChipId
+
+                val filteredBooks = when (checkedId) {
+                    R.id.chip_favorites -> books.filter { it.isFavourite }
+                    R.id.chip_finished -> books.filter { it.isFinished }
+                    R.id.chip_want_to_read -> books.filter { it.wantToRead }
+                    else -> books
+                }
+
+                adapter.setBooks(filteredBooks)
             }
         }
     }
@@ -101,7 +109,7 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
 
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
-                R.id.mark_as_finished-> markAsFinished(book)
+                R.id.mark_as_finished -> markAsFinished(book)
                 R.id.delete -> deleteBook(book)
                 R.id.add_to_favourites -> addToFavourites(book)
                 R.id.want_to_read -> addToWantToRead(book)
@@ -117,9 +125,19 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
         if (book.wantToRead) {
             val bookCopy = book.copy(wantToRead = false)
             viewModel.updateBook(bookCopy)
+            Toast.makeText(
+                requireContext(),
+                "Book removed from want to read successfully",
+                Toast.LENGTH_SHORT
+            ).show()
         } else {
             val bookCopy = book.copy(wantToRead = true)
             viewModel.updateBook(bookCopy)
+            Toast.makeText(
+                requireContext(),
+                "Book successfully added to want to read",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -132,10 +150,21 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
         if (book.isFavourite) {
             val bookCopy = book.copy(isFavourite = false)
             viewModel.updateBook(bookCopy)
-        }
+            Toast.makeText(
+                requireContext(),
+                "Book removed from favourites successfully",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
 
-        val bookCopy = book.copy(isFavourite = true)
-        viewModel.updateBook(bookCopy)
+            val bookCopy = book.copy(isFavourite = true)
+            viewModel.updateBook(bookCopy)
+            Toast.makeText(
+                requireContext(),
+                "Book successfully added to favourites",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
 
     }
 
@@ -145,11 +174,20 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
         if (book.isFinished) {
             val bookCopy = book.copy(isFinished = false)
             viewModel.updateBook(bookCopy)
+            Toast.makeText(
+                requireContext(),
+                "Book unmarked as finished successfully",
+                Toast.LENGTH_SHORT
+            ).show()
         } else {
             val bookCopy = book.copy(isFinished = true)
             viewModel.updateBook(bookCopy)
+            Toast.makeText(
+                requireContext(),
+                "Book successfully marked as finished",
+                Toast.LENGTH_SHORT
+            ).show()
         }
-
 
     }
 
@@ -157,7 +195,11 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Warning")
             .setMessage("Are you sure you want to delete this book?")
-            .setPositiveButton("Yes") { _, _ -> viewModel.deleteBook(book) }
+            .setPositiveButton("Yes") { _, _ ->
+                viewModel.deleteBook(book)
+                Toast.makeText(requireContext(), "Book deleted successfully", Toast.LENGTH_SHORT)
+                    .show()
+            }
             .setNegativeButton(
                 "No"
             ) { dialog, _ -> dialog.dismiss() }

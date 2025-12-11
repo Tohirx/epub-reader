@@ -15,6 +15,10 @@ class BooksRepository(private val bookDao: BookDao) {
         bookDao.addBook(book)
     }
 
+     fun getFinishedBooks(): Flow<List<Book>> {
+        return bookDao.getFinishedBooks()
+    }
+
     suspend fun deleteBook(book: Book) {
         bookDao.deleteBook(book)
     }

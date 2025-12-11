@@ -12,7 +12,7 @@ import com.tohir.booksplusplus.databinding.ItemRecentlyReadBooksBinding
 import java.io.File
 import kotlin.math.ceil
 
-class RecentBookAdapter(private val listener : OnRecentBooksClickedListener) : RecyclerView.Adapter<RecentBookAdapter.ViewHolder>() {
+class RecentBookAdapter(private val listener : BookClickListener) : RecyclerView.Adapter<RecentBookAdapter.ViewHolder>() {
 
     private var books: List<Book> = listOf()
 
@@ -85,12 +85,17 @@ class RecentBookAdapter(private val listener : OnRecentBooksClickedListener) : R
                 listener.onRecentBookClicked(book)
             }
 
+            binding.imageButtonOptions.setOnClickListener {
+                listener.onThreeDotsClicked(it, book)
+            }
+
         }
 
     }
 
-    interface OnRecentBooksClickedListener {
+    interface BookClickListener {
         fun onRecentBookClicked(book: Book)
         fun onMarkAsCompleted(book: Book)
+        fun onThreeDotsClicked(view: View, book: Book)
     }
 }

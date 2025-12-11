@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/delete"
-        android:title="Delete"/>
+    <item
+        android:id="@+id/mark_as_finished"
+        android:title="Mark as finished" />
 
-    <item android:id="@+id/mark_as_finished"
-        android:title="Mark as finished"/>
+    <item
+        android:id="@+id/add_to_favourites"
+        android:title="Add to favourites" />
 
-    <item android:id="@+id/add_to_favourites"
-        android:title="Add to favourites"/>
+    <item
+        android:id="@+id/want_to_read"
+        android:title="Add to want to read" />
 
-    <item android:id="@+id/details"
-        android:title="Show details"/>
+    <item
+        android:id="@+id/details"
+        android:title="Show details" />
 
-    <item android:id="@+id/want_to_read"
-        android:title="Add to want to read"/>
-
+    <item
+        android:id="@+id/delete"
+        android:title="Delete" />
 
 
 </menu>

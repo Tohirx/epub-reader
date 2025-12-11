@@ -6,10 +6,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.data.model.Book
 import com.tohir.booksplusplus.databinding.FragmentHomeBinding
 import com.tohir.booksplusplus.ui.books.reader.ReaderActivity
@@ -17,7 +21,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
-class HomeFragment : Fragment(), RecentBookAdapter.OnRecentBooksClickedListener {
+class HomeFragment : Fragment(), RecentBookAdapter.BookClickListener {
 
     private val viewModel: HomeViewModel by viewModels()
     private val adapter = RecentBookAdapter(this)
@@ -29,7 +33,11 @@ class HomeFragment : Fragment(), RecentBookAdapter.OnRecentBooksClickedListener 
         )
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -38,10 +46,26 @@ class HomeFragment : Fragment(), RecentBookAdapter.OnRecentBooksClickedListener 
         super.onViewCreated(view, savedInstanceState)
 
 
-        binding.recyclerViewPreviouslyRead.layoutManager = LinearLayoutManager(requireContext(),
-            LinearLayoutManager.HORIZONTAL, false)
+        binding.recyclerViewFinished.layoutManager = LinearLayoutManager(requireContext(),
+            LinearLayoutManager.HORIZONTAL, false
+        )
+
+        val finishedBooksAdapter = RecentBookAdapter(this)
+
+        binding.recyclerViewFinished.adapter = finishedBooksAdapter.apply {
+           lifecycleScope.launch {
+               viewModel.getFinishedBooks().collectLatest { books ->
+                   setBooks(books)
+               }
+           }
+        }
 
         binding.textViewMinutesReadValue.text = prefs.getInt("MINUTES", 0).toString()
+
+        binding.recyclerViewPreviouslyRead.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.HORIZONTAL, false
+        )
 
         binding.recyclerViewPreviouslyRead.adapter = adapter
 
@@ -80,4 +104,124 @@ class HomeFragment : Fragment(), RecentBookAdapter.OnRecentBooksClickedListener 
         val bookCopy = book.copy(isFinished = true)
         viewModel.updateBook(bookCopy)
     }
+
+    override fun onThreeDotsClicked(
+        view: View,
+        book: Book
+    ) {
+
+        val popup = PopupMenu(requireContext(), view)
+        popup.menuInflater.inflate(R.menu.menu_library_book, popup.menu)
+
+        if (book.isFinished)
+            popup.menu.findItem(R.id.mark_as_finished).title = "Mark as unfinished"
+
+        if (book.isFavourite)
+            popup.menu.findItem(R.id.add_to_favourites).title = "Remove from favourites"
+
+        if (book.wantToRead)
+            popup.menu.findItem(R.id.want_to_read).title = "Remove from want to read"
+
+        popup.show()
+
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.mark_as_finished -> markAsFinished(book)
+                R.id.delete -> deleteBook(book)
+                R.id.add_to_favourites -> addToFavourites(book)
+                R.id.want_to_read -> addToWantToRead(book)
+            }
+
+            true
+
+        }
+    }
+
+    private fun addToWantToRead(book: Book) {
+
+        if (book.wantToRead) {
+            val bookCopy = book.copy(wantToRead = false)
+            viewModel.updateBook(bookCopy)
+            Toast.makeText(
+                requireContext(),
+                "Book removed from want to read successfully",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            val bookCopy = book.copy(wantToRead = true)
+            viewModel.updateBook(bookCopy)
+            Toast.makeText(
+                requireContext(),
+                "Book successfully added to want to read",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    fun deleteBook(book: Book) {
+        showAlertDeleteDialog(book)
+    }
+
+    fun addToFavourites(book: Book) {
+
+        if (book.isFavourite) {
+            val bookCopy = book.copy(isFavourite = false)
+            viewModel.updateBook(bookCopy)
+            Toast.makeText(
+                requireContext(),
+                "Book removed from favourites successfully",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+
+            val bookCopy = book.copy(isFavourite = true)
+            viewModel.updateBook(bookCopy)
+            Toast.makeText(
+                requireContext(),
+                "Book successfully added to favourites",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+    }
+
+
+    fun markAsFinished(book: Book) {
+
+        if (book.isFinished) {
+            val bookCopy = book.copy(isFinished = false)
+            viewModel.updateBook(bookCopy)
+            Toast.makeText(
+                requireContext(),
+                "Book unmarked as finished successfully",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            val bookCopy = book.copy(isFinished = true)
+            viewModel.updateBook(bookCopy)
+            Toast.makeText(
+                requireContext(),
+                "Book successfully marked as finished",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+    }
+
+    fun showAlertDeleteDialog(book: Book) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Warning")
+            .setMessage("Are you sure you want to delete this book?")
+            .setPositiveButton("Yes") { _, _ ->
+                viewModel.deleteBook(book)
+                Toast.makeText(requireContext(), "Book deleted successfully", Toast.LENGTH_SHORT)
+                    .show()
+            }
+            .setNegativeButton(
+                "No"
+            ) { dialog, _ -> dialog.dismiss() }
+            .show()
+    }
+
+
 }

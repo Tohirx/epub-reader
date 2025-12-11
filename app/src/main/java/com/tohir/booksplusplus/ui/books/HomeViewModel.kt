@@ -12,9 +12,12 @@ class HomeViewModel : ViewModel() {
 
     private val booksRepository: BooksRepository = BooksPlusPlus.booksRepository
 
-    fun getRecentBooks(): Flow<List<Book>> {
+     fun getRecentBooks(): Flow<List<Book>> {
         return booksRepository.getRecentBooks()
+    }
 
+    fun getFinishedBooks(): Flow<List<Book>> {
+        return booksRepository.getFinishedBooks()
     }
 
     fun updateBook(book: Book) {
@@ -23,8 +26,10 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun getProgressionAsDouble(book: Book) {
-
+    fun deleteBook(book: Book) {
+        viewModelScope.launch {
+            booksRepository.deleteBook(book)
+        }
     }
 
 }

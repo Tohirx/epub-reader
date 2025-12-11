@@ -23,6 +23,8 @@ interface BookDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addBookmark(bookmark: Bookmark)
 
+    @Query("SELECT * FROM book WHERE isFinished = 1")
+    fun getFinishedBooks(): Flow<List<Book>>
 
     @Query("SELECT * FROM bookmark WHERE bookmark.ID = :id" )
     suspend fun findBookmarkById(id: Long): Bookmark
