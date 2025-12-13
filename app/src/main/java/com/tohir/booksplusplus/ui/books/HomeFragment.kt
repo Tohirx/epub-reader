@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -46,7 +47,8 @@ class HomeFragment : Fragment(), RecentBookAdapter.BookClickListener {
         super.onViewCreated(view, savedInstanceState)
 
 
-        binding.recyclerViewFinished.layoutManager = LinearLayoutManager(requireContext(),
+        binding.recyclerViewFinished.layoutManager = LinearLayoutManager(
+            requireContext(),
             LinearLayoutManager.HORIZONTAL, false
         )
 
@@ -55,14 +57,16 @@ class HomeFragment : Fragment(), RecentBookAdapter.BookClickListener {
 
 
         binding.recyclerViewFinished.adapter = finishedBooksAdapter.apply {
-           lifecycleScope.launch {
-               viewModel.getFinishedBooks().collectLatest { books ->
-                   setBooks(books)
+            lifecycleScope.launch {
+                viewModel.getFinishedBooks().collectLatest { books ->
+                    setBooks(books)
 
-                   if (books.isEmpty())
-                       binding.textViewFinished.visibility = View.GONE
-               }
-           }
+                    if (books.isEmpty())
+                        binding.textViewFinished.visibility = View.GONE
+                    else
+                        binding.textViewFinished.visibility = View.VISIBLE
+                }
+            }
         }
 
         binding.textViewMinutesReadValue.text = prefs.getInt("MINUTES", 0).toString()
@@ -100,7 +104,6 @@ class HomeFragment : Fragment(), RecentBookAdapter.BookClickListener {
         viewModel.updateBook(bookCopy)
 
         val intent = Intent(requireContext(), ReaderActivity::class.java)
-        intent.putExtra("BOOK_URI", book.uri)
         intent.putExtra("BOOK_ID", book.id)
         startActivity(intent)
     }
@@ -135,11 +138,21 @@ class HomeFragment : Fragment(), RecentBookAdapter.BookClickListener {
                 R.id.delete -> deleteBook(book)
                 R.id.add_to_favourites -> addToFavourites(book)
                 R.id.want_to_read -> addToWantToRead(book)
+                R.id.details -> showDetails(book)
             }
 
             true
 
         }
+    }
+
+    private fun showDetails(book: Book) {
+
+        val fragment = BookDetailsBottomSheetDialogFragment().apply {
+            arguments = bundleOf("book" to book)
+        }
+        fragment.show(parentFragmentManager, "BookDetailsBottomSheetDialogFragment")
+
     }
 
     private fun addToWantToRead(book: Book) {

@@ -1,18 +1,21 @@
 package com.tohir.booksplusplus.ui
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tohir.booksplusplus.data.BooksRepository
 import com.tohir.booksplusplus.data.model.Book
-import com.tohir.booksplusplus.ui.books.reader.EpubReaderViewModel
+import com.tohir.booksplusplus.ui.books.reader.ReaderActivity
 import com.tohir.booksplusplus.util.BooksPlusPlus
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.readium.adapter.pdfium.document.PdfiumDocumentFactory
 import org.readium.r2.shared.publication.Publication
 import org.readium.r2.shared.publication.services.cover
+import org.readium.r2.shared.publication.services.positions
 import org.readium.r2.shared.util.AbsoluteUrl
 import org.readium.r2.shared.util.asset.AssetRetriever
 import org.readium.r2.shared.util.http.DefaultHttpClient
@@ -21,79 +24,137 @@ import org.readium.r2.streamer.PublicationOpener
 import org.readium.r2.streamer.parser.DefaultPublicationParser
 import java.io.File
 import java.io.FileOutputStream
+import java.security.MessageDigest
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 
 class MainViewModel : ViewModel() {
     private val booksRepository: BooksRepository = BooksPlusPlus.booksRepository
     private var publication: Publication? = null
 
-
     suspend fun addBookPublicationToDatabase(uri: Uri, context: Context) {
 
-        val fileFromStorage = EpubReaderViewModel.copyUriToInternalStorage(uri, context)
+        val hashedUri = hashUri(context, uri)
+        val bookId = booksRepository.getBookIdByHash(hashedUri)
 
-        if (fileFromStorage != null) {
+        if (bookId != null) {
+            val intent = Intent(context, ReaderActivity::class.java)
+            intent.putExtra("BOOK_ID", bookId)
+            context.startActivity(intent)
+            return
+        }
 
-            val httpClient = DefaultHttpClient()
-            val assetRetriever = AssetRetriever(context.contentResolver, httpClient)
-            val url: AbsoluteUrl? = Uri.fromFile(fileFromStorage).toAbsoluteUrl()
 
-            val asset = assetRetriever.retrieve(url!!).getOrNull()
+        val httpClient = DefaultHttpClient()
+        val assetRetriever = AssetRetriever(context.contentResolver, httpClient)
+        val url: AbsoluteUrl? = uri.toAbsoluteUrl()
 
-            if (asset != null) {
-                val publicationParser = DefaultPublicationParser(
-                    context,
-                    httpClient,
-                    assetRetriever,
-                    PdfiumDocumentFactory(context)
-                )
+        val asset = assetRetriever.retrieve(url!!).getOrNull()
 
-                val publicationOpener = PublicationOpener(publicationParser)
+        if (asset != null) {
+            val publicationParser = DefaultPublicationParser(
+                context,
+                httpClient,
+                assetRetriever,
+                PdfiumDocumentFactory(context)
+            )
 
-                 publication =
-                    publicationOpener.open(asset, allowUserInteraction = false).getOrNull()
+            val publicationOpener = PublicationOpener(publicationParser)
 
+            publication =
+                publicationOpener.open(asset, allowUserInteraction = false).getOrNull()
+
+        }
+
+        if (publication != null) {
+
+            val authors = publication!!.metadata.authors.joinToString(", ") { contributor ->
+                contributor.name
             }
 
-            if (publication != null) {
+            // PLEASE FIX THIS LATER. GET A SUITABLE PLACEHOLDER IMAGE FOR BOOKS MISSING A COVER, AND STORE IT THE FILE.
+            // This stores the cover in the App's directory as a PNG image
 
-                val authors = publication!!.metadata.authors.joinToString(", ") { contributor ->
-                    contributor.name
+
+            val file = File(context.filesDir, "cover_${publication!!.metadata.title}.png")
+            if (publication!!.cover() != null && !file.exists()) {
+                FileOutputStream(file).use { out ->
+                    publication!!.cover()?.compress(Bitmap.CompressFormat.PNG, 80, out)
+                }
+            }
+
+
+            val mediaType = asset?.format?.mediaType
+            viewModelScope.launch {
+
+                val year = publication!!.metadata.published?.let { instant ->
+                    val date = instant.toJavaDate()
+                    val sdf = SimpleDateFormat("yyyy")
+
+                    sdf.format(date)
                 }
 
-                // PLEASE FIX THIS LATER. GET A SUITABLE PLACEHOLDER IMAGE FOR BOOKS MISSING A COVER, AND STORE IT THE FILE.
-                // This stores the cover in the App's directory as a PNG image
+                val uriFile = copyUriFileToInternalStorage(uri, context)
 
+                if (uriFile != null) {
 
-                val file = File(context.filesDir, "cover_${publication!!.metadata.title}.png")
-                if (publication!!.cover() != null && !file.exists()) {
-                    FileOutputStream(file).use { out ->
-                        publication!!.cover()?.compress(Bitmap.CompressFormat.PNG, 80, out)
-                    }
-                }
-
-
-                val mediaType = asset?.format?.mediaType
-                viewModelScope.launch {
-
-                    val books = booksRepository.getAllBooksAsList()
                     val book = Book(
                         title = publication!!.metadata.title,
                         author = authors,
                         cover = file.absolutePath,
                         identifier = publication!!.metadata.identifier ?: "",
-                        uri = Uri.fromFile(fileFromStorage).toString(),
                         readingProgressJSON = null,
                         mediaType = mediaType.toString(),
-                        lastDateOpened = LocalDateTime.now().toString(),
-                        readingProgressDouble = null
+                        readingProgressDouble = null,
+                        yearReleased = year,
+                        numberOfPages = publication!!.positions().size,
+                        uri = Uri.fromFile(uriFile).toString(),
+                        hash = hashedUri
                     )
-                    if (!books.contains(book))
-                        booksRepository.addBook(book)
 
+                    booksRepository.addBook(book)
                 }
             }
+
         }
+    }
+
+    private fun hashUri(context: Context, uri: Uri): String {
+        val digest = MessageDigest.getInstance("SHA-256")
+        context.contentResolver.openInputStream(uri)?.use { input ->
+            val buffer = ByteArray(8 * 1024)
+            var bytes = input.read(buffer)
+            while (bytes > 0) {
+                digest.update(buffer, 0, bytes)
+                bytes = input.read(buffer)
+            }
+        }
+        return digest.digest().joinToString("") { "%02x".format(it) }
+    }
+
+
+    fun copyUriFileToInternalStorage(uri: Uri, context: Context): File? {
+
+        try {
+            val fileName = "file_${System.currentTimeMillis()}.epub"
+            val destinationFile = File(context.filesDir, fileName)
+
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                FileOutputStream(destinationFile).use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+            }
+
+            return destinationFile
+
+        } catch (e: Exception) {
+            println(e.message)
+            println(e.printStackTrace())
+
+        }
+
+        return null
+
     }
 
 

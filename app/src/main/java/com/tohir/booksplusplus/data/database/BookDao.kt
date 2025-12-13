@@ -1,6 +1,5 @@
 package com.tohir.booksplusplus.data.database
 
-import android.icu.text.MessagePattern
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -20,14 +19,11 @@ interface BookDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addBook(book: Book)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = REPLACE)
     suspend fun addBookmark(bookmark: Bookmark)
 
     @Query("SELECT * FROM book WHERE isFinished = 1")
     fun getFinishedBooks(): Flow<List<Book>>
-
-    @Query("SELECT * FROM bookmark WHERE bookmark.ID = :id" )
-    suspend fun findBookmarkById(id: Long): Bookmark
 
     @Query("DELETE FROM BOOKMARK WHERE bookmark.ID = :id")
     suspend fun deleteBookmarkById(id: Long)
@@ -36,7 +32,7 @@ interface BookDao {
     suspend fun updateBook(book: Book)
 
     @Query("SELECT * FROM bookmark WHERE bookmark.BOOK_ID = :bookID ORDER BY PAGE_NUMBER ASC")
-     fun getAllBookmarks(bookID: Long): Flow<List<Bookmark>>
+    fun getAllBookmarks(bookID: Long): Flow<List<Bookmark>>
 
     @Query("UPDATE book SET readingProgressJSON = :locator WHERE id = :bookID")
     suspend fun saveReadingProgress(locator: String?, bookID: Long?)
@@ -62,25 +58,13 @@ interface BookDao {
     @Query("SELECT * FROM book ORDER BY dateAdded DESC")
     fun getAllBooksAsFlow(): Flow<List<Book>>
 
-    @Query("SELECT * FROM highlight ORDER BY ID DESC LIMIT 1")
-    suspend fun findLastHighlightAdded(): Highlight
-
-    @Query("SELECT readingProgressDouble FROM book WHERE id = :bookID")
-    suspend fun getReadingProgressDouble(bookID: Long): Double
-
     @Query("SELECT * FROM highlight WHERE BOOK_ID = :bookID ORDER BY PAGE_NUMBER ASC")
     fun getAllHighlights(bookID: Long): Flow<List<Highlight>>
 
     @Insert(onConflict = REPLACE)
     suspend fun addHighlight(highlight: Highlight)
 
-    @Query("SELECT * FROM book")
-    suspend fun getAllBooksAsList(): List<Book>
-
-    @Query("SELECT * FROM book WHERE id = :id")
-    fun findBookById(id: Long): Book
-
-    @Query("SELECT * FROM book ORDER BY lastDateOpened DESC LIMIT 5")
+    @Query("SELECT * FROM book ORDER BY lastDateOpened DESC LIMIT 10")
     fun getRecentBooks(): Flow<List<Book>>
 
     @Insert(onConflict = REPLACE)
@@ -92,11 +76,21 @@ interface BookDao {
     @Query("DELETE FROM note WHERE id = :id")
     suspend fun deleteNoteById(id: Long)
 
+    @Query("SELECT * FROM Book WHERE id = :bookId")
+    suspend fun findBookById(bookId: Long): Book
+
     @Query("SELECT * FROM NOTE WHERE book_id = :bookId")
-     fun getAllNotes(bookId: Long): Flow<List<Note>>
+    fun getAllNotes(bookId: Long): Flow<List<Note>>
 
     @Query("SELECT * FROM NOTE WHERE id = :id")
     suspend fun findNoteById(id: Long): Note
+
+    @Query("SELECT EXISTS(SELECT 1 FROM Book WHERE hash = :hash)")
+    suspend fun existsByHash(hash: String): Boolean
+
+    @Query("SELECT id FROM Book WHERE hash = :hash LIMIT 1")
+    suspend fun getBookIdByHash(hash: String): Long?
+
 
 
 }

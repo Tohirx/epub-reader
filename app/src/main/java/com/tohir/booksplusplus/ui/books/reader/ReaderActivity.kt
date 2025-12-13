@@ -23,14 +23,11 @@ class ReaderActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val bookIdFromLibraryFragmentOrHomeFragment =
-            intent.getLongExtra(LibraryFragment.Companion.BOOK_ID, 0)
-        val bookUriFromLibraryFragmentOrHomeFragment =
-            intent.getStringExtra(LibraryFragment.Companion.BOOK_URI)
+            intent.getLongExtra(LibraryFragment.BOOK_ID, 0)
 
 
         val fragment = EpubReaderFragment().apply {
             arguments = bundleOf(
-                BOOK_URI to bookUriFromLibraryFragmentOrHomeFragment,
                 "BOOK_ID" to bookIdFromLibraryFragmentOrHomeFragment
             )
         }
@@ -50,10 +47,4 @@ class ReaderActivity : AppCompatActivity() {
         controller.systemBarsBehavior =
             WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     }
-
-    companion object {
-        const val BOOK_URI = "BOOK_URI"
-    }
-
-
 }

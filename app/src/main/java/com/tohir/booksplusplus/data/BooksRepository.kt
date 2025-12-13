@@ -15,6 +15,10 @@ class BooksRepository(private val bookDao: BookDao) {
         bookDao.addBook(book)
     }
 
+    suspend fun getBookIdByHash(hash: String): Long? {
+        return bookDao.getBookIdByHash(hash)
+    }
+
      fun getFinishedBooks(): Flow<List<Book>> {
         return bookDao.getFinishedBooks()
     }
@@ -54,7 +58,7 @@ class BooksRepository(private val bookDao: BookDao) {
         locator: Locator,
         annotation: String,
         date: String
-    ) = bookDao.addHighlight(Highlight(bookId, style, tint, locator, annotation, date))
+    )  { bookDao.addHighlight(Highlight(bookId, style, tint, locator, annotation, date)) }
 
     fun getAllBooks(): Flow<List<Book>> = bookDao.getAllBooksAsFlow()
 
@@ -62,21 +66,13 @@ class BooksRepository(private val bookDao: BookDao) {
         bookDao.saveReadingProgress(locator, bookID)
     }
 
-    suspend fun getReadingProgressAsDouble(bookID: Long): Double {
-        return bookDao.getReadingProgressDouble(bookID)
+    suspend fun existByHash(hash: String): Boolean {
+        return bookDao.existsByHash(hash)
     }
+
 
     suspend fun getReadingProgress(bookID: Long): String? {
         return bookDao.getReadingProgress(bookID)
-    }
-
-
-    suspend fun getAllBooksAsList(): List<Book> {
-        return bookDao.getAllBooksAsList()
-    }
-
-    suspend fun findBookById(id: Long): Book {
-        return bookDao.findBookById(id)
     }
 
     suspend fun addBookmark(bookmark: Bookmark) {
@@ -112,6 +108,11 @@ class BooksRepository(private val bookDao: BookDao) {
 
     suspend fun deleteNoteById(id: Long) {
         bookDao.deleteNoteById(id)
+    }
+
+    suspend fun findBookById(bookId: Long): Book {
+        return bookDao.findBookById(bookId)
+
     }
 
 

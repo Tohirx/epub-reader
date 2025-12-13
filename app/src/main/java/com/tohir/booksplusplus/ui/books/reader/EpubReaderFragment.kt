@@ -21,7 +21,6 @@ import android.widget.Toast
 import androidx.annotation.ColorInt
 import androidx.core.content.edit
 import androidx.core.graphics.toColorInt
-import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -65,13 +64,10 @@ import org.readium.r2.shared.publication.services.positions
 
 class EpubReaderFragment : Fragment() {
     private val viewModel: EpubReaderViewModel by viewModels()
-
     private val readerViewModel: ReaderViewModel by activityViewModels()
     private lateinit var navigator: EpubNavigatorFragment
     private lateinit var binding: FragmentReaderBinding
-    private var bookUri: String? = null
     private var bookId: Long? = null
-
     private var readingStartTime: Long? = null
     private var publication: Publication? = null
 
@@ -111,83 +107,78 @@ class EpubReaderFragment : Fragment() {
     @OptIn(ExperimentalReadiumApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
 
-
-        bookUri = arguments?.getString("BOOK_PATH") ?: arguments?.getString("BOOK_URI")
         bookId = arguments?.getLong("BOOK_ID")
 
-        if (bookUri != null) {
-            publication = runBlocking {
-                viewModel.importPublication(
-                    bookUri!!.toUri(),
-                    requireContext(),
-                    bookId
-                )
-            }
+        publication = runBlocking {
+            viewModel.importPublication(
+                requireContext(),
+                bookId!!
+            )
+        }
 
 
 
-            if (publication != null) {
-                val navigatorFactory = EpubNavigatorFactory(publication = publication!!)
+        if (publication != null) {
+            val navigatorFactory = EpubNavigatorFactory(publication = publication!!)
 
-                readerViewModel.setPublication(publication!!)
-
-
-                childFragmentManager.fragmentFactory = navigatorFactory.createFragmentFactory(
-                    initialLocator = runBlocking { viewModel.restoreReadingProgression(bookId!!) },
-                    configuration = EpubNavigatorFragment.Configuration {
-                        selectionActionModeCallback = customSelectionActionModeCallback
-
-                        servedAssets += "font/.*"
+            readerViewModel.setPublication(publication!!)
 
 
-                        addFontFamilyDeclaration(FontFamily.OPEN_SANS) {
-                            addFontFace {
-                                addSource("font/open_sans.ttf", preload = true)
-                                setFontStyle(FontStyle.NORMAL)
-                                setFontWeight(FontWeight.NORMAL)
-                            }
+            childFragmentManager.fragmentFactory = navigatorFactory.createFragmentFactory(
+                initialLocator = runBlocking { viewModel.restoreReadingProgression(bookId!!) },
+                configuration = EpubNavigatorFragment.Configuration {
+                    selectionActionModeCallback = customSelectionActionModeCallback
 
+                    servedAssets += "font/.*"
+
+
+                    addFontFamilyDeclaration(FontFamily.OPEN_SANS) {
+                        addFontFace {
+                            addSource("font/open_sans.ttf", preload = true)
+                            setFontStyle(FontStyle.NORMAL)
+                            setFontWeight(FontWeight.NORMAL)
                         }
 
-                        addFontFamilyDeclaration(FontFamily.LEXEND) {
-                            addFontFace {
-                                addSource("font/lexend_regular.ttf", preload = true)
-                                setFontStyle(FontStyle.NORMAL)
-                                setFontWeight(FontWeight.NORMAL)
-                            }
+                    }
 
+                    addFontFamilyDeclaration(FontFamily.LEXEND) {
+                        addFontFace {
+                            addSource("font/lexend_regular.ttf", preload = true)
+                            setFontStyle(FontStyle.NORMAL)
+                            setFontWeight(FontWeight.NORMAL)
                         }
 
-                        addFontFamilyDeclaration(FontFamily.MONTSERRAT) {
-                            addFontFace {
-                                addSource("font/montserrat_regular.ttf", preload = true)
-                                setFontStyle(FontStyle.NORMAL)
-                                setFontWeight(FontWeight.NORMAL)
-                            }
+                    }
 
+                    addFontFamilyDeclaration(FontFamily.MONTSERRAT) {
+                        addFontFace {
+                            addSource("font/montserrat_regular.ttf", preload = true)
+                            setFontStyle(FontStyle.NORMAL)
+                            setFontWeight(FontWeight.NORMAL)
                         }
 
-                        addFontFamilyDeclaration(FontFamily.POIRET_ONE) {
-                            addFontFace {
-                                addSource("font/poiret_one_regular.ttf", preload = true)
-                                setFontStyle(FontStyle.NORMAL)
-                                setFontWeight(FontWeight.NORMAL)
-                            }
+                    }
 
+                    addFontFamilyDeclaration(FontFamily.POIRET_ONE) {
+                        addFontFace {
+                            addSource("font/poiret_one_regular.ttf", preload = true)
+                            setFontStyle(FontStyle.NORMAL)
+                            setFontWeight(FontWeight.NORMAL)
                         }
 
-                        addFontFamilyDeclaration(FontFamily.ROBOTO) {
-                            addFontFace {
-                                addSource("font/roboto_regular.ttf", preload = true)
-                                setFontStyle(FontStyle.NORMAL)
-                                setFontWeight(FontWeight.NORMAL)
-                            }
+                    }
+
+                    addFontFamilyDeclaration(FontFamily.ROBOTO) {
+                        addFontFace {
+                            addSource("font/roboto_regular.ttf", preload = true)
+                            setFontStyle(FontStyle.NORMAL)
+                            setFontWeight(FontWeight.NORMAL)
                         }
                     }
-                )
-            } else {
-                throw IllegalStateException("Publication is null")
-            }
+                }
+            )
+        } else {
+            throw IllegalStateException("Publication is null")
         }
         super.onCreate(savedInstanceState)
     }
@@ -626,7 +617,7 @@ class EpubReaderFragment : Fragment() {
 
             val noteFragment = NoteBottomSheetDialogFragment()
             noteFragment.arguments =
-                bundleOf( "bookId" to bookId, "noteId" to noteId)
+                bundleOf("bookId" to bookId, "noteId" to noteId)
             noteFragment.show(parentFragmentManager, "NoteBottomSheetDialogFragment")
 
         }
