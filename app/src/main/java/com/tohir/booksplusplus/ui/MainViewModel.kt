@@ -9,6 +9,9 @@ import android.graphics.Paint
 import android.graphics.Typeface
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.toColorInt
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tohir.booksplusplus.data.BooksRepository
@@ -30,26 +33,101 @@ import java.io.File
 import java.io.FileOutputStream
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
-import androidx.core.graphics.createBitmap
-import androidx.core.graphics.toColorInt
 
 class MainViewModel : ViewModel() {
     private val booksRepository: BooksRepository = BooksPlusPlus.booksRepository
-    private var publication: Publication? = null
+     fun addBookPublicationToDatabase(uri: Uri, context: Context) {
 
-    suspend fun addBookPublicationToDatabase(uri: Uri, context: Context) {
+        viewModelScope.launch {
+            val hashedUri = hashUri(context, uri)
+            val bookId = booksRepository.getBookIdByHash(hashedUri)
 
-        val hashedUri = hashUri(context, uri)
-        val bookId = booksRepository.getBookIdByHash(hashedUri)
+            if (bookId != null) {
+                val intent = Intent(context, ReaderActivity::class.java)
+                intent.putExtra("BOOK_ID", bookId)
+                context.startActivity(intent)
+                return@launch
+            }
 
-        if (bookId != null) {
-            val intent = Intent(context, ReaderActivity::class.java)
-            intent.putExtra("BOOK_ID", bookId)
-            context.startActivity(intent)
-            return
+            val publication = parsePublication(context, uri)
+
+            if (publication != null)
+                generateBookFromPublication(publication, context, hashedUri, uri)
+
+        }
+
+    }
+
+    private fun hashUri(context: Context, uri: Uri): String {
+        val digest = MessageDigest.getInstance("SHA-256")
+        context.contentResolver.openInputStream(uri)?.use { input ->
+            val buffer = ByteArray(8 * 1024)
+            var bytes = input.read(buffer)
+            while (bytes > 0) {
+                digest.update(buffer, 0, bytes)
+                bytes = input.read(buffer)
+            }
+        }
+        return digest.digest().joinToString("") { "%02x".format(it) }
+    }
+
+    private suspend fun generateBookFromPublication(
+        publication: Publication,
+        context: Context,
+        hashedUri: String,
+        uri: Uri
+    ) {
+        val authors = publication.metadata.authors.joinToString(", ") { contributor ->
+            contributor.name
+        }
+
+        val cover = if (publication.cover() != null) {
+            val file = File(context.filesDir, "cover_${publication.metadata.title}.png")
+            if (!file.exists()) {
+                FileOutputStream(file).use {
+                    publication.cover()!!.compress(Bitmap.CompressFormat.PNG, 100, it)
+                }
+            }
+            file
+        } else {
+            generateBookCover(
+                context = context,
+                title = publication.metadata.title!!,
+                author = authors,
+                fileName = "cover_generated_${publication.metadata.title}.png"
+            )
         }
 
 
+        val year = publication.metadata.published?.let { instant ->
+            val date = instant.toJavaDate()
+            val sdf = SimpleDateFormat("yyyy")
+
+            sdf.format(date)
+        }
+
+        val uriFile = copyUriFileToInternalStorage(uri, context)
+
+        if (uriFile != null) {
+
+            val book = Book(
+                title = publication.metadata.title,
+                author = authors,
+                cover = cover.absolutePath,
+                identifier = publication.metadata.identifier ?: "",
+                readingProgressJSON = null,
+                readingProgressDouble = null,
+                yearReleased = year,
+                numberOfPages = publication.positions().size,
+                uri = Uri.fromFile(uriFile).toString(),
+                hash = hashedUri
+            )
+
+            booksRepository.addBook(book)
+        }
+    }
+
+    private suspend fun parsePublication(context: Context, uri: Uri): Publication? {
         val httpClient = DefaultHttpClient()
         val assetRetriever = AssetRetriever(context.contentResolver, httpClient)
         val url: AbsoluteUrl? = uri.toAbsoluteUrl()
@@ -70,94 +148,22 @@ class MainViewModel : ViewModel() {
 
             val publicationResult = publicationOpener.open(asset, allowUserInteraction = true)
 
-
             if (publicationResult.isSuccess) {
-                publication = publicationResult.getOrNull()
+                return publicationResult.getOrNull()
             } else {
-                Log.d("tohir", "Error importing publication: ${publicationResult.failureOrNull()?.message} ${publicationResult.failureOrNull()?.cause}")
-            }
-
-
-        }
-
-        if (publication != null) {
-
-            val authors = publication!!.metadata.authors.joinToString(", ") { contributor ->
-                contributor.name
-            }
-
-
-
-            // PLEASE FIX THIS LATER. GET A SUITABLE PLACEHOLDER IMAGE FOR BOOKS MISSING A COVER, AND STORE IT THE FILE.
-            // This stores the cover in the App's directory as a PNG image
-
-            val cover = if (publication!!.cover() != null) {
-                val file = File(context.filesDir, "cover_${publication!!.metadata.identifier}.png")
-                if (!file.exists()) {
-                    FileOutputStream(file).use {
-                        publication!!.cover()!!.compress(Bitmap.CompressFormat.PNG, 90, it)
-                    }
-                }
-                file
-            } else {
-                generateBookCover(
-                    context = context,
-                    title = publication!!.metadata.title!!,
-                    author = authors,
-                    fileName = "cover_generated_${publication!!.metadata.identifier}.png"
+                Toast.makeText(context, "File appears to be corrupted...", Toast.LENGTH_LONG).show()
+                Log.d(
+                    "publication",
+                    publicationResult.failureOrNull()?.message + publicationResult.failureOrNull()?.cause
                 )
-            }
-
-
-            val mediaType = asset?.format?.mediaType
-            viewModelScope.launch {
-
-                val year = publication!!.metadata.published?.let { instant ->
-                    val date = instant.toJavaDate()
-                    val sdf = SimpleDateFormat("yyyy")
-
-                    sdf.format(date)
-                }
-
-                val uriFile = copyUriFileToInternalStorage(uri, context)
-
-                if (uriFile != null) {
-
-                    val book = Book(
-                        title = publication!!.metadata.title,
-                        author = authors,
-                        cover = cover.absolutePath,
-                        identifier = publication!!.metadata.identifier ?: "",
-                        readingProgressJSON = null,
-                        mediaType = mediaType.toString(),
-                        readingProgressDouble = null,
-                        yearReleased = year,
-                        numberOfPages = publication!!.positions().size,
-                        uri = Uri.fromFile(uriFile).toString(),
-                        hash = hashedUri
-                    )
-
-                    booksRepository.addBook(book)
-                }
-            }
-
-        }
-    }
-
-    private fun hashUri(context: Context, uri: Uri): String {
-        val digest = MessageDigest.getInstance("SHA-256")
-        context.contentResolver.openInputStream(uri)?.use { input ->
-            val buffer = ByteArray(8 * 1024)
-            var bytes = input.read(buffer)
-            while (bytes > 0) {
-                digest.update(buffer, 0, bytes)
-                bytes = input.read(buffer)
+                return null
             }
         }
-        return digest.digest().joinToString("") { "%02x".format(it) }
+
+        return null
     }
 
-    fun generateBookCover(
+    private fun generateBookCover(
         context: Context,
         title: String,
         author: String,
@@ -209,7 +215,6 @@ class MainViewModel : ViewModel() {
     }
 
 
-
     private fun copyUriFileToInternalStorage(uri: Uri, context: Context): File? {
 
         try {
@@ -231,8 +236,6 @@ class MainViewModel : ViewModel() {
         }
 
         return null
-
     }
-
-
 }
+

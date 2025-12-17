@@ -9,7 +9,6 @@ import com.tohir.booksplusplus.util.BooksPlusPlus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.io.File
-import java.net.URI
 
 class LibraryFragmentViewModel : ViewModel() {
 
@@ -18,10 +17,9 @@ class LibraryFragmentViewModel : ViewModel() {
 
     fun deleteBook(book: Book) {
 
-        book.cover?.let { File(book.cover).delete() }
-        book.uri.let { File(book.uri.toUri().path!!).delete() }
-
         viewModelScope.launch {
+            book.cover?.let { File(book.cover).delete() }
+            book.uri.let { File(book.uri.toUri().path!!).delete() }
             booksRepository.deleteBook(book)
         }
     }

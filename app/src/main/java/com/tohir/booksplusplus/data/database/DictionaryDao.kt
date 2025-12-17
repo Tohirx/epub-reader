@@ -17,13 +17,13 @@ interface DictionaryDao {
     suspend fun getDefinitionsRaw(query: SupportSQLiteQuery): List<DefinitionResult>
 
     @RawQuery
-    suspend fun getPosRaw(query: SupportSQLiteQuery): PosResult?
+    suspend fun getPosRaw(query: SupportSQLiteQuery): List<PosResult>
 
     @RawQuery
     suspend fun getExamplesRaw(query: SupportSQLiteQuery): List<ExampleResult>
 
     suspend fun getDefinitions(word: String): List<String> {
-        val w = lemmatize(word)
+        val w = word.lowercase()
         val query = SimpleSQLiteQuery(
             """
     SELECT DISTINCT s.definition AS definition
@@ -34,7 +34,6 @@ interface DictionaryDao {
     ) AS allwords
     JOIN senses se ON allwords.wordid = se.wordid
     JOIN synsets s ON se.synsetid = s.synsetid
-    LIMIT 10
     """,
             arrayOf(w, word)
         )
@@ -42,8 +41,8 @@ interface DictionaryDao {
         return getDefinitionsRaw(query).mapNotNull { it.definition }
     }
 
-    suspend fun getPos(word: String): String? {
-        val w = lemmatize(word)
+    suspend fun getPos(word: String): List<String> {
+        val w = word.lowercase()
         val query = SimpleSQLiteQuery(
             """
         SELECT DISTINCT p.pos
@@ -55,16 +54,15 @@ interface DictionaryDao {
         JOIN senses se ON allwords.wordid = se.wordid
         JOIN synsets s ON se.synsetid = s.synsetid
         JOIN poses p ON s.posid = p.posid
-        LIMIT 1
         """,
             arrayOf(w, word)
         )
 
-        return getPosRaw(query)?.pos
+        return getPosRaw(query).mapNotNull { it.pos }
     }
 
     suspend fun getUsageExamples(word: String): List<String> {
-        val w = lemmatize(word)
+        val w = word.lowercase()
         val query = SimpleSQLiteQuery(
             """
             SELECT DISTINCT sm.sample
@@ -81,22 +79,6 @@ interface DictionaryDao {
         )
 
         return getExamplesRaw(query).mapNotNull { it.sample }
-
-    }
-
-
-    fun lemmatize(word: String): String {
-
-        val w = word.lowercase()
-
-        return when {
-            w.endsWith("ies") -> w.dropLast(3) + "y"
-            w.endsWith("es") && w.length > 3 -> w.dropLast(2)
-            w.endsWith("s") && w.length > 2 -> w.dropLast(1)
-            w.endsWith("ing") && w.length > 4 -> w.dropLast(3)
-            w.endsWith("ed") && w.length > 3 -> w.dropLast(2)
-            else -> w
-        }
 
     }
 }

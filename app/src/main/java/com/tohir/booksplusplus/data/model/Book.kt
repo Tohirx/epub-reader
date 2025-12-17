@@ -18,7 +18,6 @@ data class Book(
     val identifier: String?,
     val readingProgressJSON: String?,
     val readingProgressDouble: Double?,
-    val mediaType: String?,
     val isFinished: Boolean = false,
     val isFavourite: Boolean = false,
     val wantToRead: Boolean = false,

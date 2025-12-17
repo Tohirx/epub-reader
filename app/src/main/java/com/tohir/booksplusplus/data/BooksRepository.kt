@@ -66,10 +66,6 @@ class BooksRepository(private val bookDao: BookDao) {
         bookDao.saveReadingProgress(locator, bookID)
     }
 
-    suspend fun existByHash(hash: String): Boolean {
-        return bookDao.existsByHash(hash)
-    }
-
 
     suspend fun getReadingProgress(bookID: Long): String? {
         return bookDao.getReadingProgress(bookID)

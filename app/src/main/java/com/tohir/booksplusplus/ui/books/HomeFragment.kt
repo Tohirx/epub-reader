@@ -46,33 +46,15 @@ class HomeFragment : Fragment(), RecentBookAdapter.BookClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-        binding.recyclerViewFinished.layoutManager = LinearLayoutManager(
-            requireContext(),
-            LinearLayoutManager.HORIZONTAL, false
-        )
-
-
-        val finishedBooksAdapter = RecentBookAdapter(this)
-
-
-
-        binding.recyclerViewFinished.adapter = finishedBooksAdapter.apply {
-            lifecycleScope.launch {
-                viewModel.getFinishedBooks().collectLatest { books ->
-
-                    if (!books.isEmpty()) {
-                        binding.textViewFinished.visibility = View.VISIBLE
-                        binding.recyclerViewFinished.visibility = View.VISIBLE
-                    }
-                    
-                    setBooks(books)
-                }
-            }
-        }
+        setupAdapters()
 
         binding.textViewMinutesReadValue.text = prefs.getInt("MINUTES", 0).toString()
 
+        fetchAllBooks()
+
+    }
+
+    private fun setupAdapters() {
         binding.recyclerViewPreviouslyRead.layoutManager = LinearLayoutManager(
             requireContext(),
             LinearLayoutManager.HORIZONTAL, false
@@ -80,8 +62,26 @@ class HomeFragment : Fragment(), RecentBookAdapter.BookClickListener {
 
         binding.recyclerViewPreviouslyRead.adapter = adapter
 
-        fetchAllBooks()
 
+        binding.recyclerViewFinished.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.HORIZONTAL, false
+        )
+
+
+        binding.recyclerViewFinished.adapter = RecentBookAdapter(this).apply {
+            lifecycleScope.launch {
+                viewModel.getFinishedBooks().collectLatest { books ->
+
+                    if (books.isNotEmpty()) {
+                        binding.textViewFinished.visibility = View.VISIBLE
+                        binding.recyclerViewFinished.visibility = View.VISIBLE
+                    }
+
+                    setBooks(books)
+                }
+            }
+        }
     }
 
     override fun onResume() {

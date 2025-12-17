@@ -10,14 +10,12 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
-import androidx.lifecycle.lifecycleScope
 import com.google.android.material.navigation.NavigationBarView
-import com.tohir.booksplusplus.ui.books.HomeFragment
-import com.tohir.booksplusplus.ui.books.LibraryFragment
 import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.databinding.ActivityMainBinding
+import com.tohir.booksplusplus.ui.books.HomeFragment
+import com.tohir.booksplusplus.ui.books.LibraryFragment
 import com.tohir.booksplusplus.ui.books.ReadingResetReceiver
-import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener {
@@ -29,9 +27,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-        binding.bottomNav.setOnItemSelectedListener(this)
 
         setContentView(binding.root)
+        binding.bottomNav.setOnItemSelectedListener(this)
 
         scheduleDailyReset(this)
 
@@ -62,6 +60,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             replace(R.id.fragment_container, LibraryFragment())
         }
     }
+
     private fun onHomeButtonClick() {
         supportFragmentManager.commit {
             replace(R.id.fragment_container, HomeFragment())
@@ -103,12 +102,8 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
     private fun handleIncomingUri(intent: Intent?) {
         val uriFromFileManager: Uri? = intent?.data
 
-        if (uriFromFileManager != null) {
-            lifecycleScope.launch {
-                viewModel.addBookPublicationToDatabase(uriFromFileManager, this@MainActivity)
-            }
-        }
+        if (uriFromFileManager != null)
+            viewModel.addBookPublicationToDatabase(uriFromFileManager, this@MainActivity)
     }
-
 
 }

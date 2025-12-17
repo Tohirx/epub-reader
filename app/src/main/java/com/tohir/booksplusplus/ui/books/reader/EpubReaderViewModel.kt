@@ -76,12 +76,11 @@ class EpubReaderViewModel : ViewModel() {
     suspend fun saveReadingProgression(locator: Locator, bookID: Long) {
         val locatorString = locator.toJSON().toString()
 
-        val progressValue = locator.locations.totalProgression
+        val progress = locator.locations.totalProgression
 
         booksRepository.saveReadingProgress(locatorString, bookID)
 
-        if (progressValue != null)
-            booksRepository.saveReadingProgressAsDouble(progressValue, bookID)
+        if (progress != null) booksRepository.saveReadingProgressAsDouble(progress, bookID)
 
     }
 

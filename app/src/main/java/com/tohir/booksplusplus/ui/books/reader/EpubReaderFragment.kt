@@ -176,7 +176,12 @@ class EpubReaderFragment : Fragment() {
                 }
             )
         } else {
-            throw IllegalStateException("Publication is null")
+            Toast.makeText(
+                requireContext(),
+                "An error occurred please try again",
+                Toast.LENGTH_LONG
+            ).show()
+            return
         }
         super.onCreate(savedInstanceState)
     }
@@ -188,19 +193,19 @@ class EpubReaderFragment : Fragment() {
     ): View {
         binding = FragmentReaderBinding.inflate(inflater, container, false)
 
-        val tag = "EpubNavigatorFragment"
         if (savedInstanceState == null) {
             childFragmentManager.commitNow {
                 add(
                     R.id.fragment_reader_container,
                     EpubNavigatorFragment::class.java,
                     Bundle(),
-                    tag
+                    "EpubNavigatorFragment"
                 )
             }
         }
 
-        navigator = childFragmentManager.findFragmentByTag(tag) as EpubNavigatorFragment
+        navigator =
+            childFragmentManager.findFragmentByTag("EpubNavigatorFragment") as EpubNavigatorFragment
 
         return binding.root
     }
@@ -212,11 +217,8 @@ class EpubReaderFragment : Fragment() {
 
         setupClickListeners()
         setupObservers()
-
         readingStartTime = elapsedRealtime()
-
-        setupHighlights()
-        setupNotes()
+        setupInitSettings()
         setupPreferences()
     }
 
@@ -233,56 +235,58 @@ class EpubReaderFragment : Fragment() {
         saveReadingProgress()
     }
 
-    private fun setupHighlights() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getAllHighlights(bookId!!).collectLatest { highlightList ->
-
-
-                val decorations = highlightList.map { highlight ->
-
-                    val style = if (highlight.style == Highlight.Style.HIGHLIGHT) {
-                        Decoration.Style.Highlight(highlight.tint)
-                    } else {
-                        Decoration.Style.Underline(highlight.tint)   // underline fallback
-                    }
-
-                    Decoration(
-                        id = highlight.id.toString(),
-                        locator = highlight.locator,
-                        style = style
-                    )
-                }
-
-                navigator.apply {
-                    applyDecorations(decorations, "user-highlights")
-                    addDecorationListener("user-highlights", decorableListener)
-                }
-
-            }
+    private fun setupInitSettings() {
+        lifecycleScope.launch {
+            setupHighlights()
+            setupNotes()
         }
     }
 
-    private fun setupNotes() {
+    private suspend fun setupHighlights() {
+        viewModel.getAllHighlights(bookId!!).collectLatest { highlightList ->
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getAllNotes(bookId!!).collectLatest { notesList ->
+            val decorations = highlightList.map { highlight ->
 
-
-                val decorations = notesList.map { note ->
-
-                    Decoration(
-                        id = note.id.toString(),
-                        locator = note.locator,
-                        style = Decoration.Style.Highlight("#FFD700".toColorInt())
-                    )
+                val style = if (highlight.style == Highlight.Style.HIGHLIGHT) {
+                    Decoration.Style.Highlight(highlight.tint)
+                } else {
+                    Decoration.Style.Underline(highlight.tint)   // underline fallback
                 }
 
-                (navigator as DecorableNavigator).apply {
-                    applyDecorations(decorations, "user-notes")
-                    addDecorationListener("user-notes", decorableListener)
-                }
-
+                Decoration(
+                    id = highlight.id.toString(),
+                    locator = highlight.locator,
+                    style = style
+                )
             }
+
+            navigator.apply {
+                applyDecorations(decorations, "user-highlights")
+                addDecorationListener("user-highlights", decorableListener)
+            }
+
+        }
+    }
+
+    private suspend fun setupNotes() {
+
+        viewModel.getAllNotes(bookId!!).collectLatest { notesList ->
+
+
+            val decorations = notesList.map { note ->
+
+                Decoration(
+                    id = note.id.toString(),
+                    locator = note.locator,
+                    style = Decoration.Style.Highlight("#FFD700".toColorInt())
+                )
+            }
+
+            navigator.apply {
+                applyDecorations(decorations, "user-notes")
+                addDecorationListener("user-notes", decorableListener)
+            }
+
         }
 
     }
@@ -298,7 +302,6 @@ class EpubReaderFragment : Fragment() {
 
             imageButtonOptions.setOnClickListener { showOptionsFragment() }
 
-
             cardViewPageNumberContainer.setOnClickListener {
                 PageNumberBottomSheetFragment().show(
                     parentFragmentManager,
@@ -311,7 +314,7 @@ class EpubReaderFragment : Fragment() {
     }
 
     private fun View.showAndAutoHide(delay: Long = 10000L) {
-       visibility = View.VISIBLE
+        visibility = View.VISIBLE
         alpha = 1f
 
         removeCallbacks(null)
@@ -398,12 +401,6 @@ class EpubReaderFragment : Fragment() {
             }
 
             fontSize.set(prefs.getFloat(FONT_SIZE, 1.0f).toDouble())
-            scroll.set(
-                prefs.getBoolean(
-                    SCROLL,
-                    false
-                )
-            )
             lineHeight.set(prefs.getFloat(LINE_HEIGHT, 1.0f).toDouble())
 
             if (prefs.getString(TEXT_COLOR, null) != null) {
@@ -482,15 +479,12 @@ class EpubReaderFragment : Fragment() {
         }
 
 
-        navigator.apply {
-            addInputListener(object : InputListener {
-                override fun onTap(event: TapEvent): Boolean {
-                    showButtons()
-                    return true
-                }
-            })
-        }
-
+        navigator.addInputListener(object : InputListener {
+            override fun onTap(event: TapEvent): Boolean {
+                showButtons()
+                return true
+            }
+        })
 
 
         lifecycleScope.launch {
@@ -681,14 +675,14 @@ class EpubReaderFragment : Fragment() {
 
     suspend fun dictionary() {
 
-        val selectedWord = (navigator as? SelectableNavigator).let { navigator ->
-            navigator?.currentSelection()?.locator?.text?.highlight
+        val selectedWord = navigator.let { navigator ->
+            navigator.currentSelection()?.locator?.text?.highlight
         } ?: ""
 
         DictionaryBottomSheet.newInstance(selectedWord)
-            .show(parentFragmentManager, "DictionaryBottomSheet")
+            ?.show(parentFragmentManager, "DictionaryBottomSheet")
 
-        (navigator as? SelectableNavigator)?.clearSelection()
+        navigator.clearSelection()
 
     }
 
@@ -698,17 +692,17 @@ class EpubReaderFragment : Fragment() {
             requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
         val selectedText =
-            (navigator as SelectableNavigator).currentSelection()?.locator?.text?.highlight
+            navigator.currentSelection()?.locator?.text?.highlight
 
         clipboard.setPrimaryClip(ClipData.newPlainText("Selected text", selectedText))
-        (navigator as SelectableNavigator).clearSelection()
+        navigator.clearSelection()
 
     }
 
     private fun showHighlightPopupWithStyle(style: Highlight.Style) {
 
         viewLifecycleOwner.lifecycleScope.launch {
-            (navigator as SelectableNavigator).currentSelection()?.rect?.let { rectF ->
+            navigator.currentSelection()?.rect?.let { rectF ->
                 showHighlightPopUp(rectF, style)
             }
         }
@@ -803,7 +797,6 @@ class EpubReaderFragment : Fragment() {
         const val FONT_FAMILY = "FONT_FAMILY"
         const val FONT_SIZE = "FONT_SIZE"
         const val LINE_HEIGHT = "LINE_HEIGHT"
-        const val SCROLL = "SCROLL"
         const val TEXT_COLOR = "TEXT_COLOR"
         const val BACKGROUND_COLOR = "BACKGROUND_COLOR"
 

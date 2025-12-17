@@ -12,8 +12,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tohir.booksplusplus.data.database.DictionaryProvider
 import com.tohir.booksplusplus.databinding.DictionaryBottomSheetBinding
-import com.tohir.booksplusplus.ui.books.reader.dictionary.DictionaryApi
-import com.tohir.booksplusplus.ui.books.reader.dictionary.WordAdapter
 import kotlinx.coroutines.launch
 
 class DictionaryBottomSheet : BottomSheetDialogFragment() {
@@ -21,10 +19,13 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
     private lateinit var binding: DictionaryBottomSheetBinding
 
     companion object {
-        fun newInstance(word: String): DictionaryBottomSheet {
+        fun newInstance(word: String): DictionaryBottomSheet? {
+
+            if (word.isEmpty())
+                return null
 
             val sheet = DictionaryBottomSheet()
-            val args = Bundle().apply{ putString("word", word) }
+            val args = Bundle().apply { putString("word", word) }
 
             sheet.arguments = args
 
@@ -77,10 +78,10 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
 
         if (data.definitions.isEmpty()) {
             binding.textViewWordText.text = "No available definitions"
-            binding.buttonPlayPronunciation.visibility = View.INVISIBLE
-            binding.textViewExamplesTitle.visibility = View.INVISIBLE
-            binding.textViewExamplesTitle.visibility = View.INVISIBLE
-        }  else {
+            binding.buttonPlayPronunciation.visibility = View.GONE
+            binding.textViewExamplesTitle.visibility = View.GONE
+            binding.textViewExamplesTitle.visibility = View.GONE
+        } else {
 
             binding.textViewWordText.text = data.selectedWord
 
@@ -99,30 +100,28 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
                     adapter = examplesAdapter
                 }
             } else {
-                binding.textViewExamplesTitle.visibility = View.INVISIBLE
+                binding.textViewExamplesTitle.visibility = View.GONE
             }
 
-            binding.textViewPosText.text = "(${data.partOfSpeech})"
+            binding.textViewPosText.text = "${data.partOfSpeech}"
 
-
-            if (data.audioUrl != null) {
+            if (data.audioUrls.isNotEmpty()) {
 
                 binding.buttonPlayPronunciation.apply {
                     visibility = View.VISIBLE
                     setOnClickListener {
 
-                        data.audioUrl.let { url ->
+                        data.audioUrls[0].let { url ->
                             val mediaPlayer = MediaPlayer()
                             mediaPlayer.setDataSource(url)
                             mediaPlayer.prepareAsync()
                             mediaPlayer.setOnPreparedListener { mp -> mp.start() }
                         }
-
                     }
                 }
 
             } else {
-                binding.buttonPlayPronunciation.visibility = View.INVISIBLE
+                binding.buttonPlayPronunciation.visibility = View.GONE
             }
         }
     }
@@ -139,37 +138,38 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
         if (result.isSuccess) {
 
             val entries = result.getOrNull()!!
-            val entry = entries[0]
-
 
             val definitions = arrayListOf<String>()
             val pos = arrayListOf<String>()
             val usages = arrayListOf<String>()
 
-            var audioUrl: String? = null
+            val audioUrls: ArrayList<String> = arrayListOf()
             entries.forEach { entry ->
                 entry.phonetics.forEach { phonetic ->
                     if (!phonetic.audio.isNullOrEmpty()) {
-                        audioUrl = phonetic.audio
-                        return@forEach
+                        audioUrls.add(phonetic.audio)
                     }
                 }
             }
 
 
-            entry.meanings.forEach { meaning ->
+            entries.forEach { entry ->
 
-                pos.add(meaning.partOfSpeech)
+                entry.meanings.forEach { meaning ->
 
-                meaning.definitions.forEach { def ->
+                    pos.add(meaning.partOfSpeech)
 
-                    definitions.add(def.definition)
+                    meaning.definitions.forEach { def ->
 
-                    def.example?.let { usages.add(it) }
+                        definitions.add(def.definition)
+
+                        def.example?.let { usages.add(it) }
+                    }
+
                 }
             }
 
-            return DictionaryResult(selectedWord, definitions, pos[0], usages, audioUrl)
+            return DictionaryResult(selectedWord, definitions, pos, usages, audioUrls)
 
         }
 
@@ -182,7 +182,6 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
 
 
         return DictionaryResult(selectedWord, definitions, pos, usages)
-
 
 
     }
