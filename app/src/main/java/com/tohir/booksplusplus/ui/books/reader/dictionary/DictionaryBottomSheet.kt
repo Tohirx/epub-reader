@@ -12,8 +12,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tohir.booksplusplus.data.database.DictionaryProvider
 import com.tohir.booksplusplus.databinding.DictionaryBottomSheetBinding
-import com.tohir.booksplusplus.dictionary.DictionaryApi
-import com.tohir.booksplusplus.ui.books.reader.WordAdapter
+import com.tohir.booksplusplus.ui.books.reader.dictionary.DictionaryApi
+import com.tohir.booksplusplus.ui.books.reader.dictionary.WordAdapter
 import kotlinx.coroutines.launch
 
 class DictionaryBottomSheet : BottomSheetDialogFragment() {

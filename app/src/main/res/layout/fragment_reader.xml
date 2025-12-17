@@ -15,12 +15,12 @@
         android:layout_height="match_parent">
 
         <ImageButton
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:id="@+id/image_view_cancel_button"
+            android:id="@+id/image_button_cancel_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_margin="20dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/reader_activity_cancel_button"
             android:padding="12dp"
             android:src="@drawable/icon_cancel"
@@ -31,19 +31,19 @@
             android:id="@+id/image_button_bookmark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:layout_constraintBottom_toTopOf="@id/image_view_options"
-            android:src="@drawable/icon_bookmark"
             android:layout_marginBottom="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="12dp"
-            app:layout_constraintEnd_toEndOf="@id/image_view_options"/>
+            android:src="@drawable/icon_bookmark"
+            app:layout_constraintBottom_toTopOf="@id/image_button_options"
+            app:layout_constraintEnd_toEndOf="@id/image_button_options" />
 
         <ImageButton
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:id="@+id/image_view_options"
+            android:id="@+id/image_button_options"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="12dp"
             android:src="@drawable/icon_setting_border"
             app:layout_constraintBottom_toBottomOf="parent"

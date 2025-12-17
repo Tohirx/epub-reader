@@ -1,9 +1,14 @@
 package com.tohir.booksplusplus.ui.books
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import com.tohir.booksplusplus.R
@@ -49,6 +54,7 @@ class RecentBookAdapter(private val listener : BookClickListener) : RecyclerView
 
             val file = File(book.cover!!)
             val uri = Uri.fromFile(file)
+
 
             Picasso.get()
                 .load(uri)

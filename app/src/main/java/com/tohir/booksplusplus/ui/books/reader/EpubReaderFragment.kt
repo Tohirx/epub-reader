@@ -22,7 +22,7 @@ import androidx.annotation.ColorInt
 import androidx.core.content.edit
 import androidx.core.graphics.toColorInt
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
+import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
@@ -45,7 +45,6 @@ import kotlinx.coroutines.runBlocking
 import org.readium.r2.navigator.DecorableNavigator
 import org.readium.r2.navigator.Decoration
 import org.readium.r2.navigator.SelectableNavigator
-import org.readium.r2.navigator.VisualNavigator
 import org.readium.r2.navigator.epub.EpubNavigatorFactory
 import org.readium.r2.navigator.epub.EpubNavigatorFragment
 import org.readium.r2.navigator.epub.EpubPreferences
@@ -115,7 +114,6 @@ class EpubReaderFragment : Fragment() {
                 bookId!!
             )
         }
-
 
 
         if (publication != null) {
@@ -255,7 +253,7 @@ class EpubReaderFragment : Fragment() {
                     )
                 }
 
-                (navigator as DecorableNavigator).apply {
+                navigator.apply {
                     applyDecorations(decorations, "user-highlights")
                     addDecorationListener("user-highlights", decorableListener)
                 }
@@ -293,26 +291,43 @@ class EpubReaderFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch { saveReadingProgression(bookId!!) }
     }
 
-    fun setupClickListeners() {
-        binding.imageViewCancelButton.setOnClickListener {
-            requireActivity().finish()
+    private fun setupClickListeners() {
+        binding.apply {
+
+            imageButtonCancelButton.setOnClickListener { requireActivity().finish() }
+
+            imageButtonOptions.setOnClickListener { showOptionsFragment() }
+
+
+            cardViewPageNumberContainer.setOnClickListener {
+                PageNumberBottomSheetFragment().show(
+                    parentFragmentManager,
+                    "PageNumberBottomSheet"
+                )
+            }
+
+            imageButtonBookmark.setOnClickListener { addToBookmark() }
         }
-
-        binding.imageViewOptions.setOnClickListener {
-            showOptionsFragment()
-        }
-
-        binding.cardViewPageNumberContainer.setOnClickListener {
-            val pageNumberBottomSheetFragment = PageNumberBottomSheetFragment()
-            pageNumberBottomSheetFragment.show(parentFragmentManager, "PageNumberBottomSheet")
-
-        }
-
-        binding.imageButtonBookmark.setOnClickListener {
-            addToBookmark()
-        }
-
     }
+
+    private fun View.showAndAutoHide(delay: Long = 10000L) {
+       visibility = View.VISIBLE
+        alpha = 1f
+
+        removeCallbacks(null)
+
+        postDelayed({
+            animate()
+                .alpha(0f)
+                .setDuration(300)
+                .withEndAction {
+                    visibility = View.GONE
+                    alpha = 1f
+                }
+                .start()
+        }, delay)
+    }
+
 
     fun addToBookmark() {
 
@@ -343,6 +358,13 @@ class EpubReaderFragment : Fragment() {
 
     private fun showOptionsFragment() {
 
+        binding.apply {
+            imageButtonCancelButton.visibility = View.GONE
+            imageButtonBookmark.visibility = View.GONE
+            cardViewPageNumberContainer.visibility = View.GONE
+            imageButtonOptions.visibility = View.GONE
+        }
+
         val fragment = OptionsFragment().apply {
             arguments = bundleOf("bookId" to bookId)
         }
@@ -363,8 +385,8 @@ class EpubReaderFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-
-        (navigator as DecorableNavigator).removeDecorationListener(decorableListener)
+        navigator.removeDecorationListener(decorableListener)
+        binding.imageButtonCancelButton.removeCallbacks(null)
     }
 
     private fun setupPreferences() {
@@ -460,7 +482,7 @@ class EpubReaderFragment : Fragment() {
         }
 
 
-        (navigator as VisualNavigator).apply {
+        navigator.apply {
             addInputListener(object : InputListener {
                 override fun onTap(event: TapEvent): Boolean {
                     showButtons()
@@ -468,6 +490,8 @@ class EpubReaderFragment : Fragment() {
                 }
             })
         }
+
+
 
         lifecycleScope.launch {
 
@@ -541,18 +565,19 @@ class EpubReaderFragment : Fragment() {
 
         binding.apply {
 
-            if ((imageViewCancelButton.isVisible && imageViewOptions.isVisible) && (cardViewPageNumberContainer.isVisible && imageButtonBookmark.isVisible)) {
-                imageViewCancelButton.visibility = View.INVISIBLE
-                imageViewOptions.visibility = View.INVISIBLE
-                cardViewPageNumberContainer.visibility = View.INVISIBLE
-                imageButtonBookmark.visibility = View.INVISIBLE
+            if (imageButtonCancelButton.isGone) {
+                imageButtonCancelButton.showAndAutoHide()
+                imageButtonOptions.showAndAutoHide()
+                cardViewPageNumberContainer.showAndAutoHide()
+                imageButtonBookmark.showAndAutoHide()
 
             } else {
-                imageViewCancelButton.visibility = View.VISIBLE
-                imageViewOptions.visibility = View.VISIBLE
-                cardViewPageNumberContainer.visibility = View.VISIBLE
-                imageButtonBookmark.visibility = View.VISIBLE
+                imageButtonCancelButton.visibility = View.GONE
+                imageButtonOptions.visibility = View.GONE
+                cardViewPageNumberContainer.visibility = View.GONE
+                imageButtonBookmark.visibility = View.GONE
             }
+
         }
     }
 
@@ -718,7 +743,12 @@ class EpubReaderFragment : Fragment() {
             val x = rectF.left
             val y = rectF.top
 
-            popupWindow?.showAtLocation(popupView, Gravity.NO_GRAVITY, x.toInt(), y.toInt() - 150)
+            popupWindow?.showAtLocation(
+                popupView,
+                Gravity.NO_GRAVITY,
+                x.toInt(),
+                y.toInt() - 150
+            )
 
             fun selectTint(view: View) {
                 val tint = highlightTints[view.id] ?: return

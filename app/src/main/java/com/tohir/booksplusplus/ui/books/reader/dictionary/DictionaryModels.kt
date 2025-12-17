@@ -1,4 +1,4 @@
-package com.tohir.booksplusplus.dictionary
+package com.tohir.booksplusplus.ui.books.reader.dictionary
 
 class DictionaryModels {
 

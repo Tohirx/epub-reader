@@ -52,6 +52,7 @@ class HomeFragment : Fragment(), RecentBookAdapter.BookClickListener {
             LinearLayoutManager.HORIZONTAL, false
         )
 
+
         val finishedBooksAdapter = RecentBookAdapter(this)
 
 
@@ -59,12 +60,13 @@ class HomeFragment : Fragment(), RecentBookAdapter.BookClickListener {
         binding.recyclerViewFinished.adapter = finishedBooksAdapter.apply {
             lifecycleScope.launch {
                 viewModel.getFinishedBooks().collectLatest { books ->
-                    setBooks(books)
 
-                    if (books.isEmpty())
-                        binding.textViewFinished.visibility = View.GONE
-                    else
+                    if (!books.isEmpty()) {
                         binding.textViewFinished.visibility = View.VISIBLE
+                        binding.recyclerViewFinished.visibility = View.VISIBLE
+                    }
+                    
+                    setBooks(books)
                 }
             }
         }

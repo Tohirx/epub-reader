@@ -1,9 +1,9 @@
-package com.tohir.booksplusplus.dictionary
+package com.tohir.booksplusplus.ui.books.reader.dictionary
 
 import com.google.gson.Gson
+import com.tohir.booksplusplus.ui.books.reader.dictionary.DictionaryModels
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.Dispatcher
 import java.net.URL
 
 class DictionaryApi {
@@ -14,7 +14,8 @@ class DictionaryApi {
         withContext(Dispatchers.IO) {
             try {
                 val response = URL(baseUrl + word).readText()
-                val entries = gson.fromJson(response, Array<DictionaryModels.WordEntry>::class.java).toList()
+                val entries =
+                    gson.fromJson(response, Array<DictionaryModels.WordEntry>::class.java).toList()
                 Result.success(entries)
             } catch (e: Exception) {
                 e.printStackTrace()

@@ -32,11 +32,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:selectionRequired="true"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="1dp"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
-        app:chipSpacingHorizontal="6dp"
+        app:chipSpacingHorizontal="8dp"
         app:singleSelection="true">
 
         <com.google.android.material.chip.Chip
@@ -55,7 +55,7 @@
             style="@style/Widget.Material3.Chip.Filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Favourites"
+            android:text="Favourite"
             android:checkable="true"
             app:chipStrokeWidth="1dp"
             app:chipIconTint="@color/white"/>

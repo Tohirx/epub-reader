@@ -3,14 +3,18 @@ package com.tohir.booksplusplus.ui
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Typeface
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tohir.booksplusplus.data.BooksRepository
 import com.tohir.booksplusplus.data.model.Book
 import com.tohir.booksplusplus.ui.books.reader.ReaderActivity
 import com.tohir.booksplusplus.util.BooksPlusPlus
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.readium.adapter.pdfium.document.PdfiumDocumentFactory
 import org.readium.r2.shared.publication.Publication
@@ -26,7 +30,8 @@ import java.io.File
 import java.io.FileOutputStream
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.toColorInt
 
 class MainViewModel : ViewModel() {
     private val booksRepository: BooksRepository = BooksPlusPlus.booksRepository
@@ -49,7 +54,9 @@ class MainViewModel : ViewModel() {
         val assetRetriever = AssetRetriever(context.contentResolver, httpClient)
         val url: AbsoluteUrl? = uri.toAbsoluteUrl()
 
-        val asset = assetRetriever.retrieve(url!!).getOrNull()
+        val asset = url?.let {
+            assetRetriever.retrieve(url).getOrNull()
+        }
 
         if (asset != null) {
             val publicationParser = DefaultPublicationParser(
@@ -61,8 +68,15 @@ class MainViewModel : ViewModel() {
 
             val publicationOpener = PublicationOpener(publicationParser)
 
-            publication =
-                publicationOpener.open(asset, allowUserInteraction = false).getOrNull()
+            val publicationResult = publicationOpener.open(asset, allowUserInteraction = true)
+
+
+            if (publicationResult.isSuccess) {
+                publication = publicationResult.getOrNull()
+            } else {
+                Log.d("tohir", "Error importing publication: ${publicationResult.failureOrNull()?.message} ${publicationResult.failureOrNull()?.cause}")
+            }
+
 
         }
 
@@ -72,15 +86,26 @@ class MainViewModel : ViewModel() {
                 contributor.name
             }
 
+
+
             // PLEASE FIX THIS LATER. GET A SUITABLE PLACEHOLDER IMAGE FOR BOOKS MISSING A COVER, AND STORE IT THE FILE.
             // This stores the cover in the App's directory as a PNG image
 
-
-            val file = File(context.filesDir, "cover_${publication!!.metadata.title}.png")
-            if (publication!!.cover() != null && !file.exists()) {
-                FileOutputStream(file).use { out ->
-                    publication!!.cover()?.compress(Bitmap.CompressFormat.PNG, 80, out)
+            val cover = if (publication!!.cover() != null) {
+                val file = File(context.filesDir, "cover_${publication!!.metadata.identifier}.png")
+                if (!file.exists()) {
+                    FileOutputStream(file).use {
+                        publication!!.cover()!!.compress(Bitmap.CompressFormat.PNG, 90, it)
+                    }
                 }
+                file
+            } else {
+                generateBookCover(
+                    context = context,
+                    title = publication!!.metadata.title!!,
+                    author = authors,
+                    fileName = "cover_generated_${publication!!.metadata.identifier}.png"
+                )
             }
 
 
@@ -101,7 +126,7 @@ class MainViewModel : ViewModel() {
                     val book = Book(
                         title = publication!!.metadata.title,
                         author = authors,
-                        cover = file.absolutePath,
+                        cover = cover.absolutePath,
                         identifier = publication!!.metadata.identifier ?: "",
                         readingProgressJSON = null,
                         mediaType = mediaType.toString(),
@@ -132,8 +157,60 @@ class MainViewModel : ViewModel() {
         return digest.digest().joinToString("") { "%02x".format(it) }
     }
 
+    fun generateBookCover(
+        context: Context,
+        title: String,
+        author: String,
+        fileName: String
+    ): File {
 
-    fun copyUriFileToInternalStorage(uri: Uri, context: Context): File? {
+        val width = 1080
+        val height = 1440
+
+        val bitmap = createBitmap(width, height)
+        val canvas = Canvas(bitmap)
+
+        // Background
+        canvas.drawColor("#693C00".toColorInt())
+
+        val titlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.WHITE
+            textSize = 130f
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+        }
+
+        val authorPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.LTGRAY
+            textSize = 130f
+        }
+
+
+        val padding = 150f
+        var y = height / 3f
+
+        // Title (wrap manually)
+        title.split(" ").chunked(3).forEach { line ->
+            canvas.drawText(line.joinToString(" "), padding, y, titlePaint)
+            y += titlePaint.textSize + 16
+        }
+
+        y += 40
+        canvas.drawText(author, padding, y, authorPaint)
+
+        val file = File(context.filesDir, fileName)
+
+        FileOutputStream(file).use {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
+        }
+
+        bitmap.recycle()
+
+        return file
+    }
+
+
+
+    private fun copyUriFileToInternalStorage(uri: Uri, context: Context): File? {
 
         try {
             val fileName = "file_${System.currentTimeMillis()}.epub"

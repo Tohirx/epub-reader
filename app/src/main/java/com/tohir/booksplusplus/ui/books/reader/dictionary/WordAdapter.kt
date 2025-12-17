@@ -1,4 +1,4 @@
-package com.tohir.booksplusplus.ui.books.reader
+package com.tohir.booksplusplus.ui.books.reader.dictionary
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
