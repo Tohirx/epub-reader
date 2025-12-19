@@ -111,11 +111,22 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
                     visibility = View.VISIBLE
                     setOnClickListener {
 
-                        data.audioUrls[0].let { url ->
-                            val mediaPlayer = MediaPlayer()
-                            mediaPlayer.setDataSource(url)
-                            mediaPlayer.prepareAsync()
-                            mediaPlayer.setOnPreparedListener { mp -> mp.start() }
+                        data.audioUrls.forEach{ audio ->
+
+                            if (audio.isNotBlank()) {
+                                val mediaPlayer = MediaPlayer()
+                                mediaPlayer.setDataSource(audio)
+                                mediaPlayer.prepareAsync()
+                                mediaPlayer.setOnPreparedListener { mp -> mp.start() }
+
+                                mediaPlayer.setOnCompletionListener {
+                                    mediaPlayer.release()
+                                }
+
+                                return@forEach
+                            }
+
+
                         }
                     }
                 }
@@ -171,6 +182,10 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
 
             return DictionaryResult(selectedWord, definitions, pos, usages, audioUrls)
 
+        } else {
+            val failure = result.exceptionOrNull()
+            Log.d("tohir", "${failure?.message} ${failure?.cause}")
+            Log.d("tohir", "${failure?.printStackTrace()}")
         }
 
         val db = DictionaryProvider.getInstance(requireContext())

@@ -1,14 +1,9 @@
 package com.tohir.booksplusplus.ui.books
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import com.tohir.booksplusplus.R
@@ -17,7 +12,8 @@ import com.tohir.booksplusplus.databinding.ItemRecentlyReadBooksBinding
 import java.io.File
 import kotlin.math.ceil
 
-class RecentBookAdapter(private val listener : BookClickListener) : RecyclerView.Adapter<RecentBookAdapter.ViewHolder>() {
+class RecentBookAdapter(private val listener: BookClickListener) :
+    RecyclerView.Adapter<RecentBookAdapter.ViewHolder>() {
 
     private var books: List<Book> = listOf()
 
@@ -35,7 +31,7 @@ class RecentBookAdapter(private val listener : BookClickListener) : RecyclerView
         holder: ViewHolder,
         position: Int
     ) {
-       holder.bind(books[position])
+        holder.bind(books[position])
     }
 
     override fun getItemCount(): Int {
@@ -48,9 +44,10 @@ class RecentBookAdapter(private val listener : BookClickListener) : RecyclerView
         notifyDataSetChanged()
     }
 
-    inner class ViewHolder(private val binding: ItemRecentlyReadBooksBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemRecentlyReadBooksBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(book : Book) {
+        fun bind(book: Book) {
 
             val file = File(book.cover!!)
             val uri = Uri.fromFile(file)
@@ -64,23 +61,23 @@ class RecentBookAdapter(private val listener : BookClickListener) : RecyclerView
             binding.textViewAuthorName.text = book.author
             binding.textViewBookTitle.text = book.title
 
-            if (book.readingProgressDouble != null ) {
+            if (book.readingProgressDouble != null) {
                 if (book.readingProgressDouble * 100 < 1) {
                     binding.progressBarReading.setProgress(1, true)
                 } else {
-                    val value =  ceil(book.readingProgressDouble * 100)
+                    val value = ceil(book.readingProgressDouble * 100)
                     binding.progressBarReading.setProgress(value.toInt(), true)
                 }
             }
 
-               if (binding.progressBarReading.progress >= 95 && !book.isFinished) {
-                   binding.buttonMarkAsFinished.visibility = View.VISIBLE
-                   binding.buttonMarkAsFinished.setOnClickListener {
-                       listener.onMarkAsCompleted(book)
-                       binding.buttonMarkAsFinished.visibility = View.GONE
-                   }
+            if (binding.progressBarReading.progress >= 95 && !book.isFinished) {
+                binding.buttonMarkAsFinished.visibility = View.VISIBLE
+                binding.buttonMarkAsFinished.setOnClickListener {
+                    listener.onMarkAsCompleted(book)
+                    binding.buttonMarkAsFinished.visibility = View.GONE
+                }
 
-           }
+            }
 
             if (book.isFinished) {
                 binding.progressBarReading.visibility = View.GONE

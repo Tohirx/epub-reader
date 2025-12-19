@@ -19,7 +19,6 @@ import com.tohir.booksplusplus.data.model.Book
 import com.tohir.booksplusplus.ui.books.reader.ReaderActivity
 import com.tohir.booksplusplus.util.BooksPlusPlus
 import kotlinx.coroutines.launch
-import org.readium.adapter.pdfium.document.PdfiumDocumentFactory
 import org.readium.r2.shared.publication.Publication
 import org.readium.r2.shared.publication.services.cover
 import org.readium.r2.shared.publication.services.positions
@@ -141,7 +140,7 @@ class MainViewModel : ViewModel() {
                 context,
                 httpClient,
                 assetRetriever,
-                PdfiumDocumentFactory(context)
+                null
             )
 
             val publicationOpener = PublicationOpener(publicationParser)

@@ -1,6 +1,5 @@
 package com.tohir.booksplusplus.ui.books
 
-import android.R.attr.fragment
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater

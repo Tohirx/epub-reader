@@ -1,6 +1,5 @@
 package com.tohir.booksplusplus.ui.books.reader
 
-
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -48,14 +47,11 @@ import org.readium.r2.navigator.SelectableNavigator
 import org.readium.r2.navigator.epub.EpubNavigatorFactory
 import org.readium.r2.navigator.epub.EpubNavigatorFragment
 import org.readium.r2.navigator.epub.EpubPreferences
-import org.readium.r2.navigator.epub.EpubPreferencesEditor
 import org.readium.r2.navigator.epub.css.FontStyle
 import org.readium.r2.navigator.epub.css.FontWeight
 import org.readium.r2.navigator.input.InputListener
 import org.readium.r2.navigator.input.TapEvent
-import org.readium.r2.navigator.preferences.ColumnCount
 import org.readium.r2.navigator.preferences.FontFamily
-import org.readium.r2.navigator.preferences.TextAlign
 import org.readium.r2.navigator.util.BaseActionModeCallback
 import org.readium.r2.shared.ExperimentalReadiumApi
 import org.readium.r2.shared.publication.Publication
@@ -69,6 +65,22 @@ class EpubReaderFragment : Fragment() {
     private var bookId: Long? = null
     private var readingStartTime: Long? = null
     private var publication: Publication? = null
+
+    private val preferences: EpubPreferences by lazy {
+        InitPreferences(requireContext()).let {
+            EpubPreferences(
+                fontFamily = it.fontFamily,
+                lineHeight = it.lineSpacing,
+                publisherStyles = it.publisherStyles,
+                columnCount = it.columnCount,
+                fontSize = it.fontSize,
+                textAlign = it.textAlign,
+                scroll = it.scroll,
+                textColor = it.textColor,
+                backgroundColor = it.backgroundColor
+            )
+        }
+    }
 
     private val prefs by lazy {
         requireContext().getSharedPreferences(
@@ -87,23 +99,6 @@ class EpubReaderFragment : Fragment() {
 
 
     @OptIn(ExperimentalReadiumApi::class)
-    private val editor: EpubPreferencesEditor by lazy {
-        val preferences = EpubPreferences(
-
-            columnCount = ColumnCount.ONE,
-            fontFamily = FontFamily.ACCESSIBLE_DFA,
-            fontSize = 1.0,
-            lineHeight = 1.0,
-            scroll = false,
-            publisherStyles = false,
-            textAlign = TextAlign.START,
-        )
-
-        EpubNavigatorFactory(publication!!).createPreferencesEditor(preferences)
-    }
-
-
-    @OptIn(ExperimentalReadiumApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
 
         bookId = arguments?.getLong("BOOK_ID")
@@ -117,13 +112,17 @@ class EpubReaderFragment : Fragment() {
 
 
         if (publication != null) {
-            val navigatorFactory = EpubNavigatorFactory(publication = publication!!)
+            val navigatorFactory = EpubNavigatorFactory(
+                publication = publication!!,
+                EpubNavigatorFactory.Configuration()
+            )
 
             readerViewModel.setPublication(publication!!)
 
 
             childFragmentManager.fragmentFactory = navigatorFactory.createFragmentFactory(
                 initialLocator = runBlocking { viewModel.restoreReadingProgression(bookId!!) },
+                initialPreferences = preferences,
                 configuration = EpubNavigatorFragment.Configuration {
                     selectionActionModeCallback = customSelectionActionModeCallback
 
@@ -212,14 +211,12 @@ class EpubReaderFragment : Fragment() {
 
     @OptIn(ExperimentalReadiumApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         super.onViewCreated(view, savedInstanceState)
 
         setupClickListeners()
         setupObservers()
         readingStartTime = elapsedRealtime()
         setupInitSettings()
-        setupPreferences()
     }
 
     override fun onPause() {
@@ -313,25 +310,6 @@ class EpubReaderFragment : Fragment() {
         }
     }
 
-    private fun View.showAndAutoHide(delay: Long = 10000L) {
-        visibility = View.VISIBLE
-        alpha = 1f
-
-        removeCallbacks(null)
-
-        postDelayed({
-            animate()
-                .alpha(0f)
-                .setDuration(300)
-                .withEndAction {
-                    visibility = View.GONE
-                    alpha = 1f
-                }
-                .start()
-        }, delay)
-    }
-
-
     fun addToBookmark() {
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -392,46 +370,10 @@ class EpubReaderFragment : Fragment() {
         binding.imageButtonCancelButton.removeCallbacks(null)
     }
 
-    private fun setupPreferences() {
-
-        editor.apply {
-
-            if (prefs.getString(FONT_FAMILY, null) != null) {
-                fontFamily.set(FontFamily(prefs.getString(FONT_FAMILY, null)!!))
-            }
-
-            fontSize.set(prefs.getFloat(FONT_SIZE, 1.0f).toDouble())
-            lineHeight.set(prefs.getFloat(LINE_HEIGHT, 1.0f).toDouble())
-
-            if (prefs.getString(TEXT_COLOR, null) != null) {
-
-                textColor.set(
-                    org.readium.r2.navigator.preferences.Color(
-                        prefs.getString(
-                            TEXT_COLOR,
-                            null
-                        )!!.toColorInt()
-                    )
-                )
-                backgroundColor.set(
-                    org.readium.r2.navigator.preferences.Color(
-                        prefs.getString(
-                            BACKGROUND_COLOR,
-                            null
-                        )!!.toColorInt()
-                    )
-                )
-            }
-
-            if (prefs.getBoolean("JUSTIFY_CONTENT", false)) {
-                textAlign.set(TextAlign.START)
-            }
-        }
-
-        navigator.submitPreferences(editor.preferences)
-    }
-
     fun setupObservers() {
+
+        val editor = EpubNavigatorFactory(publication!!).createPreferencesEditor(preferences)
+
         readerViewModel.selectedFontFamily.observe(viewLifecycleOwner) { font ->
             if (!font.isNullOrEmpty()) {
                 editor.apply {
@@ -558,12 +500,11 @@ class EpubReaderFragment : Fragment() {
     private fun showButtons() {
 
         binding.apply {
-
             if (imageButtonCancelButton.isGone) {
-                imageButtonCancelButton.showAndAutoHide()
-                imageButtonOptions.showAndAutoHide()
-                cardViewPageNumberContainer.showAndAutoHide()
-                imageButtonBookmark.showAndAutoHide()
+                imageButtonCancelButton.visibility = View.VISIBLE
+                imageButtonOptions.visibility = View.VISIBLE
+                cardViewPageNumberContainer.visibility = View.VISIBLE
+                imageButtonBookmark.visibility = View.VISIBLE
 
             } else {
                 imageButtonCancelButton.visibility = View.GONE

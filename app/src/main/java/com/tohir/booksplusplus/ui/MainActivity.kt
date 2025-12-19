@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
 
         alarmManager.setInexactRepeating(
             AlarmManager.RTC_WAKEUP,
