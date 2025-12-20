@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.tohir.booksplusplus.data.model.Note
 import com.tohir.booksplusplus.util.BooksPlusPlus
 import kotlinx.coroutines.launch
-import org.readium.r2.navigator.html.HtmlDecorationTemplate.Companion.highlight
 import org.readium.r2.shared.publication.Locator
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter

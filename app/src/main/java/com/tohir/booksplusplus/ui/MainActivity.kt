@@ -4,21 +4,28 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.navigation.NavigationBarView
 import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.databinding.ActivityMainBinding
 import com.tohir.booksplusplus.ui.books.HomeFragment
 import com.tohir.booksplusplus.ui.books.LibraryFragment
 import com.tohir.booksplusplus.ui.books.ReadingResetReceiver
+import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener {
+    private val prefs: SharedPreferences by lazy {
+        this.getSharedPreferences("user_pref", MODE_PRIVATE)
+    }
 
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
@@ -27,13 +34,28 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-
         setContentView(binding.root)
         binding.bottomNav.setOnItemSelectedListener(this)
-
         scheduleDailyReset(this)
-
+        seedDatabase()
         handleIncomingUri(intent)
+    }
+
+    private fun seedDatabase() {
+        val firstRun = prefs.getBoolean("first_run", true)
+        if (firstRun) {
+            lifecycleScope.launch {
+                viewModel.addBookFromAsset(
+                    this@MainActivity,
+                    "jane-austen_pride-and-prejudice.epub"
+                )
+                viewModel.addBookFromAsset(this@MainActivity, "mary-shelley_frankenstein.epub")
+                prefs.edit {
+                    putBoolean("first_run", false)
+                }
+            }
+
+        }
     }
 
     override fun onNewIntent(intent: Intent) {

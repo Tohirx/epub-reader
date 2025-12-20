@@ -10,7 +10,8 @@ import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.tohir.booksplusplus.data.database.DictionaryProvider
+import com.tohir.booksplusplus.data.database.dictionary.DictionaryApi
+import com.tohir.booksplusplus.data.database.dictionary.DictionaryProvider
 import com.tohir.booksplusplus.databinding.DictionaryBottomSheetBinding
 import kotlinx.coroutines.launch
 
@@ -21,8 +22,7 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
     companion object {
         fun newInstance(word: String): DictionaryBottomSheet? {
 
-            if (word.isEmpty())
-                return null
+            if (word.isEmpty()) return null
 
             val sheet = DictionaryBottomSheet()
             val args = Bundle().apply { putString("word", word) }
@@ -38,9 +38,7 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
 
         binding = DictionaryBottomSheetBinding.inflate(inflater, container, false)
@@ -111,22 +109,16 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
                     visibility = View.VISIBLE
                     setOnClickListener {
 
-                        data.audioUrls.forEach{ audio ->
+                        for (audio in data.audioUrls) {
+                            val mediaPlayer = MediaPlayer()
+                            mediaPlayer.setDataSource(audio)
+                            mediaPlayer.prepareAsync()
+                            mediaPlayer.setOnPreparedListener { mp -> mp.start() }
 
-                            if (audio.isNotBlank()) {
-                                val mediaPlayer = MediaPlayer()
-                                mediaPlayer.setDataSource(audio)
-                                mediaPlayer.prepareAsync()
-                                mediaPlayer.setOnPreparedListener { mp -> mp.start() }
-
-                                mediaPlayer.setOnCompletionListener {
-                                    mediaPlayer.release()
-                                }
-
-                                return@forEach
+                            mediaPlayer.setOnCompletionListener {
+                                mediaPlayer.release()
                             }
-
-
+                            break
                         }
                     }
                 }
@@ -144,7 +136,7 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
 
     private suspend fun fetchDictionaryData(selectedWord: String): DictionaryResult {
         val api = DictionaryApi()
-        val result = api.lookup(selectedWord)
+        val result = api.lookup(selectedWord.lowercase())
 
         if (result.isSuccess) {
 
@@ -157,7 +149,7 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
             val audioUrls: ArrayList<String> = arrayListOf()
             entries.forEach { entry ->
                 entry.phonetics.forEach { phonetic ->
-                    if (!phonetic.audio.isNullOrEmpty()) {
+                    if (!phonetic.audio.isNullOrBlank()) {
                         audioUrls.add(phonetic.audio)
                     }
                 }
@@ -197,7 +189,6 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
 
 
         return DictionaryResult(selectedWord, definitions, pos, usages)
-
 
     }
 }

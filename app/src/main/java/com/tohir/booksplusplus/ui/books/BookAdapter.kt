@@ -6,12 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
-import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.data.model.Book
 import com.tohir.booksplusplus.databinding.ItemBookBinding
 import java.io.File
 
-class BookAdapter(private val listener: BookClickListener) : RecyclerView.Adapter<BookAdapter.ViewHolder>() {
+class BookAdapter(private val listener: BookClickListener) :
+    RecyclerView.Adapter<BookAdapter.ViewHolder>() {
 
     private var books: List<Book> = listOf()
 
@@ -35,7 +35,8 @@ class BookAdapter(private val listener: BookClickListener) : RecyclerView.Adapte
         notifyDataSetChanged()
     }
 
-    inner class ViewHolder(private val binding: ItemBookBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemBookBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(book: Book) {
 
             val file = File(book.cover!!)

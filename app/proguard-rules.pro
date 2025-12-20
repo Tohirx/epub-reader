@@ -22,3 +22,11 @@
 
 -dontwarn org.conscrypt.Conscrypt
 -dontwarn org.conscrypt.OpenSSLProvider
+
+# --- Gson needs generics + annotations ---
+# Keep generic type info (for List<T> or Map<String,T>)
+
+
+
+
+

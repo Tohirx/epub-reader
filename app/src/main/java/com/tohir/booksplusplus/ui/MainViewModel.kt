@@ -35,7 +35,7 @@ import java.text.SimpleDateFormat
 
 class MainViewModel : ViewModel() {
     private val booksRepository: BooksRepository = BooksPlusPlus.booksRepository
-     fun addBookPublicationToDatabase(uri: Uri, context: Context) {
+    fun addBookPublicationToDatabase(uri: Uri, context: Context) {
 
         viewModelScope.launch {
             val hashedUri = hashUri(context, uri)
@@ -105,7 +105,7 @@ class MainViewModel : ViewModel() {
             sdf.format(date)
         }
 
-        val uriFile = copyUriFileToInternalStorage(uri, context)
+        val uriFile = copyUriToContentsToFileAndReturnFile(uri, context)
 
         if (uriFile != null) {
 
@@ -124,6 +124,56 @@ class MainViewModel : ViewModel() {
 
             booksRepository.addBook(book)
         }
+    }
+
+    suspend fun addBookFromAsset(context: Context, filename: String) {
+
+        val file = File(context.filesDir, filename)
+        context.assets.open("book/$filename").use { inputStream ->
+            file.outputStream().use { outputStream ->
+                inputStream.copyTo(outputStream)
+            }
+        }
+
+        val uri = Uri.fromFile(file)
+        val hashedUri = hashUri(context, uri)
+        val publication = parsePublication(context, uri)
+
+        val authors = publication!!.metadata.authors.joinToString(", ") { contributor ->
+            contributor.name
+        }
+
+        val year = publication.metadata.published?.let { instant ->
+            val date = instant.toJavaDate()
+            val sdf = SimpleDateFormat("yyyy")
+
+            sdf.format(date)
+        }
+
+        val cover = publication.cover().let {
+            val file = File(context.filesDir, "cover_${publication.metadata.title}.png")
+            FileOutputStream(file).use {
+                publication.cover()!!.compress(Bitmap.CompressFormat.PNG, 100, it)
+            }
+
+            file
+
+        }
+
+        val book = Book(
+            title = publication.metadata.title,
+            author = authors,
+            cover = cover.absolutePath,
+            identifier = publication.metadata.identifier ?: "",
+            readingProgressJSON = null,
+            readingProgressDouble = null,
+            yearReleased = year,
+            numberOfPages = publication.positions().size,
+            uri = uri.toString(),
+            hash = hashedUri
+        )
+
+        booksRepository.addBook(book)
     }
 
     private suspend fun parsePublication(context: Context, uri: Uri): Publication? {
@@ -214,7 +264,7 @@ class MainViewModel : ViewModel() {
     }
 
 
-    private fun copyUriFileToInternalStorage(uri: Uri, context: Context): File? {
+    private fun copyUriToContentsToFileAndReturnFile(uri: Uri, context: Context): File? {
 
         try {
             val fileName = "file_${System.currentTimeMillis()}.epub"

@@ -21,8 +21,6 @@ import com.tohir.booksplusplus.ui.books.reader.ReaderViewModel
 import com.tohir.booksplusplus.ui.books.reader.bookmarkandhighlight.BookmarkAndHighlightFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.readium.r2.navigator.Decoration
-import org.readium.r2.navigator.Decoration.Style
 
 class HighlightFragment() : Fragment(), HighlightClickedListener {
 

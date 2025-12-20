@@ -83,7 +83,4 @@ class ReaderViewModel : ViewModel() {
 }
 
 
-data class Theme(val backgroundColor: String, val textColor: String, val fontFamily: String) {
-
-
-}
+data class Theme(val backgroundColor: String, val textColor: String, val fontFamily: String)

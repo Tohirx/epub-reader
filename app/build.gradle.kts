@@ -1,4 +1,5 @@
 import org.gradle.kotlin.dsl.coreLibraryDesugaring
+import org.gradle.kotlin.dsl.implementation
 
 plugins {
     alias(libs.plugins.android.application)
@@ -23,36 +24,30 @@ android {
     }
 
 
-
     buildFeatures {
         viewBinding = true
     }
 
+
     signingConfigs {
-        // Use create("release") instead just release
         create("release") {
             storeFile = file("C:/Users/thinkpad/key-stor")
             storePassword = "Tohir564"
             keyAlias = "key0"
             keyPassword = "Tohir564"
         }
-    }
-
 
 
     buildTypes {
         release {
-            isMinifyEnabled = false
-            isShrinkResources = false
-            isDebuggable = true
+            isMinifyEnabled = true
+            isShrinkResources = true
+            isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-
             signingConfig = signingConfigs.getByName("release")
-
-
         }
 
     }
@@ -68,6 +63,8 @@ android {
 
 dependencies {
 
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.2")
+    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.2")
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
@@ -79,7 +76,6 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.gson)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.constraintlayout)
@@ -90,4 +86,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    }
 }

@@ -1,7 +1,5 @@
 package com.tohir.booksplusplus.ui.books.reader.bookmarkandhighlight.bookmarks
 
-import android.R.attr.dial
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -42,11 +40,16 @@ class BookmarkFragment : Fragment(), OnBookmarkClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val divider = MaterialDividerItemDecoration(binding.recyclerViewBookmark.context,
-            LinearLayoutManager.VERTICAL)
+        val divider = MaterialDividerItemDecoration(
+            binding.recyclerViewBookmark.context,
+            LinearLayoutManager.VERTICAL
+        )
 
         divider.dividerThickness = resources.getDimensionPixelSize(R.dimen.divider_thickness)
-        divider.dividerColor = MaterialColors.getColor(binding.recyclerViewBookmark, com.google.android.material.R.attr.colorOutline)
+        divider.dividerColor = MaterialColors.getColor(
+            binding.recyclerViewBookmark,
+            com.google.android.material.R.attr.colorOutline
+        )
 
         binding.recyclerViewBookmark.addItemDecoration(divider)
 
@@ -80,9 +83,10 @@ class BookmarkFragment : Fragment(), OnBookmarkClickListener {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Bookmark about to be deleted")
             .setMessage("Are you sure you want to delete this bookmark")
-            .setPositiveButton("Yes"
-            ) { _, _ -> lifecycleScope.launch { viewModel.deleteBookMark(bookmark.id) }  }
-            .setNegativeButton("No") {dialog, _ -> dialog.dismiss()}
+            .setPositiveButton(
+                "Yes"
+            ) { _, _ -> lifecycleScope.launch { viewModel.deleteBookMark(bookmark.id) } }
+            .setNegativeButton("No") { dialog, _ -> dialog.dismiss() }
             .show()
 
         return true
