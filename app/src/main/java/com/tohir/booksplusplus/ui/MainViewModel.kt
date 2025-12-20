@@ -18,7 +18,9 @@ import com.tohir.booksplusplus.data.BooksRepository
 import com.tohir.booksplusplus.data.model.Book
 import com.tohir.booksplusplus.ui.books.reader.ReaderActivity
 import com.tohir.booksplusplus.util.BooksPlusPlus
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.readium.r2.shared.publication.Publication
 import org.readium.r2.shared.publication.services.cover
 import org.readium.r2.shared.publication.services.positions
@@ -80,11 +82,13 @@ class MainViewModel : ViewModel() {
             contributor.name
         }
 
-        val cover = if (publication.cover() != null) {
+        val coverBitmap = publication.cover()
+
+        val cover = if (coverBitmap != null) {
             val file = File(context.filesDir, "cover_${publication.metadata.title}.png")
             if (!file.exists()) {
                 FileOutputStream(file).use {
-                    publication.cover()!!.compress(Bitmap.CompressFormat.PNG, 100, it)
+                    coverBitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
                 }
             }
             file
@@ -113,11 +117,10 @@ class MainViewModel : ViewModel() {
                 title = publication.metadata.title,
                 author = authors,
                 cover = cover.absolutePath,
-                identifier = publication.metadata.identifier ?: "",
                 readingProgressJSON = null,
                 readingProgressDouble = null,
                 yearReleased = year,
-                numberOfPages = publication.positions().size,
+                numberOfPages = publication.metadata.numberOfPages ?: publication.positions().size,
                 uri = Uri.fromFile(uriFile).toString(),
                 hash = hashedUri
             )
@@ -128,52 +131,56 @@ class MainViewModel : ViewModel() {
 
     suspend fun addBookFromAsset(context: Context, filename: String) {
 
-        val file = File(context.filesDir, filename)
-        context.assets.open("book/$filename").use { inputStream ->
-            file.outputStream().use { outputStream ->
-                inputStream.copyTo(outputStream)
-            }
-        }
-
-        val uri = Uri.fromFile(file)
-        val hashedUri = hashUri(context, uri)
-        val publication = parsePublication(context, uri)
-
-        val authors = publication!!.metadata.authors.joinToString(", ") { contributor ->
-            contributor.name
-        }
-
-        val year = publication.metadata.published?.let { instant ->
-            val date = instant.toJavaDate()
-            val sdf = SimpleDateFormat("yyyy")
-
-            sdf.format(date)
-        }
-
-        val cover = publication.cover().let {
-            val file = File(context.filesDir, "cover_${publication.metadata.title}.png")
-            FileOutputStream(file).use {
-                publication.cover()!!.compress(Bitmap.CompressFormat.PNG, 100, it)
+        withContext(Dispatchers.IO) {
+            val file = File(context.filesDir, filename)
+            context.assets.open("book/$filename").use { inputStream ->
+                file.outputStream().use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
             }
 
-            file
+            val uri = Uri.fromFile(file)
+            val hashedUri = hashUri(context, uri)
+            val publication = parsePublication(context, uri)
 
+            val authors = publication!!.metadata.authors.joinToString(", ") { contributor ->
+                contributor.name
+            }
+
+            val year = publication.metadata.published?.let { instant ->
+                val date = instant.toJavaDate()
+                val sdf = SimpleDateFormat("yyyy")
+
+                sdf.format(date)
+            }
+
+            val coverBitmap = publication.cover()
+            val coverFile = coverBitmap!!.let {
+                val file = File(context.filesDir, "cover_${publication.metadata.title}.png")
+                FileOutputStream(file).use { out ->
+                    it.compress(Bitmap.CompressFormat.PNG, 100, out)
+                }
+                file
+            }
+
+
+            val book = Book(
+                title = publication.metadata.title,
+                author = authors,
+                cover = coverFile.absolutePath,
+                readingProgressJSON = null,
+                readingProgressDouble = null,
+                yearReleased = year,
+                numberOfPages = publication.metadata.numberOfPages ?: publication.positions().size,
+                uri = uri.toString(),
+                hash = hashedUri,
+                dateAdded = System.currentTimeMillis()
+            )
+
+            booksRepository.addBook(book)
         }
 
-        val book = Book(
-            title = publication.metadata.title,
-            author = authors,
-            cover = cover.absolutePath,
-            identifier = publication.metadata.identifier ?: "",
-            readingProgressJSON = null,
-            readingProgressDouble = null,
-            yearReleased = year,
-            numberOfPages = publication.positions().size,
-            uri = uri.toString(),
-            hash = hashedUri
-        )
 
-        booksRepository.addBook(book)
     }
 
     private suspend fun parsePublication(context: Context, uri: Uri): Publication? {

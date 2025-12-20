@@ -26,6 +26,19 @@
 # --- Gson needs generics + annotations ---
 # Keep generic type info (for List<T> or Map<String,T>)
 
+-keep class org.readium.r2.shared.** { *; }
+-dontwarn org.readium.r2.shared.**
+-keep class org.readium.r2.streamer.** {*;}
+-dontwarn org.readium.r2.streamer.**
+-keep class org.readium.r2.navigator.** {*;}
+-dontwarn org.readium.r2.navigator.**
+-keep class org.readium.r2.opds.** {*;}
+-dontwarn org.readium.r2.opds.**
+-keep class org.readium.r2.lcp.** {*;}
+-dontwarn org.readium.r2.lcp.**
+-keep class org.readium.lcp.** {*;}
+-dontwarn org.readium.lcp.**
+
 
 
 

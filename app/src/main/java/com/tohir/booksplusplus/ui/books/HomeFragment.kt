@@ -11,7 +11,9 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.tohir.booksplusplus.R
@@ -25,7 +27,6 @@ import java.time.LocalDateTime
 class HomeFragment : Fragment(), RecentBookAdapter.BookClickListener {
 
     private val viewModel: HomeViewModel by viewModels()
-    private val adapter = RecentBookAdapter(this)
     private lateinit var binding: FragmentHomeBinding
     private val prefs by lazy {
         requireContext().getSharedPreferences(
@@ -50,53 +51,91 @@ class HomeFragment : Fragment(), RecentBookAdapter.BookClickListener {
 
         binding.textViewMinutesReadValue.text = prefs.getInt("MINUTES", 0).toString()
 
-        fetchAllBooks()
 
     }
 
     private fun setupAdapters() {
-        binding.recyclerViewPreviouslyRead.layoutManager = LinearLayoutManager(
-            requireContext(),
-            LinearLayoutManager.HORIZONTAL, false
-        )
 
-        binding.recyclerViewPreviouslyRead.adapter = adapter
+        // Finished books
+        val finishedAdapter = RecentBookAdapter(this)
+        binding.recyclerViewFinished.apply {
+            layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+            adapter = finishedAdapter
+        }
 
+        // Recently added
+        val recentlyAddedAdapter = RecentBookAdapter(this)
+        binding.recyclerViewRecentlyAdded.apply {
+            layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+            adapter = recentlyAddedAdapter
+        }
 
-        binding.recyclerViewFinished.layoutManager = LinearLayoutManager(
-            requireContext(),
-            LinearLayoutManager.HORIZONTAL, false
-        )
+        // Continue reading
+        val continueReadingAdapter = RecentBookAdapter(this)
+        binding.recyclerViewContinueReading.apply {
+            layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+            adapter = continueReadingAdapter
+        }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-        binding.recyclerViewFinished.adapter = RecentBookAdapter(this).apply {
-            lifecycleScope.launch {
-                viewModel.getFinishedBooks().collectLatest { books ->
+                launch {
+                    viewModel.getFinishedBooks().collectLatest { books ->
+                        val visible = books.isNotEmpty()
+                        binding.textViewFinished.visibility =
+                            if (visible) View.VISIBLE else View.GONE
+                        binding.recyclerViewFinished.visibility =
+                            if (visible) View.VISIBLE else View.GONE
 
-                    if (books.isNotEmpty()) {
-                        binding.textViewFinished.visibility = View.VISIBLE
-                        binding.recyclerViewFinished.visibility = View.VISIBLE
+                        finishedAdapter.setBooks(books)
                     }
+                }
 
-                    setBooks(books)
+                launch {
+                    viewModel.getRecentlyAddedBooks().collectLatest { books ->
+                        val visible = books.isNotEmpty()
+                        binding.textViewRecentlyAdded.visibility =
+                            if (visible) View.VISIBLE else View.GONE
+                        binding.recyclerViewRecentlyAdded.visibility =
+                            if (visible) View.VISIBLE else View.GONE
+
+                        recentlyAddedAdapter.setBooks(books)
+                    }
+                }
+
+                launch {
+                    viewModel.getRecentBooks().collectLatest { books ->
+                        val visible = books.isNotEmpty()
+                        binding.textViewContinueReading.visibility =
+                            if (visible) View.VISIBLE else View.GONE
+                        binding.recyclerViewContinueReading.visibility =
+                            if (visible) View.VISIBLE else View.GONE
+
+                        continueReadingAdapter.setBooks(books)
+                    }
                 }
             }
         }
     }
 
+
     override fun onResume() {
         super.onResume()
 
         binding.textViewMinutesReadValue.text = prefs.getInt("MINUTES", 0).toString()
-    }
-
-    fun fetchAllBooks() {
-        lifecycleScope.launch {
-            viewModel.getRecentBooks().collectLatest { books ->
-                adapter.setBooks(books)
-            }
-        }
-
     }
 
 

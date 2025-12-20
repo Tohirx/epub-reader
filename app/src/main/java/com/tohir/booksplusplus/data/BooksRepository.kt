@@ -27,6 +27,10 @@ class BooksRepository(private val bookDao: BookDao) {
         bookDao.deleteBook(book)
     }
 
+    fun getRecentlyAddedBooks(): Flow<List<Book>> {
+        return bookDao.getRecentlyAddedBooks()
+    }
+
     suspend fun saveReadingProgressAsDouble(value: Double, bookID: Long) {
         bookDao.saveReadingProgressAsDouble(value, bookID)
     }

@@ -22,6 +22,10 @@ class HomeViewModel : ViewModel() {
         return booksRepository.getFinishedBooks()
     }
 
+    fun getRecentlyAddedBooks(): Flow<List<Book>> {
+        return booksRepository.getRecentlyAddedBooks()
+    }
+
     fun updateBook(book: Book) {
         viewModelScope.launch {
             booksRepository.updateBook(book)

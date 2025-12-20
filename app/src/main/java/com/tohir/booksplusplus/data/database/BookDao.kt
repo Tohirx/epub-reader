@@ -31,6 +31,9 @@ interface BookDao {
     @Update
     suspend fun updateBook(book: Book)
 
+    @Query("SELECT * FROM Book ORDER BY dateAdded ASC")
+    fun getRecentlyAddedBooks(): Flow<List<Book>>
+
     @Query("SELECT * FROM bookmark WHERE bookmark.BOOK_ID = :bookID ORDER BY PAGE_NUMBER ASC")
     fun getAllBookmarks(bookID: Long): Flow<List<Bookmark>>
 
@@ -64,7 +67,13 @@ interface BookDao {
     @Insert(onConflict = REPLACE)
     suspend fun addHighlight(highlight: Highlight)
 
-    @Query("SELECT * FROM book ORDER BY lastDateOpened DESC LIMIT 10")
+    @Query("""
+    SELECT *
+    FROM Book
+    WHERE lastDateOpened IS NOT NULL
+    ORDER BY lastDateOpened DESC
+    LIMIT 10
+""")
     fun getRecentBooks(): Flow<List<Book>>
 
     @Insert(onConflict = REPLACE)

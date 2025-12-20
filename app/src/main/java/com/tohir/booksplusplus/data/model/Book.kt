@@ -15,7 +15,6 @@ data class Book(
     val author: String?,
     val cover: String?,
     val uri: String,
-    val identifier: String?,
     val readingProgressJSON: String?,
     val readingProgressDouble: Double?,
     val isFinished: Boolean = false,

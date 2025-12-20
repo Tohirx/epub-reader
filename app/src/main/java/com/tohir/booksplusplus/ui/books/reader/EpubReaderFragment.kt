@@ -233,6 +233,7 @@ class EpubReaderFragment : Fragment() {
     }
 
     private fun setupInitSettings() {
+
         lifecycleScope.launch {
             setupHighlights()
             setupNotes()
