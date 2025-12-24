@@ -49,8 +49,11 @@ class HomeFragment : Fragment(), RecentBookAdapter.BookClickListener {
 
         setupAdapters()
 
-        binding.textViewMinutesReadValue.text = prefs.getInt("MINUTES", 0).toString()
+        val minutesRead = prefs.getInt("MINUTES", 0)
 
+        binding.textViewMinutesReadValue.text = minutesRead.toString()
+
+        binding.textViewMinutes.text = if (minutesRead <= 1) "minute" else "minutes"
 
     }
 

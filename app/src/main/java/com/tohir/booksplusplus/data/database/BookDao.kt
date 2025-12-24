@@ -67,13 +67,15 @@ interface BookDao {
     @Insert(onConflict = REPLACE)
     suspend fun addHighlight(highlight: Highlight)
 
-    @Query("""
+    @Query(
+        """
     SELECT *
     FROM Book
     WHERE lastDateOpened IS NOT NULL
     ORDER BY lastDateOpened DESC
     LIMIT 10
-""")
+"""
+    )
     fun getRecentBooks(): Flow<List<Book>>
 
     @Insert(onConflict = REPLACE)
@@ -94,12 +96,8 @@ interface BookDao {
     @Query("SELECT * FROM NOTE WHERE id = :id")
     suspend fun findNoteById(id: Long): Note
 
-    @Query("SELECT EXISTS(SELECT 1 FROM Book WHERE hash = :hash)")
-    suspend fun existsByHash(hash: String): Boolean
-
     @Query("SELECT id FROM Book WHERE hash = :hash LIMIT 1")
     suspend fun getBookIdByHash(hash: String): Long?
-
 
 
 }

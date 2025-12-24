@@ -19,23 +19,6 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var binding: DictionaryBottomSheetBinding
 
-    companion object {
-        fun newInstance(word: String): DictionaryBottomSheet? {
-
-            if (word.isEmpty()) return null
-
-            val sheet = DictionaryBottomSheet()
-            val args = Bundle().apply { putString("word", word) }
-
-            sheet.arguments = args
-
-            return sheet
-        }
-    }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return BottomSheetDialog(requireContext(), theme)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -136,6 +119,7 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
 
     private suspend fun fetchDictionaryData(selectedWord: String): DictionaryResult {
         val api = DictionaryApi()
+
         val result = api.lookup(selectedWord.lowercase())
 
         if (result.isSuccess) {
@@ -145,8 +129,8 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
             val definitions = arrayListOf<String>()
             val pos = arrayListOf<String>()
             val usages = arrayListOf<String>()
+            val audioUrls = arrayListOf<String>()
 
-            val audioUrls: ArrayList<String> = arrayListOf()
             entries.forEach { entry ->
                 entry.phonetics.forEach { phonetic ->
                     if (!phonetic.audio.isNullOrBlank()) {

@@ -81,7 +81,11 @@ class RecentBookAdapter(private val listener: BookClickListener) :
 
             if (book.isFinished) {
                 binding.progressBarReading.visibility = View.GONE
+                binding.buttonMarkAsFinished.visibility = View.GONE
                 binding.textViewFinished.visibility = View.VISIBLE
+            } else {
+                binding.progressBarReading.visibility = View.VISIBLE
+                binding.textViewFinished.visibility = View.GONE
             }
 
             binding.root.setOnClickListener {

@@ -621,8 +621,10 @@ class EpubReaderFragment : Fragment() {
             navigator.currentSelection()?.locator?.text?.highlight
         } ?: ""
 
-        DictionaryBottomSheet.newInstance(selectedWord)
-            ?.show(parentFragmentManager, "DictionaryBottomSheet")
+        val dictionaryBottomSheet = DictionaryBottomSheet()
+        dictionaryBottomSheet.arguments = bundleOf("word" to selectedWord)
+
+        dictionaryBottomSheet.show(parentFragmentManager, "DictionaryBottomSheet")
 
         navigator.clearSelection()
 

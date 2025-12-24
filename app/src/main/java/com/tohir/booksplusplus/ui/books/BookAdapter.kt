@@ -9,6 +9,7 @@ import com.squareup.picasso.Picasso
 import com.tohir.booksplusplus.data.model.Book
 import com.tohir.booksplusplus.databinding.ItemBookBinding
 import java.io.File
+import kotlin.math.ceil
 
 class BookAdapter(private val listener: BookClickListener) :
     RecyclerView.Adapter<BookAdapter.ViewHolder>() {
@@ -50,6 +51,18 @@ class BookAdapter(private val listener: BookClickListener) :
                 listener.onThreeDotsClicked(it, book)
 
             }
+
+            if (book.isFinished) binding.readingPercent.text = "Finished"
+            else if (book.readingProgressDouble != null) {
+                if (book.readingProgressDouble * 100 < 1) {
+                    binding.readingPercent.text = "1%"
+                } else {
+                    val value = ceil(book.readingProgressDouble * 100)
+                    binding.readingPercent.text = value.toInt().toString()
+                }
+            }
+
+            if (book.lastDateOpened == null) binding.readingPercent.text = "New"
 
             binding.root.setOnClickListener {
                 listener.onBookOpened(book)

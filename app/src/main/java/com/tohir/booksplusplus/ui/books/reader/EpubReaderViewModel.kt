@@ -1,8 +1,8 @@
 package com.tohir.booksplusplus.ui.books.reader
 
 import android.content.Context
-import android.net.Uri
 import android.support.annotation.ColorInt
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import com.tohir.booksplusplus.data.model.Bookmark
 import com.tohir.booksplusplus.data.model.Highlight
@@ -39,7 +39,7 @@ class EpubReaderViewModel : ViewModel() {
             val book = booksRepository.findBookById(bookId)
             val httpClient = DefaultHttpClient()
             val assetRetriever = AssetRetriever(context.contentResolver, httpClient)
-            val url: AbsoluteUrl? = Uri.parse(book.uri).toAbsoluteUrl()
+            val url: AbsoluteUrl? = book.uri.toUri().toAbsoluteUrl()
 
             val asset = assetRetriever.retrieve(url!!).getOrNull()
 
