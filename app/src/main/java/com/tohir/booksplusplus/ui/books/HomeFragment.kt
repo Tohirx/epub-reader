@@ -2,6 +2,7 @@ package com.tohir.booksplusplus.ui.books
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +24,7 @@ import com.tohir.booksplusplus.ui.books.reader.ReaderActivity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.time.ZoneId
 
 class HomeFragment : Fragment(), RecentBookAdapter.BookClickListener {
 
@@ -49,13 +51,11 @@ class HomeFragment : Fragment(), RecentBookAdapter.BookClickListener {
 
         setupAdapters()
 
+        ensureDailyReset()
         val minutesRead = prefs.getInt("MINUTES", 0)
-
-        binding.textViewMinutesReadValue.text = minutesRead.toString()
-
         binding.textViewMinutes.text = if (minutesRead <= 1) "minute" else "minutes"
-
     }
+
 
     private fun setupAdapters() {
 
@@ -134,10 +134,31 @@ class HomeFragment : Fragment(), RecentBookAdapter.BookClickListener {
         }
     }
 
+    fun ensureDailyReset() {
+        val zoneId = ZoneId.systemDefault()
+        val now = LocalDateTime.now(zoneId)
+
+        val todayMidnight = now.toLocalDate()
+        val todayEpochDay = todayMidnight.toEpochDay()
+
+        val lastResetDay = prefs.getLong("LAST_RESET_EPOCH_DAY", -1)
+
+        if (lastResetDay != todayEpochDay) {
+            prefs.edit()
+                .putInt("MINUTES", 0)
+                .putLong("LAST_RESET_EPOCH_DAY", todayEpochDay)
+                .commit()
+        }
+    }
+
+
 
     override fun onResume() {
         super.onResume()
 
+        ensureDailyReset()
+        val minutesRead = prefs.getInt("MINUTES", 0)
+        binding.textViewMinutes.text = if (minutesRead <= 1) "minute" else "minutes"
         binding.textViewMinutesReadValue.text = prefs.getInt("MINUTES", 0).toString()
     }
 

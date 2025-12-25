@@ -167,6 +167,25 @@ class ThemesAndSettingsFragment : BottomSheetDialogFragment() {
         binding.sliderLineSpacing.addOnChangeListener { _, value, _ ->
             readerViewModel.setLineSpacing(value.toDouble())
         }
+
+        binding.sliderLetterSpacing.addOnChangeListener { _, value, _ ->
+            readerViewModel.setLetterSpacing(value.toDouble())
+        }
+
+        binding.sliderWordSpacing.addOnChangeListener { _, value, _ ->
+            readerViewModel.setWordSpacing(value.toDouble())
+        }
+
+        binding.buttonMoreSettings.setOnClickListener {
+            binding.mainSettingsContainer.visibility = View.GONE
+            binding.moreSettingsContainer.visibility = View.VISIBLE
+        }
+
+        binding.imageButtonBack.setOnClickListener {
+            binding.moreSettingsContainer.visibility = View.GONE
+            binding.mainSettingsContainer.visibility = View.VISIBLE
+        }
+
     }
 
     fun setInitialValuesForViews() {
@@ -176,17 +195,10 @@ class ThemesAndSettingsFragment : BottomSheetDialogFragment() {
         if (activeChip != -1)
             binding.fontFamilyChipGroup.check(activeChip)
 
-        val fontSizeValue = userPreferences.getFloat(EpubReaderFragment.FONT_SIZE, -1.0f)
-
-        if (fontSizeValue != -1.0f)
-            binding.sliderFontSize.value = fontSizeValue
-
-        val lineSpacingValue = userPreferences.getFloat(EpubReaderFragment.LINE_HEIGHT, -1.0f)
-
-        if (lineSpacingValue != -1.0f)
-            binding.sliderLineSpacing.value = lineSpacingValue
-
-
+        binding.sliderFontSize.value = userPreferences.getFloat(EpubReaderFragment.FONT_SIZE, 1.0f)
+        binding.sliderLineSpacing.value = userPreferences.getFloat(EpubReaderFragment.LINE_HEIGHT, 1.0f)
+        binding.sliderLetterSpacing.value = userPreferences.getFloat(EpubReaderFragment.LETTER_SPACING, 0.0f)
+        binding.sliderWordSpacing.value = userPreferences.getFloat(EpubReaderFragment.WORD_SPACING, 0.0f)
     }
 
     fun convertChipStringToStandardFormat(text: String): String {
@@ -202,6 +214,4 @@ class ThemesAndSettingsFragment : BottomSheetDialogFragment() {
             else -> "OpenSans"
         }
     }
-
-
 }

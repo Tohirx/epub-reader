@@ -39,7 +39,6 @@
             android:name=".ui.books.reader.ReaderActivity"
             android:exported="false" />
 
-        <receiver android:name=".ui.books.ReadingResetReceiver"/>
 
 
     </application>

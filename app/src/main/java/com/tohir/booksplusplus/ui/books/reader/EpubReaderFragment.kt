@@ -56,6 +56,8 @@ import org.readium.r2.navigator.util.BaseActionModeCallback
 import org.readium.r2.shared.ExperimentalReadiumApi
 import org.readium.r2.shared.publication.Publication
 import org.readium.r2.shared.publication.services.positions
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 class EpubReaderFragment : Fragment() {
     private val viewModel: EpubReaderViewModel by viewModels()
@@ -77,7 +79,9 @@ class EpubReaderFragment : Fragment() {
                 textAlign = it.textAlign,
                 scroll = it.scroll,
                 textColor = it.textColor,
-                backgroundColor = it.backgroundColor
+                backgroundColor = it.backgroundColor,
+                letterSpacing = it.letterSpacing,
+                wordSpacing = it.wordSpacing
             )
         }
     }
@@ -227,6 +231,7 @@ class EpubReaderFragment : Fragment() {
 
         val currentValue = prefs.getInt("MINUTES", minutesRead)
 
+        ensureDailyReset()
         prefs.edit { putInt("MINUTES", currentValue + minutesRead) }
 
         saveReadingProgress()
@@ -485,6 +490,41 @@ class EpubReaderFragment : Fragment() {
             navigator.submitPreferences(editor.preferences)
 
         }
+
+        readerViewModel.selectedLetterSpacing.observe(viewLifecycleOwner) { letterSpacing ->
+            editor.apply {
+                this.letterSpacing.set(letterSpacing)
+            }
+            prefs.edit { putFloat(LETTER_SPACING, letterSpacing.toFloat()) }
+            navigator.submitPreferences(editor.preferences)
+
+        }
+
+        readerViewModel.selectedWordSpacing.observe(viewLifecycleOwner) { wordSpacing ->
+            editor.apply {
+                this.wordSpacing.set(wordSpacing)
+            }
+            prefs.edit { putFloat(WORD_SPACING, wordSpacing.toFloat()) }
+            navigator.submitPreferences(editor.preferences)
+        }
+    }
+
+    fun ensureDailyReset() {
+        val zoneId = ZoneId.systemDefault()
+        val now = LocalDateTime.now(zoneId)
+
+        // Today at 00:00
+        val todayMidnight = now.toLocalDate()
+        val todayEpochDay = todayMidnight.toEpochDay()
+
+        val lastResetDay = prefs.getLong("LAST_RESET_EPOCH_DAY", -1)
+
+        if (lastResetDay != todayEpochDay) {
+            prefs.edit()
+                .putInt("MINUTES", 0)
+                .putLong("LAST_RESET_EPOCH_DAY", todayEpochDay)
+                .commit() // synchronous on purpose
+        }
     }
 
 
@@ -528,6 +568,7 @@ class EpubReaderFragment : Fragment() {
         R.id.yellow to Color.rgb(249, 239, 125),
         R.id.purple to Color.rgb(182, 153, 255)
     )
+
 
     val customSelectionActionModeCallback: ActionMode.Callback by lazy { SelectionActionModeCallBack() }
 
@@ -743,6 +784,9 @@ class EpubReaderFragment : Fragment() {
         const val LINE_HEIGHT = "LINE_HEIGHT"
         const val TEXT_COLOR = "TEXT_COLOR"
         const val BACKGROUND_COLOR = "BACKGROUND_COLOR"
+
+        const val LETTER_SPACING = "LETTER_SPACING"
+        const val WORD_SPACING = "WORD_SPACING"
 
     }
 }

@@ -18,7 +18,9 @@ class InitPreferences(
     var textAlign: TextAlign = TextAlign.START,
     var scroll: Boolean = false,
     var backgroundColor: Color = Color("#FFFFFF".toColorInt()),
-    var textColor: Color = Color("#000000".toColorInt())
+    var textColor: Color = Color("#000000".toColorInt()),
+    var letterSpacing: Double = 0.0,
+    var wordSpacing: Double= 0.0
 ) {
 
     init {
@@ -28,6 +30,8 @@ class InitPreferences(
         lineSpacing = pref.getFloat(EpubReaderFragment.LINE_HEIGHT, 1.2f).toDouble()
         backgroundColor = Color(pref.getString(EpubReaderFragment.BACKGROUND_COLOR, "#FFFFFF")!!.toColorInt())
         textColor = Color(pref.getString(TEXT_COLOR, "#000000")!!.toColorInt())
+        letterSpacing =  pref.getFloat(EpubReaderFragment.LETTER_SPACING, 0.0f).toDouble()
+        wordSpacing =  pref.getFloat(EpubReaderFragment.WORD_SPACING, 0.0f).toDouble()
     }
 
 

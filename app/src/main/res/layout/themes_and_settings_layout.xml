@@ -5,385 +5,463 @@
     android:layout_height="match_parent"
     android:background="?attr/colorSurface">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <ImageButton
-            android:tint="?attr/colorOnSurface"
-            android:id="@+id/image_button_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:background="@null"
-            android:padding="6dp"
-            android:src="@drawable/icon_cancel1" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/text_view_themes_and_settings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="Themes and Settings"
-            android:textAppearance="?attr/textAppearanceTitleLarge" />
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="8dp"
-            android:text="Themes"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:textColor="?attr/colorOnSurfaceVariant" />
-
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.material.card.MaterialCardView
-
-                android:id="@+id/card_view_custom_theme_1"
-                style="?attr/materialCardViewOutlinedStyle"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="16dp"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toStartOf="@id/card_view_custom_theme_2"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:fontFamily="@font/open_dyslexic_regular"
-                    android:text="Aa"
-                    android:textAppearance="?attr/textAppearanceHeadlineMedium" />
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_view_custom_theme_2"
-                style="?attr/materialCardViewOutlinedStyle"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="12dp"
-                app:cardBackgroundColor="@color/black"
-                app:cardCornerRadius="16dp"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toStartOf="@id/card_view_custom_theme_3"
-                app:layout_constraintStart_toEndOf="@id/card_view_custom_theme_1"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:fontFamily="@font/roboto_regular"
-                    android:text="Aa"
-                    android:textAppearance="?attr/textAppearanceHeadlineMedium"
-                    android:textColor="@color/white" />
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_view_custom_theme_3"
-                style="?attr/materialCardViewOutlinedStyle"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="12dp"
-                app:cardBackgroundColor="@color/dark_brown"
-                app:cardCornerRadius="16dp"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toStartOf="@id/card_view_custom_theme_4"
-                app:layout_constraintStart_toEndOf="@id/card_view_custom_theme_2"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:fontFamily="@font/open_sans"
-                    android:text="Aa"
-                    android:textAppearance="?attr/textAppearanceHeadlineMedium"
-                    android:textColor="@color/oasis" />
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_view_custom_theme_4"
-                style="?attr/materialCardViewOutlinedStyle"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="12dp"
-                app:cardBackgroundColor="@color/cream"
-                app:cardCornerRadius="16dp"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/card_view_custom_theme_3"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:fontFamily="serif"
-                    android:text="Aa"
-                    android:textAppearance="?attr/textAppearanceHeadlineMedium"
-                    android:textColor="@color/oasis" />
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_view_custom_theme_5"
-                style="?attr/materialCardViewOutlinedStyle"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginTop="12dp"
-                app:cardBackgroundColor="@color/off_white"
-                app:cardCornerRadius="16dp"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toStartOf="@id/card_view_custom_theme_6"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/card_view_custom_theme_1">
-
-                <TextView
-                    android:fontFamily="@font/lexend_regular"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="Aa"
-                    android:textAppearance="?attr/textAppearanceHeadlineMedium"
-                    android:textColor="@color/dark_grey" />
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_view_custom_theme_6"
-                style="?attr/materialCardViewOutlinedStyle"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="12dp"
-                app:cardBackgroundColor="@color/very_dark_grey"
-                app:cardCornerRadius="16dp"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toStartOf="@id/card_view_custom_theme_7"
-                app:layout_constraintStart_toEndOf="@id/card_view_custom_theme_5"
-                app:layout_constraintTop_toBottomOf="@id/card_view_custom_theme_2">
-
-                <TextView
-                    android:fontFamily="@font/montserrat_regular"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="Aa"
-                    android:textAppearance="?attr/textAppearanceHeadlineMedium"
-                    android:textColor="@color/soft_off_white" />
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_view_custom_theme_7"
-                style="?attr/materialCardViewOutlinedStyle"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="12dp"
-                app:cardBackgroundColor="@color/medium_dark_grey"
-                app:cardCornerRadius="16dp"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toStartOf="@id/card_view_custom_theme_8"
-                app:layout_constraintStart_toEndOf="@id/card_view_custom_theme_6"
-                app:layout_constraintTop_toBottomOf="@id/card_view_custom_theme_3">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:fontFamily="@font/poiret_one_regular"
-                    android:text="Aa"
-                    android:textAppearance="?attr/textAppearanceHeadlineMedium"
-                    android:textColor="@color/light_grey" />
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-
-                android:id="@+id/card_view_custom_theme_8"
-                style="?attr/materialCardViewOutlinedStyle"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="12dp"
-                app:cardBackgroundColor="@color/very_dark_navy"
-                app:cardCornerRadius="16dp"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/card_view_custom_theme_7"
-                app:layout_constraintTop_toBottomOf="@id/card_view_custom_theme_4">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="Aa"
-                    android:fontFamily="casual"
-                    android:textAppearance="?attr/textAppearanceHeadlineMedium"
-                    android:textColor="@color/light_bluish_white" />
-            </com.google.android.material.card.MaterialCardView>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="8dp"
-            android:text="Font Family"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:textColor="?attr/colorOnSurfaceVariant" />
-
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="none">
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/font_family_chip_group"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:selectionRequired="true"
-                app:singleSelection="true">
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_font_default"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="Default" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_font_open_sans"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Open Sans" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_font_casual"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Casual" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_font_serif"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="serif"
-                    android:text="Serif" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_font_sans_serif"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"
-                    android:text="Sans-serif" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_font_open_dyslexic"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/open_dyslexic_regular"
-                    android:text="Open Dyslexic" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_font_roboto"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_regular"
-                    android:text="Roboto" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_font_lexend"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_regular"
-                    android:text="Lexend" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_font_montserrat"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_regular"
-                    android:text="Montserrat" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_font_poiret_one"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_regular"
-                    android:text="Poiret One" />
-
-            </com.google.android.material.chip.ChipGroup>
-        </HorizontalScrollView>
-
-
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="12dp" />
+        android:layout_height="wrap_content">
 
         <LinearLayout
+            android:id="@+id/main_settings_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:visibility="visible">
+
+            <ImageButton
+                android:id="@+id/image_button_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:background="@null"
+                android:padding="6dp"
+                android:src="@drawable/icon_cancel1"
+                app:tint="?attr/colorOnSurface" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/text_view_themes_and_settings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Themes and Settings"
+                android:textAppearance="?attr/textAppearanceTitleLarge" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Font Size"
-                android:textAppearance="?attr/textAppearanceBodyLarge" />
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="8dp"
+                android:text="Themes"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
-            <com.google.android.material.slider.Slider
-                android:id="@+id/slider_font_size"
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:stepSize="0.1"
-                android:value="1.0"
-                android:valueFrom="0.8"
-                android:valueTo="2.0" />
-        </LinearLayout>
+                android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:orientation="vertical">
+                <com.google.android.material.card.MaterialCardView
+
+                    android:id="@+id/card_view_custom_theme_1"
+                    style="?attr/materialCardViewOutlinedStyle"
+                    android:layout_width="75dp"
+                    android:layout_height="60dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:layout_constraintEnd_toStartOf="@id/card_view_custom_theme_2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/open_dyslexic_regular"
+                        android:text="Aa"
+                        android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                        android:textColor="@color/black" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_view_custom_theme_2"
+                    style="?attr/materialCardViewOutlinedStyle"
+                    android:layout_width="75dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="12dp"
+                    app:cardBackgroundColor="@color/black"
+                    app:cardCornerRadius="16dp"
+                    app:layout_constraintEnd_toStartOf="@id/card_view_custom_theme_3"
+                    app:layout_constraintStart_toEndOf="@id/card_view_custom_theme_1"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text="Aa"
+                        android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                        android:textColor="@color/white" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_view_custom_theme_3"
+                    style="?attr/materialCardViewOutlinedStyle"
+                    android:layout_width="75dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="12dp"
+                    app:cardBackgroundColor="@color/dark_brown"
+                    app:cardCornerRadius="16dp"
+                    app:layout_constraintEnd_toStartOf="@id/card_view_custom_theme_4"
+                    app:layout_constraintStart_toEndOf="@id/card_view_custom_theme_2"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/open_sans"
+                        android:text="Aa"
+                        android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                        android:textColor="@color/oasis" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_view_custom_theme_4"
+                    style="?attr/materialCardViewOutlinedStyle"
+                    android:layout_width="75dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="12dp"
+                    app:cardBackgroundColor="@color/cream"
+                    app:cardCornerRadius="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/card_view_custom_theme_3"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="serif"
+                        android:text="Aa"
+                        android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                        android:textColor="@color/oasis" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_view_custom_theme_5"
+                    style="?attr/materialCardViewOutlinedStyle"
+                    android:layout_width="75dp"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="12dp"
+                    app:cardBackgroundColor="@color/off_white"
+                    app:cardCornerRadius="16dp"
+                    app:layout_constraintEnd_toStartOf="@id/card_view_custom_theme_6"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/card_view_custom_theme_1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/lexend_regular"
+                        android:text="Aa"
+                        android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                        android:textColor="@color/dark_grey" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_view_custom_theme_6"
+                    style="?attr/materialCardViewOutlinedStyle"
+                    android:layout_width="75dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    app:cardBackgroundColor="@color/very_dark_grey"
+                    app:cardCornerRadius="16dp"
+                    app:layout_constraintEnd_toStartOf="@id/card_view_custom_theme_7"
+                    app:layout_constraintStart_toEndOf="@id/card_view_custom_theme_5"
+                    app:layout_constraintTop_toBottomOf="@id/card_view_custom_theme_2">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/montserrat_regular"
+                        android:text="Aa"
+                        android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                        android:textColor="@color/soft_off_white" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_view_custom_theme_7"
+                    style="?attr/materialCardViewOutlinedStyle"
+                    android:layout_width="75dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    app:cardBackgroundColor="@color/medium_dark_grey"
+                    app:cardCornerRadius="16dp"
+                    app:layout_constraintEnd_toStartOf="@id/card_view_custom_theme_8"
+                    app:layout_constraintStart_toEndOf="@id/card_view_custom_theme_6"
+                    app:layout_constraintTop_toBottomOf="@id/card_view_custom_theme_3">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/poiret_one_regular"
+                        android:text="Aa"
+                        android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                        android:textColor="@color/light_grey" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+
+                    android:id="@+id/card_view_custom_theme_8"
+                    style="?attr/materialCardViewOutlinedStyle"
+                    android:layout_width="75dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    app:cardBackgroundColor="@color/very_dark_navy"
+                    app:cardCornerRadius="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/card_view_custom_theme_7"
+                    app:layout_constraintTop_toBottomOf="@id/card_view_custom_theme_4">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="casual"
+                        android:text="Aa"
+                        android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                        android:textColor="@color/light_bluish_white" />
+                </com.google.android.material.card.MaterialCardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Line Spacing"
-                android:textAppearance="?attr/textAppearanceBodyLarge" />
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="8dp"
+                android:text="Font Family"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
-            <com.google.android.material.slider.Slider
-                android:id="@+id/slider_line_spacing"
+            <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:stepSize="0.2"
-                android:value="1.2"
-                android:valueFrom="1.0"
-                android:valueTo="2.0" />
+                android:scrollbars="none">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/font_family_chip_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_font_default"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="Default" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_font_open_sans"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Open Sans" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_font_casual"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Casual" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_font_serif"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="serif"
+                        android:text="Serif" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_font_sans_serif"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:text="Sans-serif" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_font_open_dyslexic"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/open_dyslexic_regular"
+                        android:text="Open Dyslexic" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_font_roboto"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text="Roboto" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_font_lexend"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text="Lexend" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_font_montserrat"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text="Montserrat" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_font_poiret_one"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text="Poiret One" />
+
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
+
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="6dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Font Size"
+                    android:textAppearance="?attr/textAppearanceBodyLarge" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/slider_font_size"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stepSize="0.1"
+                    android:value="1.0"
+                    android:valueFrom="1.0"
+                    android:valueTo="2.0" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Line Spacing"
+                    android:textAppearance="?attr/textAppearanceBodyLarge" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/slider_line_spacing"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stepSize="0.1"
+                    android:value="1.0"
+                    android:valueFrom="1.0"
+                    android:valueTo="2.0" />
+            </LinearLayout>
+
+           <com.google.android.material.button.MaterialButton
+               android:id="@+id/button_more_settings"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               app:icon="@drawable/icon_settings"
+               android:text="More Settings"
+               android:layout_marginTop="6dp"
+               android:layout_gravity="center_horizontal"/>
+
+
         </LinearLayout>
-    </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/more_settings_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:visibility="gone">
+
+            <ImageButton
+                android:id="@+id/image_button_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:focusable="true"
+                android:padding="6dp"
+                android:src="@drawable/icon_back"
+                android:tint="@color/md_theme_onSurface" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Letter Spacing"
+                    android:textAppearance="?attr/textAppearanceBodyLarge" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/slider_letter_spacing"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stepSize="0.1"
+                    android:value="1.0"
+                    android:valueFrom="0.0"
+                    android:valueTo="2.0" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Word Spacing"
+                    android:textAppearance="?attr/textAppearanceBodyLarge" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/slider_word_spacing"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stepSize="0.1"
+                    android:value="0.0"
+                    android:valueFrom="0.0"
+                    android:valueTo="2.0" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+    </FrameLayout>
+
+
 </ScrollView>

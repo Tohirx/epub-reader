@@ -58,7 +58,7 @@ class BookAdapter(private val listener: BookClickListener) :
                     binding.readingPercent.text = "1%"
                 } else {
                     val value = ceil(book.readingProgressDouble * 100)
-                    binding.readingPercent.text = value.toInt().toString()
+                    binding.readingPercent.text = value.toInt().toString() + "%"
                 }
             }
 

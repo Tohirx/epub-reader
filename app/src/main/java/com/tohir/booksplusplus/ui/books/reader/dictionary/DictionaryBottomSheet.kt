@@ -1,11 +1,13 @@
 package com.tohir.booksplusplus.ui.books.reader.dictionary
 
 import android.media.MediaPlayer
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tohir.booksplusplus.data.database.dictionary.DictionaryApi
@@ -105,39 +107,46 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
     }
 
     private suspend fun fetchDictionaryData(selectedWord: String): DictionaryResult {
-        val api = DictionaryApi()
 
-        val result = api.lookup(selectedWord.lowercase())
+        val connectivityManager = requireContext().getSystemService(ConnectivityManager::class.java) as ConnectivityManager
 
-        if (result.isSuccess) {
+        if (connectivityManager.activeNetwork != null) {
 
-            val entries = result.getOrNull()!!
+            val api = DictionaryApi()
 
-            val definitions: ArrayList<DictionaryModels.Definition> = arrayListOf()
-            val pos = arrayListOf<String>()
-            val audioUrls = arrayListOf<String>()
+            val result = api.lookup(selectedWord.lowercase())
 
-            entries.forEach { entry ->
-                entry.phonetics.forEach { phonetic ->
-                    if (!phonetic.audio.isNullOrBlank()) {
-                        audioUrls.add(phonetic.audio)
+            if (result.isSuccess) {
+
+                val entries = result.getOrNull()!!
+
+                val definitions: ArrayList<DictionaryModels.Definition> = arrayListOf()
+                val pos = arrayListOf<String>()
+                val audioUrls = arrayListOf<String>()
+
+                entries.forEach { entry ->
+                    entry.phonetics.forEach { phonetic ->
+                        if (!phonetic.audio.isNullOrBlank()) {
+                            audioUrls.add(phonetic.audio)
+                        }
                     }
                 }
-            }
 
-            entries.forEach { entry ->
+                entries.forEach { entry ->
 
-                entry.meanings.forEach { meaning ->
+                    entry.meanings.forEach { meaning ->
 
-                    pos.add(meaning.partOfSpeech)
+                        pos.add(meaning.partOfSpeech)
 
-                    meaning.definitions.forEach { definition ->
-                        definitions.add(definition)
+                        meaning.definitions.forEach { definition ->
+                            definitions.add(definition)
+                        }
                     }
                 }
-            }
 
-            return DictionaryResult(selectedWord, definitions, pos, audioUrls)
+                return DictionaryResult(selectedWord, definitions, pos, audioUrls)
+
+            }
 
         }
 
