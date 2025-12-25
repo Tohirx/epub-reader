@@ -36,7 +36,7 @@ class WordAdapter: RecyclerView.Adapter<WordAdapter.ViewHolder>() {
     }
 
     class ViewHolder(binding: ItemWordBinding) : RecyclerView.ViewHolder(binding.root) {
-        val textView = binding.textViewWord
+        val textView = binding.textViewWordiiooohhhjj
     }
 
 

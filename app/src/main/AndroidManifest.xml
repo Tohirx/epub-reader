@@ -38,9 +38,6 @@
         <activity
             android:name=".ui.books.reader.ReaderActivity"
             android:exported="false" />
-        <activity
-            android:name=".ui.books.reader.AnalyticsActivity"
-            android:exported="false" />
 
         <receiver android:name=".ui.books.ReadingResetReceiver"/>
 
