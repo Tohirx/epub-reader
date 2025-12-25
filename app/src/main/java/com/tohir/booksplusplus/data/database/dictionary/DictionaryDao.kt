@@ -60,25 +60,4 @@ interface DictionaryDao {
 
         return getPosRaw(query).mapNotNull { it.pos }
     }
-
-    suspend fun getUsageExamples(word: String): List<String> {
-        val w = word.lowercase()
-        val query = SimpleSQLiteQuery(
-            """
-            SELECT DISTINCT sm.sample
-            FROM (
-                SELECT wordid FROM words WHERE word = ?
-                UNION
-                SELECT wordid FROM casedwords WHERE casedword = ?
-            ) AS allwords
-            JOIN senses se ON allwords.wordid = se.wordid
-            JOIN samples sm ON se.synsetid = sm.synsetid
-            LIMIT 5
-        """,
-            arrayOf(w, word)
-        )
-
-        return getExamplesRaw(query).mapNotNull { it.sample }
-
-    }
 }

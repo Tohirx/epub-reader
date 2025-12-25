@@ -1,6 +1,5 @@
 package com.tohir.booksplusplus.ui.books.reader.dictionary
 
-import android.app.Dialog
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
@@ -8,9 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tohir.booksplusplus.data.database.dictionary.DictionaryApi
+import com.tohir.booksplusplus.data.database.dictionary.DictionaryModels
 import com.tohir.booksplusplus.data.database.dictionary.DictionaryProvider
 import com.tohir.booksplusplus.databinding.DictionaryBottomSheetBinding
 import kotlinx.coroutines.launch
@@ -60,29 +59,17 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
         if (data.definitions.isEmpty()) {
             binding.textViewWordText.text = "No available definitions"
             binding.buttonPlayPronunciation.visibility = View.GONE
-            binding.textViewExamplesTitle.visibility = View.GONE
-            binding.textViewExamplesTitle.visibility = View.GONE
+
         } else {
 
             binding.textViewWordText.text = data.selectedWord
 
-            binding.recyclerViewDefinition.apply {
+            binding.recyclerViewDefinitions.apply {
                 adapter = WordAdapter().apply {
                     setWords(data.definitions)
                 }
             }
 
-
-            if (data.usages.isNotEmpty()) {
-                binding.recyclerViewExamples.apply {
-                    val examplesAdapter = WordAdapter().apply {
-                        setWords(data.usages)
-                    }
-                    adapter = examplesAdapter
-                }
-            } else {
-                binding.textViewExamplesTitle.visibility = View.GONE
-            }
 
             binding.textViewPosText.text = "${data.partOfSpeech}"
 
@@ -126,9 +113,8 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
 
             val entries = result.getOrNull()!!
 
-            val definitions = arrayListOf<String>()
+            val definitions: ArrayList<DictionaryModels.Definition> = arrayListOf()
             val pos = arrayListOf<String>()
-            val usages = arrayListOf<String>()
             val audioUrls = arrayListOf<String>()
 
             entries.forEach { entry ->
@@ -139,40 +125,31 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
                 }
             }
 
-
             entries.forEach { entry ->
 
                 entry.meanings.forEach { meaning ->
 
                     pos.add(meaning.partOfSpeech)
 
-                    meaning.definitions.forEach { def ->
-
-                        definitions.add(def.definition)
-
-                        def.example?.let { usages.add(it) }
+                    meaning.definitions.forEach { definition ->
+                        definitions.add(definition)
                     }
-
                 }
             }
 
-            return DictionaryResult(selectedWord, definitions, pos, usages, audioUrls)
+            return DictionaryResult(selectedWord, definitions, pos, audioUrls)
 
-        } else {
-            val failure = result.exceptionOrNull()
-            Log.d("tohir", "${failure?.message} ${failure?.cause}")
-            Log.d("tohir", "${failure?.printStackTrace()}")
         }
 
         val db = DictionaryProvider.getInstance(requireContext())
-        val definitions = db.dictionaryDao().getDefinitions(selectedWord)
 
         val pos = db.dictionaryDao().getPos(selectedWord)
+        val definitions = db.dictionaryDao().getDefinitions(selectedWord)
 
-        val usages = db.dictionaryDao().getUsageExamples(selectedWord)
+        val transformedDefinitions: List<DictionaryModels.Definition> = definitions.map {
+            DictionaryModels.Definition(it)
+        }
 
-
-        return DictionaryResult(selectedWord, definitions, pos, usages)
-
+        return DictionaryResult(selectedWord, transformedDefinitions, pos)
     }
 }

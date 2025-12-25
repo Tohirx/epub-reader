@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="4dp"
     android:orientation="vertical"
     android:layout_height="wrap_content">
-
-
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/text_view_definition"
-        android:text="The rear of the body, especially the part between the neck and the end of the spine and opposite the chest and belly."
+        tools:text="The rear of the body, especially the part between the neck and the end of the spine and opposite the chest and belly."
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/example"
-        android:text="Could you please scratch my back?"
+        android:id="@+id/text_view_example"
+        android:visibility="gone"
+        tools:text="Could you please scratch my back?"
         android:textColor="@android:color/darker_gray"
-        android:textSize="13sp"
-        android:layout_marginTop="4dp"
-        android:layout_marginStart="12dp"
+        android:textSize="12sp"
+        android:layout_marginTop="1dp"
+        android:layout_marginStart="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 

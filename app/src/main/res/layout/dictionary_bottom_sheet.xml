@@ -17,10 +17,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:visibility="visible"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/text_view_word_text"
@@ -45,18 +45,18 @@
             tools:text="(noun)" />
 
         <ImageButton
-            app:tint="@color/md_theme_onSurface"
             android:id="@+id/button_play_pronunciation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Play pronunciation"
-            android:padding="2dp"
+            android:padding="8dp"
             android:src="@drawable/icon_speaker"
             app:layout_constraintBottom_toBottomOf="@id/text_view_word_text"
             app:layout_constraintStart_toEndOf="@id/text_view_pos_text"
-            app:layout_constraintTop_toTopOf="@id/text_view_word_text" />
+            app:layout_constraintTop_toTopOf="@id/text_view_word_text"
+            app:tint="@color/md_theme_onSurface" />
 
         <View
             android:id="@+id/divider"
@@ -69,55 +69,25 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_view_word_text" />
 
-        <TextView
-            android:id="@+id/text_view_definition_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider"
-            tools:text="Definition." />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_definition"
+            android:id="@+id/recycler_view_definitions"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toTopOf="@id/text_view_examples_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_view_definition_text" />
+            app:layout_constraintTop_toBottomOf="@id/divider" />
 
-
-        <TextView
-            android:id="@+id/text_view_examples_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Usage example(s)."
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recycler_view_definition" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_examples"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_view_examples_title" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/result_content_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            tools:visibility="visible"
-            app:constraint_referenced_ids="text_view_word_text, text_view_pos_text, button_play_pronunciation, divider, text_view_definition_text, recycler_view_definition, text_view_examples_title, recycler_view_examples"/>
+            app:constraint_referenced_ids="text_view_word_text, text_view_pos_text, button_play_pronunciation, divider, recycler_view_definitions"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
