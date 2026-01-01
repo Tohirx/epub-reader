@@ -22,9 +22,9 @@ import androidx.core.content.edit
 import androidx.core.graphics.toColorInt
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -33,8 +33,11 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.data.model.Highlight
 import com.tohir.booksplusplus.databinding.FragmentReaderBinding
+import com.tohir.booksplusplus.ui.books.reader.bookmarkandhighlight.BookmarkAndHighlightFragment
 import com.tohir.booksplusplus.ui.books.reader.dictionary.DictionaryBottomSheet
 import com.tohir.booksplusplus.ui.books.reader.note.NoteBottomSheetDialogFragment
+import com.tohir.booksplusplus.ui.books.reader.search.SearchServiceFragmentBottomSheet
+import com.tohir.booksplusplus.ui.books.reader.toc.ContentsBottomSheetFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
@@ -240,7 +243,7 @@ class EpubReaderFragment : Fragment() {
             setupHighlights()
         }
 
-        lifecycleScope.launch{
+        lifecycleScope.launch {
             setupNotes()
         }
     }
@@ -301,8 +304,10 @@ class EpubReaderFragment : Fragment() {
         binding.apply {
 
             imageButtonCancelButton.setOnClickListener { requireActivity().finish() }
-
-            imageButtonOptions.setOnClickListener { showOptionsFragment() }
+            fabMain.setOnClickListener {
+                toggleFabMenu()
+                showButtons()
+            }
 
             cardViewPageNumberContainer.setOnClickListener {
                 PageNumberBottomSheetFragment().show(
@@ -313,6 +318,73 @@ class EpubReaderFragment : Fragment() {
 
             imageButtonBookmark.setOnClickListener { addToBookmark() }
         }
+
+        binding.fabThemes.setOnClickListener {
+
+            val fragment = ThemesAndSettingsFragment()
+            fragment.show(parentFragmentManager, "ThemesAndSettingsFragment")
+
+        }
+
+        binding.touchInterceptor.setOnClickListener {
+            toggleFabMenu()
+            showButtons()
+        }
+
+        binding.fabHighlights.setOnClickListener {
+
+            val fragment = BookmarkAndHighlightFragment().apply {
+                arguments = bundleOf("bookId" to bookId)
+            }
+
+            fragment.show(parentFragmentManager, "BookmarkAndHighlightFragment")
+
+        }
+
+        binding.fabContents.setOnClickListener {
+            ContentsBottomSheetFragment().show(parentFragmentManager, "ContentBottomSheetFragment")
+        }
+
+        binding.fabSearch.setOnClickListener {
+            SearchServiceFragmentBottomSheet().show(
+                parentFragmentManager,
+                "SearchServiceBottomSheet"
+            )
+        }
+    }
+
+    private var fabOpen = false
+
+    private fun toggleFabMenu() {
+        val fabs =
+            listOf(binding.fabThemes, binding.fabHighlights, binding.fabSearch, binding.fabContents)
+
+        if (fabOpen) {
+            fabs.forEach {
+                it.animate()
+                    .alpha(0f)
+                    .translationY(50f)
+                    .setDuration(150)
+                    .withEndAction { it.visibility = View.GONE }
+
+                binding.touchInterceptor.visibility = View.GONE
+            }
+        } else {
+            fabs.forEachIndexed { index, fab ->
+                fab.visibility = View.VISIBLE
+                fab.alpha = 0f
+                fab.translationY = 50f
+                fab.animate()
+                    .alpha(1f)
+                    .translationY(0f)
+                    .setStartDelay(index * 40L)
+                    .setDuration(180)
+
+                binding.touchInterceptor.visibility = View.VISIBLE
+            }
+        }
+
+        fabOpen = !fabOpen
     }
 
     fun addToBookmark() {
@@ -340,32 +412,6 @@ class EpubReaderFragment : Fragment() {
                 ).show()
             }
         }
-    }
-
-    private fun showOptionsFragment() {
-
-        binding.apply {
-            imageButtonCancelButton.visibility = View.GONE
-            imageButtonBookmark.visibility = View.GONE
-            cardViewPageNumberContainer.visibility = View.GONE
-            imageButtonOptions.visibility = View.GONE
-        }
-
-        val fragment = OptionsFragment().apply {
-            arguments = bundleOf("bookId" to bookId)
-        }
-
-        parentFragmentManager.commit {
-            setCustomAnimations(
-                R.anim.slide_in, // enter
-                R.anim.fade_out, // exit
-                R.anim.fade_in, // popEnter
-                R.anim.slide_out // popExit
-            )
-            replace(R.id.fragment_options, fragment)
-            addToBackStack(null)
-        }
-
     }
 
 
@@ -401,10 +447,7 @@ class EpubReaderFragment : Fragment() {
                     if (page <= publication!!.positions().size)
                         navigator.go(publication!!.positions()[page - 1])
                 }
-
-
             }
-
         }
 
         readerViewModel.link.observe(viewLifecycleOwner) { link ->
@@ -429,6 +472,9 @@ class EpubReaderFragment : Fragment() {
         navigator.addInputListener(object : InputListener {
             override fun onTap(event: TapEvent): Boolean {
                 showButtons()
+                if (binding.fabMain.isVisible) {
+                    binding.fabMain.visibility = View.GONE
+                } else {binding.fabMain.visibility = View.VISIBLE}
                 return true
             }
         })
@@ -524,20 +570,16 @@ class EpubReaderFragment : Fragment() {
         binding.apply {
             if (imageButtonCancelButton.isGone) {
                 imageButtonCancelButton.visibility = View.VISIBLE
-                imageButtonOptions.visibility = View.VISIBLE
                 cardViewPageNumberContainer.visibility = View.VISIBLE
                 imageButtonBookmark.visibility = View.VISIBLE
 
             } else {
                 imageButtonCancelButton.visibility = View.GONE
-                imageButtonOptions.visibility = View.GONE
                 cardViewPageNumberContainer.visibility = View.GONE
                 imageButtonBookmark.visibility = View.GONE
             }
-
         }
     }
-
     private var popupWindow: PopupWindow? = null
     private var mode: ActionMode? = null
 
