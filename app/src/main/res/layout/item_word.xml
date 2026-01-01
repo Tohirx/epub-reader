@@ -1,29 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
     android:padding="4dp"
-    android:orientation="vertical"
-    android:layout_height="wrap_content">
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/text_view_definition"
-        tools:text="The rear of the body, especially the part between the neck and the end of the spine and opposite the chest and belly."
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <com.google.android.material.textview.MaterialTextView
+    <TextView
+        android:id="@+id/text_view_definition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="The rear of the body, especially the part between the neck and the end of the spine and opposite the chest and belly." />
+
+    <TextView
         android:id="@+id/text_view_example"
-        android:visibility="gone"
-        tools:text="Could you please scratch my back?"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="1dp"
         android:textColor="@android:color/darker_gray"
         android:textSize="12sp"
-        android:layout_marginTop="1dp"
-        android:layout_marginStart="8dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-
-
+        android:visibility="visible"
+        tools:text="Could you please scratch my back?" />
 
 
 </LinearLayout>

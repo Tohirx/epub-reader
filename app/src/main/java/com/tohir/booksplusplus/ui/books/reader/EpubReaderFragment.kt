@@ -56,8 +56,6 @@ import org.readium.r2.navigator.util.BaseActionModeCallback
 import org.readium.r2.shared.ExperimentalReadiumApi
 import org.readium.r2.shared.publication.Publication
 import org.readium.r2.shared.publication.services.positions
-import java.time.LocalDateTime
-import java.time.ZoneId
 
 class EpubReaderFragment : Fragment() {
     private val viewModel: EpubReaderViewModel by viewModels()
@@ -231,7 +229,6 @@ class EpubReaderFragment : Fragment() {
 
         val currentValue = prefs.getInt("MINUTES", minutesRead)
 
-        ensureDailyReset()
         prefs.edit { putInt("MINUTES", currentValue + minutesRead) }
 
         saveReadingProgress()
@@ -241,6 +238,9 @@ class EpubReaderFragment : Fragment() {
 
         lifecycleScope.launch {
             setupHighlights()
+        }
+
+        lifecycleScope.launch{
             setupNotes()
         }
     }
@@ -274,7 +274,6 @@ class EpubReaderFragment : Fragment() {
     private suspend fun setupNotes() {
 
         viewModel.getAllNotes(bookId!!).collectLatest { notesList ->
-
 
             val decorations = notesList.map { note ->
 
@@ -509,24 +508,6 @@ class EpubReaderFragment : Fragment() {
         }
     }
 
-    fun ensureDailyReset() {
-        val zoneId = ZoneId.systemDefault()
-        val now = LocalDateTime.now(zoneId)
-
-        // Today at 00:00
-        val todayMidnight = now.toLocalDate()
-        val todayEpochDay = todayMidnight.toEpochDay()
-
-        val lastResetDay = prefs.getLong("LAST_RESET_EPOCH_DAY", -1)
-
-        if (lastResetDay != todayEpochDay) {
-            prefs.edit()
-                .putInt("MINUTES", 0)
-                .putLong("LAST_RESET_EPOCH_DAY", todayEpochDay)
-                .commit() // synchronous on purpose
-        }
-    }
-
 
     suspend fun saveReadingProgression(bookId: Long) {
 
@@ -623,6 +604,8 @@ class EpubReaderFragment : Fragment() {
             noteFragment.show(parentFragmentManager, "NoteBottomSheetDialogFragment")
 
         }
+
+        navigator.clearSelection()
     }
 
     private fun selectHighlightTint(

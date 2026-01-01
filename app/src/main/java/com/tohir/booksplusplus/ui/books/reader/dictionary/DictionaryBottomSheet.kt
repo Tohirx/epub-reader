@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tohir.booksplusplus.data.database.dictionary.DictionaryApi
@@ -19,7 +18,6 @@ import kotlinx.coroutines.launch
 class DictionaryBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var binding: DictionaryBottomSheetBinding
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -52,51 +50,26 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
         e.message?.let { Log.d("tohir", it) }
     }
 
-    private fun showSuccessState(data: DictionaryResult) {
-        binding.loadingSpinner.visibility = View.GONE
+    private fun showSuccessState(data: DictionaryResult?) {
 
-        binding.resultContentGroup.visibility = View.VISIBLE
+        if (data != null) {
 
+            binding.loadingSpinner.visibility = View.GONE
+            binding.resultContentGroup.visibility = View.VISIBLE
+            binding.recyclerViewWordEntry.visibility = View.GONE
 
-        if (data.definitions.isEmpty()) {
-            binding.textViewWordText.text = "No available definitions"
-            binding.buttonPlayPronunciation.visibility = View.GONE
-
-        } else {
-
-            binding.textViewWordText.text = data.selectedWord
-
-            binding.recyclerViewDefinitions.apply {
-                adapter = WordAdapter().apply {
-                    setWords(data.definitions)
-                }
-            }
-
-
-            binding.textViewPosText.text = "${data.partOfSpeech}"
-
-            if (data.audioUrls.isNotEmpty()) {
-
-                binding.buttonPlayPronunciation.apply {
-                    visibility = View.VISIBLE
-                    setOnClickListener {
-
-                        for (audio in data.audioUrls) {
-                            val mediaPlayer = MediaPlayer()
-                            mediaPlayer.setDataSource(audio)
-                            mediaPlayer.prepareAsync()
-                            mediaPlayer.setOnPreparedListener { mp -> mp.start() }
-
-                            mediaPlayer.setOnCompletionListener {
-                                mediaPlayer.release()
-                            }
-                            break
-                        }
-                    }
-                }
+            if (data.definitions.isEmpty()) {
+                binding.textViewWordText.text = "No available definitions"
 
             } else {
-                binding.buttonPlayPronunciation.visibility = View.GONE
+
+                binding.textViewWordText.text = data.selectedWord
+
+                binding.recyclerViewMeanings.apply {
+                    adapter = WordAdapter().apply {
+                        setWords(data.definitions)
+                    }
+                }
             }
         }
     }
@@ -106,46 +79,68 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
         binding.resultContentGroup.visibility = View.GONE
     }
 
-    private suspend fun fetchDictionaryData(selectedWord: String): DictionaryResult {
+    private suspend fun fetchDictionaryData(selectedWord: String): DictionaryResult? {
 
-        val connectivityManager = requireContext().getSystemService(ConnectivityManager::class.java) as ConnectivityManager
+        val connectivityManager =
+            requireContext().getSystemService(ConnectivityManager::class.java) as ConnectivityManager
 
         if (connectivityManager.activeNetwork != null) {
 
             val api = DictionaryApi()
-
             val result = api.lookup(selectedWord.lowercase())
+
 
             if (result.isSuccess) {
 
-                val entries = result.getOrNull()!!
+                val wordEntries = result.getOrNull()!!
 
-                val definitions: ArrayList<DictionaryModels.Definition> = arrayListOf()
-                val pos = arrayListOf<String>()
                 val audioUrls = arrayListOf<String>()
 
-                entries.forEach { entry ->
-                    entry.phonetics.forEach { phonetic ->
-                        if (!phonetic.audio.isNullOrBlank()) {
-                            audioUrls.add(phonetic.audio)
+                wordEntries.forEach { wordEntry ->
+                    for (phonetics: DictionaryModels.Phonetic in wordEntry.phonetics) {
+                        if (!phonetics.audio.isNullOrBlank()) {
+                            audioUrls.add(phonetics.audio)
+                            break
                         }
                     }
                 }
 
-                entries.forEach { entry ->
+                if (audioUrls.isNotEmpty()) {
 
-                    entry.meanings.forEach { meaning ->
+                    binding.buttonPlayPronunciation.apply {
+                        visibility = View.VISIBLE
+                        setOnClickListener {
 
-                        pos.add(meaning.partOfSpeech)
+                            for (audio in audioUrls) {
+                                val mediaPlayer = MediaPlayer()
+                                mediaPlayer.setDataSource(audio)
+                                mediaPlayer.prepareAsync()
+                                mediaPlayer.setOnPreparedListener { mp -> mp.start() }
 
-                        meaning.definitions.forEach { definition ->
-                            definitions.add(definition)
+                                mediaPlayer.setOnCompletionListener {
+                                    mediaPlayer.release()
+                                }
+                                break
+                            }
                         }
                     }
+
+                } else {
+                    binding.buttonPlayPronunciation.visibility = View.GONE
                 }
 
-                return DictionaryResult(selectedWord, definitions, pos, audioUrls)
 
+                val adapter = WordEntryAdapter()
+
+                adapter.setWordEntries(wordEntries)
+                adapter.setWord(wordEntries[0].word)
+                binding.loadingSpinner.visibility = View.GONE
+                binding.recyclerViewMeanings.visibility = View.GONE
+                binding.recyclerViewWordEntry.visibility = View.VISIBLE
+                binding.textViewWordText.visibility = View.VISIBLE
+                binding.textViewWordText.text = wordEntries[0].word
+                binding.recyclerViewWordEntry.adapter = adapter
+                return null
             }
 
         }

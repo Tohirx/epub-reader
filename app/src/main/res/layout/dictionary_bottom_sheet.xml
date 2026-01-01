@@ -11,6 +11,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_word_entry"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toTopOf="@id/recycler_view_meanings"
+            app:layout_constraintTop_toBottomOf="@id/divider" />
+
         <ProgressBar
             android:id="@+id/loading_spinner"
             android:layout_width="wrap_content"
@@ -32,29 +41,17 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Word" />
 
-        <TextView
-            android:id="@+id/text_view_pos_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            app:layout_constraintBottom_toBottomOf="@id/text_view_word_text"
-            app:layout_constraintStart_toEndOf="@id/text_view_word_text"
-            app:layout_constraintTop_toTopOf="@id/text_view_word_text"
-            tools:text="(noun)" />
-
         <ImageButton
+            android:visibility="gone"
             android:id="@+id/button_play_pronunciation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Play pronunciation"
-            android:padding="8dp"
+            android:padding="4dp"
             android:src="@drawable/icon_speaker"
             app:layout_constraintBottom_toBottomOf="@id/text_view_word_text"
-            app:layout_constraintStart_toEndOf="@id/text_view_pos_text"
+            app:layout_constraintStart_toEndOf="@id/text_view_word_text"
             app:layout_constraintTop_toTopOf="@id/text_view_word_text"
             app:tint="@color/md_theme_onSurface" />
 
@@ -71,14 +68,15 @@
 
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_definitions"
+            android:id="@+id/recycler_view_meanings"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider" />
+            app:layout_constraintTop_toBottomOf="@id/recycler_view_word_entry" />
 
 
         <androidx.constraintlayout.widget.Group
@@ -86,7 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:constraint_referenced_ids="text_view_word_text, text_view_pos_text, button_play_pronunciation, divider, recycler_view_definitions"
+            app:constraint_referenced_ids="text_view_word_text, divider, recycler_view_meanings"
             tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
