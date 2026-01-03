@@ -8,13 +8,15 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+import android.provider.Settings
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationBarView
 import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.databinding.ActivityMainBinding
@@ -37,9 +39,11 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.bottomNav.setOnItemSelectedListener(this)
+
         seedDatabase()
-        scheduleDailyReset(this)
         handleIncomingUri(intent)
+
+        maybeRequestExactAlarmPermission()
     }
 
     private fun seedDatabase() {
@@ -61,20 +65,13 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
     companion object {
         fun scheduleDailyReset(context: Context) {
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
-                if (!alarmManager.canScheduleExactAlarms()) {
-                    // Direct user to settings
-                    val intent = Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    }
-                    context.startActivity(intent)
-                }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                !alarmManager.canScheduleExactAlarms()
+            ) {
+                return // Permission missing, do nothing
             }
-
-
-            val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
 
             val intent = Intent(context, ReadingResetReceiver::class.java)
             val pendingIntent = PendingIntent.getBroadcast(
@@ -89,8 +86,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                 set(Calendar.MINUTE, 0)
                 set(Calendar.SECOND, 0)
                 set(Calendar.MILLISECOND, 0)
-
-                // If midnight already passed, schedule tomorrow
                 if (timeInMillis <= System.currentTimeMillis()) {
                     add(Calendar.DAY_OF_MONTH, 1)
                 }
@@ -143,5 +138,59 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         if (uriFromFileManager != null)
             viewModel.addBookPublicationToDatabase(uriFromFileManager, this@MainActivity)
     }
+
+    private fun maybeRequestExactAlarmPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            scheduleDailyReset(this)
+            return
+        }
+
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        if (alarmManager.canScheduleExactAlarms()) {
+            scheduleDailyReset(this)
+            return
+        }
+
+        showPermissionAlertDialog()
+    }
+
+    private fun showPermissionAlertDialog() {
+
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setView(R.layout.alarm_permission)
+            .create()
+
+        dialog.show()
+
+
+        val buttonAllow = dialog.findViewById<MaterialButton>(R.id.button_allow)
+        buttonAllow?.setOnClickListener {
+            openExactAlarmSettings()
+        }
+
+        val buttonNotNow = dialog.findViewById<MaterialButton>(R.id.button_not_now)
+        buttonNotNow?.setOnClickListener {
+            finish()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            if (alarmManager.canScheduleExactAlarms()) {
+                scheduleDailyReset(this)
+            }
+        }
+    }
+
+    private fun openExactAlarmSettings() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            startActivity(
+                Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+            )
+        }
+    }
+
 
 }

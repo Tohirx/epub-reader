@@ -45,8 +45,19 @@ class WordAdapter: RecyclerView.Adapter<WordAdapter.ViewHolder>() {
             if (!definition.example.isNullOrBlank()) {
                 binding.textViewExample.text = definition.example
                 binding.textViewExample.visibility = View.VISIBLE
+
             } else
                 binding.textViewExample.visibility = View.GONE
+
+            if (definition.synonyms != null && definition.synonyms.isNotEmpty()) {
+                binding.textViewSynonyms.text = "Synonyms: ${definition.synonyms}"
+            } else
+                binding.textViewSynonyms.visibility = View.GONE
+
+            if (definition.antonyms != null && definition.antonyms.isNotEmpty()) {
+                binding.textViewAntonyms.text = "Antonyms: ${definition.antonyms}"
+            } else
+                binding.textViewAntonyms.visibility = View.GONE
 
         }
     }

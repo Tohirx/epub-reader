@@ -32,6 +32,14 @@ class InitPreferences(
         textColor = Color(pref.getString(TEXT_COLOR, "#000000")!!.toColorInt())
         letterSpacing =  pref.getFloat(EpubReaderFragment.LETTER_SPACING, 0.0f).toDouble()
         wordSpacing =  pref.getFloat(EpubReaderFragment.WORD_SPACING, 0.0f).toDouble()
+        scroll = pref.getBoolean("SCROLL", false)
+
+        val textAlign = pref.getBoolean("JUSTIFY_CONTENT", false)
+        if (textAlign) {
+            this.textAlign = TextAlign.JUSTIFY
+        } else {
+            this.textAlign = TextAlign.START
+        }
     }
 
 

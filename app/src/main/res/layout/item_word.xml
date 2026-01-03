@@ -2,17 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:padding="4dp"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="4dp">
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/text_view_definition"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:text="The rear of the body, especially the part between the neck and the end of the spine and opposite the chest and belly." />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/text_view_example"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,6 +22,25 @@
         android:textSize="12sp"
         android:visibility="visible"
         tools:text="Could you please scratch my back?" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/text_view_synonyms"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="4dp"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="13sp"
+        tools:text="Synonyms:" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/text_view_antonyms"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="13sp"
+        tools:text="Antonyms:" />
 
 
 </LinearLayout>

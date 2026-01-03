@@ -39,6 +39,12 @@ class ReaderViewModel : ViewModel() {
     private val _selectedHighlight = MutableLiveData<Highlight?>()
     var selectedHighlight: LiveData<Highlight?> = _selectedHighlight
 
+    private val _scroll = MutableLiveData<Boolean>()
+    var scroll: LiveData<Boolean> = _scroll
+
+    private val _justifyContent = MutableLiveData<Boolean>()
+    var justifyContent: LiveData<Boolean> = _justifyContent
+
     private val _letterSpacing = MutableLiveData<Double>()
     var selectedLetterSpacing: LiveData<Double> = _letterSpacing
 
@@ -76,6 +82,15 @@ class ReaderViewModel : ViewModel() {
     fun setWordSpacing(wordSpacing: Double) {
         _wordSpacing.value = wordSpacing
     }
+
+    fun setScroll(scroll: Boolean) {
+        _scroll.value = scroll
+    }
+
+    fun setJustifyContent(justifyContent: Boolean) {
+        _justifyContent.value = justifyContent
+    }
+
 
 
     fun setTheme(theme: Theme) {

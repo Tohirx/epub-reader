@@ -55,6 +55,7 @@ import org.readium.r2.navigator.epub.css.FontWeight
 import org.readium.r2.navigator.input.InputListener
 import org.readium.r2.navigator.input.TapEvent
 import org.readium.r2.navigator.preferences.FontFamily
+import org.readium.r2.navigator.preferences.TextAlign
 import org.readium.r2.navigator.util.BaseActionModeCallback
 import org.readium.r2.shared.ExperimentalReadiumApi
 import org.readium.r2.shared.publication.Publication
@@ -474,7 +475,9 @@ class EpubReaderFragment : Fragment() {
                 showButtons()
                 if (binding.fabMain.isVisible) {
                     binding.fabMain.visibility = View.GONE
-                } else {binding.fabMain.visibility = View.VISIBLE}
+                } else {
+                    binding.fabMain.visibility = View.VISIBLE
+                }
                 return true
             }
         })
@@ -552,6 +555,25 @@ class EpubReaderFragment : Fragment() {
             prefs.edit { putFloat(WORD_SPACING, wordSpacing.toFloat()) }
             navigator.submitPreferences(editor.preferences)
         }
+
+        readerViewModel.scroll.observe(viewLifecycleOwner) {
+            editor.scroll.set(it)
+            prefs.edit { putBoolean("SCROLL", it) }
+            navigator.submitPreferences(editor.preferences)
+        }
+
+        readerViewModel.justifyContent.observe(viewLifecycleOwner) {
+
+            if (it) {
+                editor.textAlign.set(TextAlign.JUSTIFY)
+                prefs.edit { putBoolean("JUSTIFY_CONTENT", it) }
+                navigator.submitPreferences(editor.preferences)
+            } else {
+                editor.textAlign.set(TextAlign.START)
+                prefs.edit { putBoolean("JUSTIFY_CONTENT", !it) }
+                navigator.submitPreferences(editor.preferences)
+            }
+        }
     }
 
 
@@ -580,6 +602,7 @@ class EpubReaderFragment : Fragment() {
             }
         }
     }
+
     private var popupWindow: PopupWindow? = null
     private var mode: ActionMode? = null
 

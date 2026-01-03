@@ -40,11 +40,9 @@ class ThemesAndSettingsFragment : BottomSheetDialogFragment() {
 
         setupClickListeners()
         setInitialValuesForViews()
-
-
     }
 
-    fun setupClickListeners() {
+    private fun setupClickListeners() {
         binding.imageButtonCancel.setOnClickListener { dialog?.dismiss() }
         binding.cardViewCustomTheme1.setOnClickListener {
 
@@ -186,6 +184,14 @@ class ThemesAndSettingsFragment : BottomSheetDialogFragment() {
             binding.mainSettingsContainer.visibility = View.VISIBLE
         }
 
+        binding.switchScroll.setOnCheckedChangeListener { _, isChecked ->
+            readerViewModel.setScroll(isChecked)
+        }
+
+        binding.switchJustifyContent.setOnCheckedChangeListener { _, isChecked ->
+            readerViewModel.setJustifyContent(isChecked)
+        }
+
     }
 
     fun setInitialValuesForViews() {
@@ -196,9 +202,15 @@ class ThemesAndSettingsFragment : BottomSheetDialogFragment() {
             binding.fontFamilyChipGroup.check(activeChip)
 
         binding.sliderFontSize.value = userPreferences.getFloat(EpubReaderFragment.FONT_SIZE, 1.0f)
-        binding.sliderLineSpacing.value = userPreferences.getFloat(EpubReaderFragment.LINE_HEIGHT, 1.0f)
-        binding.sliderLetterSpacing.value = userPreferences.getFloat(EpubReaderFragment.LETTER_SPACING, 0.0f)
-        binding.sliderWordSpacing.value = userPreferences.getFloat(EpubReaderFragment.WORD_SPACING, 0.0f)
+        binding.sliderLineSpacing.value =
+            userPreferences.getFloat(EpubReaderFragment.LINE_HEIGHT, 1.0f)
+        binding.sliderLetterSpacing.value =
+            userPreferences.getFloat(EpubReaderFragment.LETTER_SPACING, 0.0f)
+        binding.sliderWordSpacing.value =
+            userPreferences.getFloat(EpubReaderFragment.WORD_SPACING, 0.0f)
+        binding.switchScroll.isChecked = userPreferences.getBoolean("SCROLL", false)
+        binding.switchJustifyContent.isChecked =
+            userPreferences.getBoolean("JUSTIFY_CONTENT", false)
     }
 
     fun convertChipStringToStandardFormat(text: String): String {

@@ -19,6 +19,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.data.model.Book
 import com.tohir.booksplusplus.databinding.FragmentHomeBinding
+import com.tohir.booksplusplus.ui.books.ActivityAbout
 import com.tohir.booksplusplus.ui.books.reader.ReaderActivity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -48,8 +49,26 @@ class HomeFragment : Fragment(), RecentBookAdapter.BookClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         setupAdapters()
+        setupClickListeners()
         val minutesRead = prefs.getInt("MINUTES", 0)
         binding.textViewMinutes.text = if (minutesRead <= 1) "minute" else "minutes"
+    }
+
+
+    private fun setupClickListeners() {
+        binding.homeToolbar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_about -> showAbout()
+            }
+
+            return@setOnMenuItemClickListener true
+
+        }
+    }
+
+    private fun showAbout() {
+        val intent = Intent(requireContext(), ActivityAbout::class.java)
+        startActivity(intent)
     }
 
 

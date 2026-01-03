@@ -26,63 +26,73 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.google.android.material.chip.ChipGroup
-        app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
-        android:id="@+id/category_chip_group"
+    <HorizontalScrollView
+        android:id="@+id/chip_group_scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:selectionRequired="true"
-        android:paddingStart="8dp"
-        android:paddingEnd="1dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        app:chipSpacingHorizontal="8dp"
-        app:singleSelection="true">
+        app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
+        android:layout_height="wrap_content">
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_all"
-            style="@style/Widget.Material3.Chip.Filter"
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/category_chip_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="All"
-            android:checkable="true"
-            android:checked="true"
-            app:chipStrokeWidth="1dp"
-            app:chipIconTint="@color/white"/>
+            app:selectionRequired="true"
+            android:paddingStart="8dp"
+            android:paddingEnd="1dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            app:chipSpacingHorizontal="8dp"
+            app:singleSelection="true">
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_favorites"
-            style="@style/Widget.Material3.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Favourite"
-            android:checkable="true"
-            app:chipStrokeWidth="1dp"
-            app:chipIconTint="@color/white"/>
 
-        <!-- Completed -->
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_finished"
-            style="@style/Widget.Material3.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Finished"
-            android:checkable="true"
-            app:chipStrokeWidth="1dp"
-            app:chipIconTint="@color/white"/>
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_all"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All"
+                android:checkable="true"
+                android:checked="true"
+                app:chipStrokeWidth="1dp"
+                app:chipIconTint="@color/white"/>
 
-        <!-- Want to Read -->
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_want_to_read"
-            style="@style/Widget.Material3.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Want to Read"
-            android:checkable="true"
-            app:chipStrokeWidth="1dp"
-            app:chipIconTint="@color/white"/>
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_favorites"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Favourite"
+                android:checkable="true"
+                app:chipStrokeWidth="1dp"
+                app:chipIconTint="@color/white"/>
 
-    </com.google.android.material.chip.ChipGroup>
+            <!-- Completed -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_finished"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Finished"
+                android:checkable="true"
+                app:chipStrokeWidth="1dp"
+                app:chipIconTint="@color/white"/>
+
+            <!-- Want to Read -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_want_to_read"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Want to Read"
+                android:checkable="true"
+                app:chipStrokeWidth="1dp"
+                app:chipIconTint="@color/white"/>
+
+        </com.google.android.material.chip.ChipGroup>
+
+    </HorizontalScrollView>
+
+
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -98,7 +108,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/category_chip_group"
+        app:layout_constraintTop_toBottomOf="@id/chip_group_scroll_view"
         app:layout_constraintVertical_bias="0.0"
         app:spanCount="2"
         tools:listitem="@layout/item_book" />

@@ -1,6 +1,5 @@
 package com.tohir.booksplusplus.ui.books.reader.dictionary
 
-import android.media.MediaPlayer
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
@@ -91,55 +90,15 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
 
 
             if (result.isSuccess) {
-
                 val wordEntries = result.getOrNull()!!
-
-                val audioUrls = arrayListOf<String>()
-
-                wordEntries.forEach { wordEntry ->
-                    for (phonetics: DictionaryModels.Phonetic in wordEntry.phonetics) {
-                        if (!phonetics.audio.isNullOrBlank()) {
-                            audioUrls.add(phonetics.audio)
-                            break
-                        }
-                    }
-                }
-
-                if (audioUrls.isNotEmpty()) {
-
-                    binding.buttonPlayPronunciation.apply {
-                        visibility = View.VISIBLE
-                        setOnClickListener {
-
-                            for (audio in audioUrls) {
-                                val mediaPlayer = MediaPlayer()
-                                mediaPlayer.setDataSource(audio)
-                                mediaPlayer.prepareAsync()
-                                mediaPlayer.setOnPreparedListener { mp -> mp.start() }
-
-                                mediaPlayer.setOnCompletionListener {
-                                    mediaPlayer.release()
-                                }
-                                break
-                            }
-                        }
-                    }
-
-                } else {
-                    binding.buttonPlayPronunciation.visibility = View.GONE
-                }
-
-
                 val adapter = WordEntryAdapter()
 
                 adapter.setWordEntries(wordEntries)
-                adapter.setWord(wordEntries[0].word)
                 binding.loadingSpinner.visibility = View.GONE
                 binding.recyclerViewMeanings.visibility = View.GONE
                 binding.recyclerViewWordEntry.visibility = View.VISIBLE
-                binding.textViewWordText.visibility = View.VISIBLE
-                binding.textViewWordText.text = wordEntries[0].word
                 binding.recyclerViewWordEntry.adapter = adapter
+                binding.textViewWordText.visibility = View.GONE
                 return null
             }
 
@@ -156,4 +115,5 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
 
         return DictionaryResult(selectedWord, transformedDefinitions, pos)
     }
+
 }

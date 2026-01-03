@@ -15,7 +15,7 @@
             android:id="@+id/recycler_view_word_entry"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@id/recycler_view_meanings"
             app:layout_constraintTop_toBottomOf="@id/divider" />
@@ -41,19 +41,6 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Word" />
 
-        <ImageButton
-            android:visibility="gone"
-            android:id="@+id/button_play_pronunciation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Play pronunciation"
-            android:padding="4dp"
-            android:src="@drawable/icon_speaker"
-            app:layout_constraintBottom_toBottomOf="@id/text_view_word_text"
-            app:layout_constraintStart_toEndOf="@id/text_view_word_text"
-            app:layout_constraintTop_toTopOf="@id/text_view_word_text"
-            app:tint="@color/md_theme_onSurface" />
 
         <View
             android:id="@+id/divider"

@@ -18,6 +18,7 @@ picasso = "2.71828"
 readiumShared = "3.1.2"
 roomVersion = "2.8.1"
 paletteKtx = "1.0.0"
+playServicesOssLicenses = "17.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -42,6 +43,7 @@ readium-navigator = { module = "org.readium.kotlin-toolkit:readium-navigator", v
 readium-shared = { module = "org.readium.kotlin-toolkit:readium-shared", version.ref = "readiumShared" }
 readium-streamer = { module = "org.readium.kotlin-toolkit:readium-streamer", version.ref = "readiumShared" }
 androidx-palette-ktx = { group = "androidx.palette", name = "palette-ktx", version.ref = "paletteKtx" }
+play-services-oss-licenses = { group = "com.google.android.gms", name = "play-services-oss-licenses", version.ref = "playServicesOssLicenses" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

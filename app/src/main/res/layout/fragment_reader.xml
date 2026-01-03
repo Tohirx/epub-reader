@@ -25,16 +25,16 @@
         android:layout_height="match_parent">
 
         <ImageButton
-            android:background="@drawable/bg_circle"
             android:id="@+id/image_button_cancel_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:layout_margin="20dp"
             android:backgroundTint="?attr/colorPrimaryContainer"
             android:contentDescription="@string/reader_activity_cancel_button"
-            android:padding="2dp"
+            android:padding="24dp"
             android:src="@drawable/icon_cancel"
+            android:layout_margin="12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tint="@color/md_theme_onPrimaryContainer" />
