@@ -50,12 +50,18 @@ class WordAdapter: RecyclerView.Adapter<WordAdapter.ViewHolder>() {
                 binding.textViewExample.visibility = View.GONE
 
             if (definition.synonyms != null && definition.synonyms.isNotEmpty()) {
-                binding.textViewSynonyms.text = "Synonyms: ${definition.synonyms}"
+                val synonyms = StringBuilder()
+                for (s: String in definition.synonyms) synonyms.append("$s, ")
+                binding.textViewSynonyms.visibility = View.VISIBLE
+                binding.textViewSynonyms.text = "Synonyms: ${synonyms.removeSuffix(", ")}"
             } else
                 binding.textViewSynonyms.visibility = View.GONE
 
             if (definition.antonyms != null && definition.antonyms.isNotEmpty()) {
-                binding.textViewAntonyms.text = "Antonyms: ${definition.antonyms}"
+                val antonyms = StringBuilder()
+                for (a: String in definition.antonyms) antonyms.append("$a, ")
+                binding.textViewAntonyms.visibility = View.VISIBLE
+                binding.textViewAntonyms.text = "Antonyms: ${antonyms.removeSuffix(", ")}"
             } else
                 binding.textViewAntonyms.visibility = View.GONE
 

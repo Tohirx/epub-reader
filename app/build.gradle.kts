@@ -19,7 +19,7 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = 1
-        versionName = "1.1"
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -32,10 +32,10 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("C:/Users/thinkpad/key-stor")
-            storePassword = "Tohir564"
-            keyAlias = "key0"
-            keyPassword = "Tohir564"
+            storeFile = file(findProperty("RELEASE_KEYSTORE_PATH")!!)
+            storePassword = System.getenv("RELEASE_STORE_PASSWORD")
+            keyAlias = findProperty("RELEASE_KEY_ALIAS") as String
+            keyPassword = System.getenv("RELEASE_KEY_PASSWORD")
         }
 
 

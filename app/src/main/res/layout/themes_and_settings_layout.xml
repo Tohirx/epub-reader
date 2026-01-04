@@ -24,7 +24,7 @@
                 android:layout_gravity="end"
                 android:background="@null"
                 android:padding="6dp"
-                android:src="@drawable/icon_cancel1"
+                android:src="@drawable/icon_cancel"
                 app:tint="?attr/colorOnSurface" />
 
             <com.google.android.material.textview.MaterialTextView

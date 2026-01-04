@@ -39,6 +39,7 @@
         tools:text="(noun)" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:visibility="visible"
         android:id="@+id/recycler_view_meanings"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:layout_width="match_parent"
@@ -46,5 +47,25 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/text_view_word_text"
         app:layout_constraintStart_toStartOf="parent"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/text_view_synonyms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/recycler_view_meanings"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone"
+        android:text="Synonyms"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/text_view_antonyms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/text_view_synonyms"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="Antonyms"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

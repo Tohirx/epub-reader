@@ -9,6 +9,7 @@
     <!-- App Bar -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
+        android:fitsSystemWindows="true"
         android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.MaterialToolbar

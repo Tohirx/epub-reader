@@ -573,6 +573,7 @@ class EpubReaderFragment : Fragment() {
                 prefs.edit { putBoolean("JUSTIFY_CONTENT", !it) }
                 navigator.submitPreferences(editor.preferences)
             }
+
         }
     }
 
@@ -832,7 +833,6 @@ class EpubReaderFragment : Fragment() {
         const val LINE_HEIGHT = "LINE_HEIGHT"
         const val TEXT_COLOR = "TEXT_COLOR"
         const val BACKGROUND_COLOR = "BACKGROUND_COLOR"
-
         const val LETTER_SPACING = "LETTER_SPACING"
         const val WORD_SPACING = "WORD_SPACING"
 

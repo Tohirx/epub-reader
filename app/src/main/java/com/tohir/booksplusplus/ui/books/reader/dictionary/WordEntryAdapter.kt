@@ -99,7 +99,13 @@ class WordEntryAdapter : RecyclerView.Adapter<WordEntryAdapter.ViewHolder>() {
             }
 
             if (phoneticsTexts.isNotEmpty())
-                binding.textViewPronunciationText.text = "$phoneticsTexts"
+            {
+                val phonetics = StringBuilder()
+                for (s: String in phoneticsTexts) phonetics.append(s.removeSuffix("/").removePrefix("/") + ", ")
+                binding.textViewPronunciationText.text = "| " + phonetics.removeSuffix(", ").toString() + " |"
+            } else
+                binding.textViewPronunciationText.visibility = View.GONE
+
 
             binding.textViewWord.text = wordEntry.word
 

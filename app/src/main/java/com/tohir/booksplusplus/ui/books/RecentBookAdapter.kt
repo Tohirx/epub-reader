@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
-import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.data.model.Book
 import com.tohir.booksplusplus.databinding.ItemRecentlyReadBooksBinding
 import java.io.File
@@ -55,7 +54,6 @@ class RecentBookAdapter(private val listener: BookClickListener) :
 
             Picasso.get()
                 .load(uri)
-                .error(R.drawable.ic_launcher_background)
                 .into(binding.imageViewRecentlyReadBookCover)
 
             binding.textViewAuthorName.text = book.author

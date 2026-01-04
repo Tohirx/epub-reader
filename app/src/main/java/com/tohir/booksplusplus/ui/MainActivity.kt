@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.MenuItem
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.fragment.app.commit
@@ -40,10 +41,11 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         setContentView(binding.root)
         binding.bottomNav.setOnItemSelectedListener(this)
 
+        maybeRequestExactAlarmPermission()
         seedDatabase()
         handleIncomingUri(intent)
 
-        maybeRequestExactAlarmPermission()
+
     }
 
     private fun seedDatabase() {
@@ -65,7 +67,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
     companion object {
         fun scheduleDailyReset(context: Context) {
-            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
                 !alarmManager.canScheduleExactAlarms()
@@ -145,7 +147,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             return
         }
 
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
         if (alarmManager.canScheduleExactAlarms()) {
             scheduleDailyReset(this)
             return
@@ -156,30 +158,31 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
     private fun showPermissionAlertDialog() {
 
-        val dialog = MaterialAlertDialogBuilder(this)
-            .setView(R.layout.alarm_permission)
-            .create()
+        val existing = supportFragmentManager.findFragmentByTag("PermissionDialog")
+        if (existing != null) return
 
-        dialog.show()
-
-
-        val buttonAllow = dialog.findViewById<MaterialButton>(R.id.button_allow)
-        buttonAllow?.setOnClickListener {
-            openExactAlarmSettings()
+        val dialog = PermissionDialogFragment().apply {
+            onPermissionRequest = {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+                }
+            }
+            onCancel = {
+                finish()
+            }
         }
 
-        val buttonNotNow = dialog.findViewById<MaterialButton>(R.id.button_not_now)
-        buttonNotNow?.setOnClickListener {
-            finish()
-        }
+        dialog.show(supportFragmentManager, "PermissionDialog")
     }
 
     override fun onResume() {
         super.onResume()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
             if (alarmManager.canScheduleExactAlarms()) {
                 scheduleDailyReset(this)
+            } else {
+                showPermissionAlertDialog()
             }
         }
     }
@@ -189,6 +192,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             startActivity(
                 Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
             )
+
         }
     }
 

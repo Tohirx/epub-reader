@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_reader_container"
@@ -15,9 +15,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/transparent"
-        android:visibility="gone"
         android:clickable="true"
-        android:focusable="true" />
+        android:focusable="true"
+        android:visibility="gone" />
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,15 +29,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:backgroundTint="?attr/colorPrimaryContainer"
+            android:layout_margin="12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/reader_activity_cancel_button"
             android:padding="24dp"
             android:src="@drawable/icon_cancel"
-            android:layout_margin="12dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/md_theme_onPrimaryContainer" />
+            app:tint="?attr/colorPrimaryContainer" />
 
         <ImageButton
             android:id="@+id/image_button_bookmark"
@@ -47,8 +46,8 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="16dp"
             android:src="@drawable/icon_bookmark"
-            app:layout_constraintStart_toStartOf="@id/fabMenuContainer"
             app:layout_constraintBottom_toTopOf="@id/fabMenuContainer"
+            app:layout_constraintStart_toStartOf="@id/fabMenuContainer"
             app:tint="?attr/colorPrimaryContainer" />
 
 
@@ -106,9 +105,9 @@
             <!-- Main FAB -->
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabMain"
-                android:layout_marginBottom="24dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
                 android:contentDescription="Settings"
                 android:src="@drawable/icon_settings" />
 
@@ -143,9 +142,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="6dp"
-                tools:text="232"
                 android:textColor="?attr/colorOnPrimaryContainer"
-                android:textSize="11sp" />
+                android:textSize="11sp"
+                tools:text="232" />
 
 
         </com.google.android.material.card.MaterialCardView>

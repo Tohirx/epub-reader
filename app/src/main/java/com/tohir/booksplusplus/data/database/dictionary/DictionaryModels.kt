@@ -20,7 +20,10 @@ object DictionaryModels {
     @JsonClass(generateAdapter = true)
     data class Meaning(
         val partOfSpeech: String,
-        val definitions: List<Definition>
+        val definitions: List<Definition>,
+        val synonyms: List<String>,
+        val antonyms: List<String>
+
     )
 
     @JsonClass(generateAdapter = true)
