@@ -11,13 +11,10 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.MenuItem
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationBarView
 import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.databinding.ActivityMainBinding
@@ -184,15 +181,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             } else {
                 showPermissionAlertDialog()
             }
-        }
-    }
-
-    private fun openExactAlarmSettings() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            startActivity(
-                Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
-            )
-
         }
     }
 

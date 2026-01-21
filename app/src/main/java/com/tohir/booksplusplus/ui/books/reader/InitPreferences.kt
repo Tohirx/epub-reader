@@ -11,7 +11,7 @@ import org.readium.r2.navigator.preferences.TextAlign
 class InitPreferences(
     var context: Context,
     var fontFamily: FontFamily = FontFamily.SERIF,
-    var fontSize: Double = 1.0,
+    var fontSize: Double = 0.8,
     var lineSpacing: Double = 1.2,
     var publisherStyles: Boolean = false,
     var columnCount: ColumnCount = ColumnCount.ONE,
@@ -26,7 +26,7 @@ class InitPreferences(
     init {
         val pref = context.getSharedPreferences("user_pref", Context.MODE_PRIVATE)
         fontFamily = FontFamily(pref.getString(EpubReaderFragment.FONT_FAMILY, "Lexend") ?: "Lexend")
-        fontSize = pref.getFloat(EpubReaderFragment.FONT_SIZE, 1.0f).toDouble()
+        fontSize = pref.getFloat(EpubReaderFragment.FONT_SIZE, 0.8f).toDouble()
         lineSpacing = pref.getFloat(EpubReaderFragment.LINE_HEIGHT, 1.2f).toDouble()
         backgroundColor = Color(pref.getString(EpubReaderFragment.BACKGROUND_COLOR, "#FFFFFF")!!.toColorInt())
         textColor = Color(pref.getString(TEXT_COLOR, "#000000")!!.toColorInt())
