@@ -1,6 +1,5 @@
 package com.tohir.booksplusplus.ui.books
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,7 +18,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.data.model.Book
 import com.tohir.booksplusplus.databinding.FragmentHomeBinding
-import com.tohir.booksplusplus.ui.books.ActivityAbout
 import com.tohir.booksplusplus.ui.books.reader.ReaderActivity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -29,12 +27,7 @@ class HomeFragment : Fragment(), RecentBookAdapter.BookClickListener {
 
     private val viewModel: HomeViewModel by viewModels()
     private lateinit var binding: FragmentHomeBinding
-    private val prefs by lazy {
-        requireContext().getSharedPreferences(
-            "user_pref",
-            Context.MODE_PRIVATE
-        )
-    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,8 +43,7 @@ class HomeFragment : Fragment(), RecentBookAdapter.BookClickListener {
 
         setupAdapters()
         setupClickListeners()
-        val minutesRead = prefs.getInt("MINUTES", 0)
-        binding.textViewMinutes.text = if (minutesRead <= 1) "minute" else "minutes"
+
     }
 
 
@@ -148,15 +140,6 @@ class HomeFragment : Fragment(), RecentBookAdapter.BookClickListener {
             }
         }
     }
-
-    override fun onResume() {
-        super.onResume()
-
-        val minutesRead = prefs.getInt("MINUTES", 0)
-        binding.textViewMinutes.text = if (minutesRead == 1) "minute" else "minutes"
-        binding.textViewMinutesReadValue.text = prefs.getInt("MINUTES", 0).toString()
-    }
-
 
     override fun onRecentBookClicked(book: Book) {
 

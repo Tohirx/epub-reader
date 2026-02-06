@@ -108,41 +108,11 @@
                 android:visibility="gone"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toBottomOf="@id/text_view_finished"
-                app:layout_constraintBottom_toTopOf="@id/text_view_todays_reading"
+
                 tools:itemCount="3"
                 tools:listitem="@layout/item_recently_read_books" />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/text_view_todays_reading"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="55dp"
-                android:text="Today's Reading"
-                android:textSize="18sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/recycler_view_finished" />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/text_view_minutes_read_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="80sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_view_todays_reading"
-                tools:text="2:00" />
-
-            <TextView
-                android:id="@+id/text_view_minutes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:textSize="18sp"
-                android:text="minutes"
-                app:layout_constraintBottom_toBottomOf="@id/text_view_minutes_read_value"
-                app:layout_constraintStart_toEndOf="@id/text_view_minutes_read_value"
-                app:layout_constraintTop_toTopOf="@id/text_view_minutes_read_value" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

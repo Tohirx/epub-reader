@@ -227,14 +227,6 @@ class EpubReaderFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-
-        val elapsedMillis = elapsedRealtime() - readingStartTime!!
-        val minutesRead = (elapsedMillis / 1000 / 60).toInt()
-
-        val currentValue = prefs.getInt("MINUTES", minutesRead)
-
-        prefs.edit { putInt("MINUTES", currentValue + minutesRead) }
-
         saveReadingProgress()
     }
 
