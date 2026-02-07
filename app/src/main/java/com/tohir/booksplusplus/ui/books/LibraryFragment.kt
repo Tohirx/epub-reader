@@ -27,6 +27,10 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
     private val adapter = BookAdapter(this)
     private lateinit var binding: FragmentLibraryBinding
     private lateinit var books: List<Book>
+    private val favouriteBooks = mutableListOf<Book>()
+    private val finishedBooks = mutableListOf<Book>()
+    private val wantToReadBooks = mutableListOf<Book>()
+
 
 
     override fun onCreateView(
@@ -48,16 +52,16 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
         binding.categoryChipGroup.setOnCheckedStateChangeListener { _, checkedId ->
             val filteredBooks = if (checkedId.isNotEmpty()) {
                 when (checkedId.first()) {
-                    R.id.chip_favorites -> books.filter { it.isFavourite }
-                    R.id.chip_finished -> books.filter { it.isFinished }
-                    R.id.chip_want_to_read -> books.filter { it.wantToRead }
+                    R.id.chip_favorites -> favouriteBooks
+                    R.id.chip_finished -> finishedBooks
+                    R.id.chip_want_to_read -> wantToReadBooks
                     else -> books
                 }
             } else {
                 books
             }
-            adapter.setBooks(filteredBooks)
 
+            adapter.setBooks(filteredBooks)
         }
     }
 
@@ -66,14 +70,41 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
             viewModel.getAllBooks().collectLatest { books ->
                 this@LibraryFragment.books = books   // store full list
 
+                var favouriteCount = 0
+                var finishedCount = 0
+                var wantToReadCount = 0
+
+
+                for (book in books) {
+                    if (book.isFavourite) {
+                        favouriteBooks.add(book)
+                        favouriteCount++
+                    }
+
+                    if (book.isFinished) {
+                        finishedBooks.add(book)
+                        finishedCount++
+                    }
+
+                    if (book.wantToRead) {
+                        wantToReadBooks.add(book)
+                        wantToReadCount++
+                    }
+                }
+
                 val checkedId = binding.categoryChipGroup.checkedChipId
 
                 val filteredBooks = when (checkedId) {
-                    R.id.chip_favorites -> books.filter { it.isFavourite }
-                    R.id.chip_finished -> books.filter { it.isFinished }
-                    R.id.chip_want_to_read -> books.filter { it.wantToRead }
+                    R.id.chip_favorites -> favouriteBooks
+                    R.id.chip_finished -> finishedBooks
+                    R.id.chip_want_to_read -> wantToReadBooks
                     else -> books
                 }
+
+                binding.chipAll.text = "All (${books.size})"
+                binding.chipFavorites.text = "Favourite ($favouriteCount)"
+                binding.chipFinished.text = "Finished ($finishedCount)"
+                binding.chipWantToRead.text = "Want to Read ($wantToReadCount)"
 
                 adapter.setBooks(filteredBooks)
             }
