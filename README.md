@@ -1,13 +1,19 @@
 ## Introduction
-  Books++ is an Android EPUB reader designed to provide a customizable and distraction-free reading experience. The application supports advanced reading features such as bookmarking, text highlighting, theme switching, font scaling, and persistent reading progress.
-  The app integrates both online and offline dictionary support, with cached audio pronunciations to ensure reliability even when network connectivity is unavailable.
+
+**Books++** is a full-featured Android EPUB reader engineered to deliver a customizable, distraction-free reading experience. The application provides advanced reader capabilities including bookmarking, text highlighting, adaptive theming, dynamic font scaling, and reliable reading progress persistence.
+
+The app integrates both online and offline dictionary support, with locally cached audio pronunciations to maintain functionality under limited or unstable network conditions. The project emphasizes performance, usability, and architectural maintainability.
+
+---
 
 ## Features
-  -Supports bookmarks and highlights.
-  -Has a built in dictionary with audio pronunciations for looking up meanings of words without leaving the app.
-  -Cutomization: Allows adjustment of line spacing, letter spacing, font size, font family, and has built in, well-researched reading themes that enhances readability, and reduce eye strain over a long period.
-  -Supports both sliding and scrolling page switching options.
-  -Consistent reading progress persistence.
 
-
-## How to use
+- **Bookmarks & Highlights** – Create, manage, and persist annotations within EPUB content.
+- **Integrated Dictionary** – Look up word definitions in-app with support for audio pronunciations.
+- **Offline Fallback Mechanism** – Local dictionary support ensures uninterrupted functionality when API calls fail.
+- **Advanced Customization**
+  - Adjustable line spacing and letter spacing  
+  - Dynamic font size and font family selection  
+  - Carefully designed reading themes optimized for long reading sessions and reduced eye strain  
+- **Flexible Navigation** – Supports both sliding (page-based) and continuous scrolling reading modes.
+- **Persistent Reading State** – Automatically saves and restores reading progress across sessions.
