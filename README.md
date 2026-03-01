@@ -50,6 +50,8 @@ After installation, the app will be available on your device.
 
 > Note: If Books++ is set as your default EPUB reader, it may open automatically without prompting.
 
+https://github.com/user-attachments/assets/e7ef560e-503d-4e7c-a46c-0a3cc1e4c7f8
+
 
 ---
 
@@ -68,6 +70,8 @@ All reading settings can be accessed via the **Settings icon** at the bottom-rig
 
 Themes are designed to enhance readability and reduce eye strain during long reading sessions.
 
+*(Insert GIF here)*
+
 ---
 
 ### Font Customization
@@ -82,6 +86,7 @@ Inside **Themes & Settings**, you can adjust:
 
 Adjust sliders to your preference for a personalized reading experience.
 
+*(Insert GIF here)*
 
 ---
 
@@ -93,6 +98,7 @@ Adjust sliders to your preference for a personalized reading experience.
    - Scroll mode (continuous reading)
    - Text justification
 
+*(Insert GIF here)*
 
 ---
 
@@ -103,6 +109,7 @@ Adjust sliders to your preference for a personalized reading experience.
 2. Select **Highlight**.
 3. Choose a color.
 
+*(Insert GIF here)*
 
 ---
 
@@ -125,7 +132,7 @@ Tap the **Bookmark icon** at the bottom-right corner while reading.
 
 Text with notes is highlighted in gold to distinguish it from standard highlights.
 
-
+*(Insert GIF here)*
 
 ---
 
@@ -146,7 +153,7 @@ To search within a book:
 
 All matching occurrences will be displayed.
 
-
+*(Insert GIF here)*
 
 ---
 
@@ -182,6 +189,7 @@ You can:
 
 If offline, the app automatically falls back to the built-in local dictionary. The local dictionary provides basic definitions when network access is unavailable.
 
+*(Insert GIF here)*
 
 ---
 
@@ -208,7 +216,6 @@ Use the three-dot menu next to a book to manage collections.
 2. Select **Show Details**.
 
 Book metadata and information will be displayed.
-
 
 
 
