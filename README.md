@@ -50,8 +50,8 @@ After installation, the app will be available on your device.
 
 > Note: If Books++ is set as your default EPUB reader, it may open automatically without prompting.
 
-https://github.com/user-attachments/assets/e7ef560e-503d-4e7c-a46c-0a3cc1e4c7f8
 
+https://github.com/user-attachments/assets/ad9736fd-333e-4263-b184-412b6e5ebe6d
 
 ---
 
@@ -70,7 +70,10 @@ All reading settings can be accessed via the **Settings icon** at the bottom-rig
 
 Themes are designed to enhance readability and reduce eye strain during long reading sessions.
 
-*(Insert GIF here)*
+
+https://github.com/user-attachments/assets/bbda7388-f126-4354-a58c-dbd116761a50
+
+
 
 ---
 
@@ -86,7 +89,9 @@ Inside **Themes & Settings**, you can adjust:
 
 Adjust sliders to your preference for a personalized reading experience.
 
-*(Insert GIF here)*
+
+https://github.com/user-attachments/assets/c2c04ea8-1d7d-44e6-a2b7-051089557170
+
 
 ---
 
@@ -98,7 +103,11 @@ Adjust sliders to your preference for a personalized reading experience.
    - Scroll mode (continuous reading)
    - Text justification
 
-*(Insert GIF here)*
+
+
+https://github.com/user-attachments/assets/bdbebe91-b3a3-4239-a270-fb43940a7f3b
+
+
 
 ---
 
@@ -109,7 +118,11 @@ Adjust sliders to your preference for a personalized reading experience.
 2. Select **Highlight**.
 3. Choose a color.
 
-*(Insert GIF here)*
+
+
+https://github.com/user-attachments/assets/49eb1d80-3f3f-4702-adc2-6d93f82566e2
+
+
 
 ---
 
@@ -128,11 +141,15 @@ Tap the **Bookmark icon** at the bottom-right corner while reading.
 ### Add Notes
 1. Long-press text.
 2. Select **Note**.
-3. Enter your note and save.
+3. Enter your note and click save.
 
 Text with notes is highlighted in gold to distinguish it from standard highlights.
 
-*(Insert GIF here)*
+
+
+https://github.com/user-attachments/assets/7301636a-3dbc-46bf-929d-db1f7b53061b
+
+
 
 ---
 
@@ -153,7 +170,11 @@ To search within a book:
 
 All matching occurrences will be displayed.
 
-*(Insert GIF here)*
+
+
+https://github.com/user-attachments/assets/7615ed25-6ba6-47f7-acf0-59d871d1f1b6
+
+
 
 ---
 
@@ -172,6 +193,12 @@ If the EPUB file includes a table of contents, it will be displayed for quick na
 2. Enter the desired page number.
 3. Tap **Go**.
 
+   
+
+
+https://github.com/user-attachments/assets/2d3dc526-20cf-4bde-b0ea-8aa95c6e4f3a
+
+
 ---
 
 ## Dictionary
@@ -189,7 +216,11 @@ You can:
 
 If offline, the app automatically falls back to the built-in local dictionary. The local dictionary provides basic definitions when network access is unavailable.
 
-*(Insert GIF here)*
+
+
+https://github.com/user-attachments/assets/550f928b-ca8b-4ad2-93bb-49e898abc16c
+
+
 
 ---
 
