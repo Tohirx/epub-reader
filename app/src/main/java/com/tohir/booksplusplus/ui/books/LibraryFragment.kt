@@ -10,7 +10,9 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.data.model.Book
@@ -66,48 +68,53 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
     }
 
     fun fetchAllBooks() {
-        lifecycleScope.launch {
-            viewModel.getAllBooks().collectLatest { books ->
-                this@LibraryFragment.books = books   // store full list
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.getAllBooks().collectLatest { books ->
 
-                var favouriteCount = 0
-                var finishedCount = 0
-                var wantToReadCount = 0
+                    this@LibraryFragment.books = books   // store full list
+
+                    var favouriteCount = 0
+                    var finishedCount = 0
+                    var wantToReadCount = 0
 
 
-                for (book in books) {
-                    if (book.isFavourite) {
-                        favouriteBooks.add(book)
-                        favouriteCount++
+                    for (book in books) {
+                        if (book.isFavourite) {
+                            favouriteBooks.add(book)
+                            favouriteCount++
+                        }
+
+                        if (book.isFinished) {
+                            finishedBooks.add(book)
+                            finishedCount++
+                        }
+
+                        if (book.wantToRead) {
+                            wantToReadBooks.add(book)
+                            wantToReadCount++
+                        }
                     }
 
-                    if (book.isFinished) {
-                        finishedBooks.add(book)
-                        finishedCount++
+                    val checkedId = binding.categoryChipGroup.checkedChipId
+
+                    val filteredBooks = when (checkedId) {
+                        R.id.chip_favorites -> favouriteBooks
+                        R.id.chip_finished -> finishedBooks
+                        R.id.chip_want_to_read -> wantToReadBooks
+                        else -> books
                     }
 
-                    if (book.wantToRead) {
-                        wantToReadBooks.add(book)
-                        wantToReadCount++
-                    }
+                    binding.chipAll.text = "All (${books.size})"
+                    binding.chipFavorites.text = "Favourite ($favouriteCount)"
+                    binding.chipFinished.text = "Finished ($finishedCount)"
+                    binding.chipWantToRead.text = "Want to Read ($wantToReadCount)"
+
+                    adapter.setBooks(filteredBooks)
                 }
 
-                val checkedId = binding.categoryChipGroup.checkedChipId
-
-                val filteredBooks = when (checkedId) {
-                    R.id.chip_favorites -> favouriteBooks
-                    R.id.chip_finished -> finishedBooks
-                    R.id.chip_want_to_read -> wantToReadBooks
-                    else -> books
-                }
-
-                binding.chipAll.text = "All (${books.size})"
-                binding.chipFavorites.text = "Favourite ($favouriteCount)"
-                binding.chipFinished.text = "Finished ($finishedCount)"
-                binding.chipWantToRead.text = "Want to Read ($wantToReadCount)"
-
-                adapter.setBooks(filteredBooks)
             }
+
         }
     }
 

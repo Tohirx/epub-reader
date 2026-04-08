@@ -43,9 +43,7 @@ class HomeFragment : Fragment(), RecentBookAdapter.BookClickListener {
 
         setupAdapters()
         setupClickListeners()
-
     }
-
 
     private fun setupClickListeners() {
         binding.homeToolbar.setOnMenuItemClickListener { item ->

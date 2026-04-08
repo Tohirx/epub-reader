@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,11 +10,11 @@
         android:id="@+id/app_bar_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"
         android:background="?attr/colorSurface"
-        app:layout_constraintTop_toTopOf="parent"
+        android:fitsSystemWindows="true"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/library_toolbar"
@@ -29,19 +28,19 @@
     <HorizontalScrollView
         android:id="@+id/chip_group_scroll_view"
         android:layout_width="match_parent"
-        app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/app_bar_layout">
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/category_chip_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:selectionRequired="true"
             android:paddingStart="12dp"
-            android:paddingEnd="12dp"
             android:paddingTop="8dp"
+            android:paddingEnd="12dp"
             android:paddingBottom="8dp"
             app:chipSpacingHorizontal="8dp"
+            app:selectionRequired="true"
             app:singleSelection="true">
 
 
@@ -50,21 +49,21 @@
                 style="@style/Widget.Material3.Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="All (0)"
                 android:checkable="true"
                 android:checked="true"
+                app:chipIconTint="@color/white"
                 app:chipStrokeWidth="1dp"
-                app:chipIconTint="@color/white"/>
+                tools:text="All (0)" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_favorites"
                 style="@style/Widget.Material3.Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Favourite (0)"
                 android:checkable="true"
+                app:chipIconTint="@color/white"
                 app:chipStrokeWidth="1dp"
-                app:chipIconTint="@color/white"/>
+                tools:text="Favourite (0)" />
 
             <!-- Completed -->
             <com.google.android.material.chip.Chip
@@ -72,10 +71,10 @@
                 style="@style/Widget.Material3.Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Finished (0)"
                 android:checkable="true"
+                app:chipIconTint="@color/white"
                 app:chipStrokeWidth="1dp"
-                app:chipIconTint="@color/white"/>
+                tools:text="Finished (0)" />
 
             <!-- Want to Read -->
             <com.google.android.material.chip.Chip
@@ -83,16 +82,14 @@
                 style="@style/Widget.Material3.Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Want to Read (0)"
                 android:checkable="true"
+                app:chipIconTint="@color/white"
                 app:chipStrokeWidth="1dp"
-                app:chipIconTint="@color/white"/>
+                tools:text="Want to Read (0)" />
 
         </com.google.android.material.chip.ChipGroup>
 
     </HorizontalScrollView>
-
-
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -106,10 +103,8 @@
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/chip_group_scroll_view"
-        app:layout_constraintVertical_bias="0.0"
         app:spanCount="2"
         tools:listitem="@layout/item_book" />
 

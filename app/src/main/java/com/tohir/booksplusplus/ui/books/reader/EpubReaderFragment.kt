@@ -6,7 +6,6 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.RectF
 import android.os.Bundle
-import android.os.SystemClock.elapsedRealtime
 import android.view.ActionMode
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -38,6 +37,7 @@ import com.tohir.booksplusplus.ui.books.reader.dictionary.DictionaryBottomSheet
 import com.tohir.booksplusplus.ui.books.reader.note.NoteBottomSheetDialogFragment
 import com.tohir.booksplusplus.ui.books.reader.search.SearchServiceFragmentBottomSheet
 import com.tohir.booksplusplus.ui.books.reader.toc.ContentsBottomSheetFragment
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
@@ -67,7 +67,6 @@ class EpubReaderFragment : Fragment() {
     private lateinit var navigator: EpubNavigatorFragment
     private lateinit var binding: FragmentReaderBinding
     private var bookId: Long? = null
-    private var readingStartTime: Long? = null
     private var publication: Publication? = null
 
     private val preferences: EpubPreferences by lazy {
@@ -107,15 +106,15 @@ class EpubReaderFragment : Fragment() {
     @OptIn(ExperimentalReadiumApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        bookId = arguments?.getLong("BOOK_ID")
-
-        publication = runBlocking {
-            viewModel.importPublication(
-                requireContext(),
-                bookId!!
-            )
+        bookId = arguments?.getLong("BOOK_ID")!!
+        bookId?.let {
+            publication = runBlocking {
+                viewModel.importPublication(
+                    requireContext(),
+                    bookId!!
+                )
+            }
         }
-
 
         if (publication != null) {
             val navigatorFactory = EpubNavigatorFactory(
@@ -124,7 +123,6 @@ class EpubReaderFragment : Fragment() {
             )
 
             readerViewModel.setPublication(publication!!)
-
 
             childFragmentManager.fragmentFactory = navigatorFactory.createFragmentFactory(
                 initialLocator = runBlocking { viewModel.restoreReadingProgression(bookId!!) },
@@ -183,7 +181,7 @@ class EpubReaderFragment : Fragment() {
         } else {
             Toast.makeText(
                 requireContext(),
-                "An error occurred please try again",
+                "An error while parsing the publication, the file may be corrupted.",
                 Toast.LENGTH_LONG
             ).show()
             return
@@ -221,7 +219,6 @@ class EpubReaderFragment : Fragment() {
 
         setupClickListeners()
         setupObservers()
-        readingStartTime = elapsedRealtime()
         setupInitSettings()
     }
 

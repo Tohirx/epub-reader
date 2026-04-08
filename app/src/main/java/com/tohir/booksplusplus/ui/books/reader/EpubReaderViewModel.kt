@@ -13,6 +13,7 @@ import org.json.JSONObject
 import org.readium.r2.shared.publication.Locator
 import org.readium.r2.shared.publication.Publication
 import org.readium.r2.shared.util.AbsoluteUrl
+import org.readium.r2.shared.util.asset.Asset
 import org.readium.r2.shared.util.asset.AssetRetriever
 import org.readium.r2.shared.util.http.DefaultHttpClient
 import org.readium.r2.shared.util.toAbsoluteUrl
@@ -29,11 +30,9 @@ class EpubReaderViewModel : ViewModel() {
             return size > 3
         }
     }
-
-    private var publication: Publication? = null
     private val booksRepository = BooksPlusPlus.booksRepository
     suspend fun importPublication(context: Context, bookId: Long): Publication? {
-
+        var publication: Publication? = null
         if (!publicationCache.contains(bookId)) {
 
             val book = booksRepository.findBookById(bookId)
@@ -41,7 +40,7 @@ class EpubReaderViewModel : ViewModel() {
             val assetRetriever = AssetRetriever(context.contentResolver, httpClient)
             val url: AbsoluteUrl? = book.uri.toUri().toAbsoluteUrl()
 
-            val asset = assetRetriever.retrieve(url!!).getOrNull()
+            val asset: Asset? = url?.let { assetRetriever.retrieve(url).getOrNull() }
 
             if (asset != null) {
                 val publicationParser = DefaultPublicationParser(
@@ -56,31 +55,25 @@ class EpubReaderViewModel : ViewModel() {
                 publication =
                     publicationOpener.open(asset, allowUserInteraction = false).getOrNull()
 
-
-                publicationCache.putIfAbsent(bookId, publication!!)
-
-                return publication
-
+                if (publication != null)
+                    publicationCache.putIfAbsent(bookId, publication)
             }
 
 
         } else {
-            return publicationCache[bookId]
+            publication =  publicationCache[bookId]
         }
 
-        return null
+        return publication
     }
 
 
     suspend fun saveReadingProgression(locator: Locator, bookID: Long) {
         val locatorString = locator.toJSON().toString()
-
         val progress = locator.locations.totalProgression
-
         booksRepository.saveReadingProgress(locatorString, bookID)
-
-        if (progress != null) booksRepository.saveReadingProgressAsDouble(progress, bookID)
-
+        if (progress != null)
+            booksRepository.saveReadingProgressAsDouble(progress, bookID)
     }
 
 
