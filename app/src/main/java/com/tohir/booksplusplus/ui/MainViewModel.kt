@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tohir.booksplusplus.data.BooksRepository
 import com.tohir.booksplusplus.data.model.Book
+import com.tohir.booksplusplus.ui.books.publicationparser.PublicationParser
 import com.tohir.booksplusplus.ui.books.reader.ReaderActivity
 import com.tohir.booksplusplus.util.BooksPlusPlus
 import kotlinx.coroutines.Dispatchers
@@ -184,39 +185,7 @@ class MainViewModel : ViewModel() {
     }
 
     private suspend fun parsePublication(context: Context, uri: Uri): Publication? {
-        val httpClient = DefaultHttpClient()
-        val assetRetriever = AssetRetriever(context.contentResolver, httpClient)
-        val url: AbsoluteUrl? = uri.toAbsoluteUrl()
-
-        val asset = url?.let {
-            assetRetriever.retrieve(url).getOrNull()
-        }
-
-        if (asset != null) {
-            val publicationParser = DefaultPublicationParser(
-                context,
-                httpClient,
-                assetRetriever,
-                null
-            )
-
-            val publicationOpener = PublicationOpener(publicationParser)
-
-            val publicationResult = publicationOpener.open(asset, allowUserInteraction = true)
-
-            if (publicationResult.isSuccess) {
-                return publicationResult.getOrNull()
-            } else {
-                Toast.makeText(context, "File appears to be corrupted...", Toast.LENGTH_LONG).show()
-                Log.d(
-                    "publication",
-                    publicationResult.failureOrNull()?.message + publicationResult.failureOrNull()?.cause
-                )
-                return null
-            }
-        }
-
-        return null
+        return PublicationParser.parsePublication(context, uri)
     }
 
     private fun generateBookCover(
@@ -273,7 +242,7 @@ class MainViewModel : ViewModel() {
 
     private fun copyUriToContentsToFileAndReturnFile(uri: Uri, context: Context): File? {
 
-        try {
+        val file: File? = try {
             val fileName = "file_${System.currentTimeMillis()}.epub"
             val destinationFile = File(context.filesDir, fileName)
 
@@ -283,15 +252,16 @@ class MainViewModel : ViewModel() {
                 }
             }
 
-            return destinationFile
+            destinationFile
 
         } catch (e: Exception) {
             println(e.message)
             println(e.printStackTrace())
+            null
 
         }
 
-        return null
+        return file
     }
 }
 

@@ -37,7 +37,6 @@ import com.tohir.booksplusplus.ui.books.reader.dictionary.DictionaryBottomSheet
 import com.tohir.booksplusplus.ui.books.reader.note.NoteBottomSheetDialogFragment
 import com.tohir.booksplusplus.ui.books.reader.search.SearchServiceFragmentBottomSheet
 import com.tohir.booksplusplus.ui.books.reader.toc.ContentsBottomSheetFragment
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
@@ -58,6 +57,7 @@ import org.readium.r2.navigator.preferences.FontFamily
 import org.readium.r2.navigator.preferences.TextAlign
 import org.readium.r2.navigator.util.BaseActionModeCallback
 import org.readium.r2.shared.ExperimentalReadiumApi
+import org.readium.r2.shared.publication.Locator
 import org.readium.r2.shared.publication.Publication
 import org.readium.r2.shared.publication.services.positions
 
@@ -103,90 +103,68 @@ class EpubReaderFragment : Fragment() {
     val FontFamily.Companion.POIRET_ONE get() = FontFamily("PoiretOne")
 
 
-    @OptIn(ExperimentalReadiumApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-
         bookId = arguments?.getLong("BOOK_ID")!!
-        bookId?.let {
-            publication = runBlocking {
-                viewModel.importPublication(
-                    requireContext(),
-                    bookId!!
-                )
+
+        if (savedInstanceState != null) {
+            // FragmentManager is restoring state — set dummy factory to prevent crash
+            childFragmentManager.fragmentFactory = EpubNavigatorFragment.createDummyFactory()
+            super.onCreate(savedInstanceState)
+
+            // Remove the restored fragment so setupNavigator can add the real one later
+            childFragmentManager.findFragmentByTag("EpubNavigatorFragment")?.let {
+                childFragmentManager.commitNow { remove(it) }
             }
+
+            viewModel.loadBook(requireContext().applicationContext, bookId!!)
+            return
         }
 
-        if (publication != null) {
-            val navigatorFactory = EpubNavigatorFactory(
-                publication = publication!!,
-                EpubNavigatorFactory.Configuration()
-            )
+        super.onCreate(savedInstanceState)
+        viewModel.loadBook(requireContext().applicationContext, bookId!!)
+    }
 
-            readerViewModel.setPublication(publication!!)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-            childFragmentManager.fragmentFactory = navigatorFactory.createFragmentFactory(
-                initialLocator = runBlocking { viewModel.restoreReadingProgression(bookId!!) },
-                initialPreferences = preferences,
-                configuration = EpubNavigatorFragment.Configuration {
-                    selectionActionModeCallback = customSelectionActionModeCallback
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.readerState.collect { state ->
+                    when {
+                        state.isLoading -> showLoading(true)
 
-                    servedAssets += "font/.*"
-
-
-                    addFontFamilyDeclaration(FontFamily.OPEN_SANS) {
-                        addFontFace {
-                            addSource("font/open_sans.ttf", preload = true)
-                            setFontStyle(FontStyle.NORMAL)
-                            setFontWeight(FontWeight.NORMAL)
+                        state.error != null -> {
+                            showLoading(false)
+                            Toast.makeText(requireContext(), state.error, Toast.LENGTH_LONG).show()
+                            requireActivity().finish()
                         }
 
-                    }
-
-                    addFontFamilyDeclaration(FontFamily.LEXEND) {
-                        addFontFace {
-                            addSource("font/lexend_regular.ttf", preload = true)
-                            setFontStyle(FontStyle.NORMAL)
-                            setFontWeight(FontWeight.NORMAL)
-                        }
-
-                    }
-
-                    addFontFamilyDeclaration(FontFamily.MONTSERRAT) {
-                        addFontFace {
-                            addSource("font/montserrat_regular.ttf", preload = true)
-                            setFontStyle(FontStyle.NORMAL)
-                            setFontWeight(FontWeight.NORMAL)
-                        }
-
-                    }
-
-                    addFontFamilyDeclaration(FontFamily.POIRET_ONE) {
-                        addFontFace {
-                            addSource("font/poiret_one_regular.ttf", preload = true)
-                            setFontStyle(FontStyle.NORMAL)
-                            setFontWeight(FontWeight.NORMAL)
-                        }
-
-                    }
-
-                    addFontFamilyDeclaration(FontFamily.ROBOTO) {
-                        addFontFace {
-                            addSource("font/roboto_regular.ttf", preload = true)
-                            setFontStyle(FontStyle.NORMAL)
-                            setFontWeight(FontWeight.NORMAL)
+                        state.publication != null -> {
+                            showLoading(false)
+                            if (childFragmentManager.findFragmentByTag("EpubNavigatorFragment") == null) {
+                                publication = state.publication
+                                setupNavigator(state.publication, state.locator)
+                                setupClickListeners()
+                                setupObservers()
+                                setupInitSettings()
+                            }
                         }
                     }
                 }
-            )
-        } else {
-            Toast.makeText(
-                requireContext(),
-                "An error while parsing the publication, the file may be corrupted.",
-                Toast.LENGTH_LONG
-            ).show()
-            return
+            }
         }
-        super.onCreate(savedInstanceState)
+
+    }
+
+    fun showLoading(bool: Boolean) {
+        if (bool) {
+            binding.loadingSpinner.visibility = View.VISIBLE
+            binding.buttonContainer.visibility = View.GONE
+        } else {
+            binding.loadingSpinner.visibility = View.GONE
+            binding.buttonContainer.visibility = View.VISIBLE
+        }
+
     }
 
     override fun onCreateView(
@@ -195,32 +173,89 @@ class EpubReaderFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentReaderBinding.inflate(inflater, container, false)
-
-        if (savedInstanceState == null) {
-            childFragmentManager.commitNow {
-                add(
-                    R.id.fragment_reader_container,
-                    EpubNavigatorFragment::class.java,
-                    Bundle(),
-                    "EpubNavigatorFragment"
-                )
-            }
-        }
-
-        navigator =
-            childFragmentManager.findFragmentByTag("EpubNavigatorFragment") as EpubNavigatorFragment
-
         return binding.root
     }
 
-    @OptIn(ExperimentalReadiumApi::class)
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
-        setupClickListeners()
-        setupObservers()
-        setupInitSettings()
+    @OptIn(ExperimentalReadiumApi::class)
+    private fun setupNavigator(publication: Publication, locator: Locator?) {
+        readerViewModel.setPublication(publication)
+
+        val navigatorFactory = EpubNavigatorFactory(
+            publication = publication,
+            EpubNavigatorFactory.Configuration()
+        )
+
+        childFragmentManager.fragmentFactory = navigatorFactory.createFragmentFactory(
+            initialLocator = locator,
+            initialPreferences = preferences,
+            configuration = EpubNavigatorFragment.Configuration {
+                selectionActionModeCallback = customSelectionActionModeCallback
+                servedAssets += "font/.*"
+
+                addFontFamilyDeclaration(FontFamily.OPEN_SANS) {
+                    addFontFace {
+                        addSource("font/open_sans.ttf", preload = true)
+                        setFontStyle(FontStyle.NORMAL)
+                        setFontWeight(FontWeight.NORMAL)
+                    }
+
+                }
+
+                addFontFamilyDeclaration(FontFamily.LEXEND) {
+                    addFontFace {
+                        addSource("font/lexend_regular.ttf", preload = true)
+                        setFontStyle(FontStyle.NORMAL)
+                        setFontWeight(FontWeight.NORMAL)
+                    }
+
+                }
+
+                addFontFamilyDeclaration(FontFamily.MONTSERRAT) {
+                    addFontFace {
+                        addSource("font/montserrat_regular.ttf", preload = true)
+                        setFontStyle(FontStyle.NORMAL)
+                        setFontWeight(FontWeight.NORMAL)
+                    }
+
+                }
+
+                addFontFamilyDeclaration(FontFamily.POIRET_ONE) {
+                    addFontFace {
+                        addSource("font/poiret_one_regular.ttf", preload = true)
+                        setFontStyle(FontStyle.NORMAL)
+                        setFontWeight(FontWeight.NORMAL)
+                    }
+
+                }
+
+                addFontFamilyDeclaration(FontFamily.ROBOTO) {
+                    addFontFace {
+                        addSource("font/roboto_regular.ttf", preload = true)
+                        setFontStyle(FontStyle.NORMAL)
+                        setFontWeight(FontWeight.NORMAL)
+                    }
+
+                }
+
+
+            }
+
+        )
+
+        childFragmentManager.commitNow {
+            add(
+                R.id.fragment_reader_container,
+                EpubNavigatorFragment::class.java,
+                Bundle(),
+                "EpubNavigatorFragment"
+            )
+        }
+
+        navigator = childFragmentManager
+            .findFragmentByTag("EpubNavigatorFragment") as EpubNavigatorFragment
     }
+
 
     override fun onPause() {
         super.onPause()
@@ -809,7 +844,9 @@ class EpubReaderFragment : Fragment() {
 
             val id = decoration.id.toLong()
 
-            runBlocking { note(id) }
+            lifecycleScope.launch {
+                note(id)
+            }
             return true
 
         }

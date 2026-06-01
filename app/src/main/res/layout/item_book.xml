@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_margin="12dp">
 
 
@@ -12,10 +12,10 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scaleType="centerCrop"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.5"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintDimensionRatio="2:3"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Small"
         tools:src="@color/md_theme_onSurface" />
 
@@ -24,19 +24,17 @@
         android:id="@+id/reading_percent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:fontFamily="sans-serif-light"
         android:textColor="?android:attr/textColorSecondary"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@id/image_button_options"
+        android:textSize="11sp"
+        app:layout_constraintBaseline_toBaselineOf="@id/image_button_options"
         app:layout_constraintEnd_toStartOf="@id/image_button_options"
-        app:layout_constraintTop_toTopOf="@id/image_button_options"
         tools:text="67%" />
 
     <ImageButton
         android:id="@+id/image_button_options"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="52dp"
+        android:layout_height="0dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/icon_options"
         app:layout_constraintEnd_toEndOf="@id/image_view_book_cover"

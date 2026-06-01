@@ -34,57 +34,57 @@
             android:padding="16dp">
 
             <com.google.android.material.textview.MaterialTextView
-                android:visibility="gone"
                 android:id="@+id/text_view_continue_reading"
                 android:layout_width="wrap_content"
-                tools:visibility="visible"
                 android:layout_height="wrap_content"
                 android:text="Continue Reading"
                 android:textAppearance="?attr/textAppearanceTitleLarge"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
 
 
             <androidx.recyclerview.widget.RecyclerView
-                android:visibility="gone"
                 android:id="@+id/recycler_view_continue_reading"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                tools:visibility="visible"
                 android:orientation="horizontal"
+                android:visibility="gone"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toTopOf="@id/text_view_recently_added"
                 app:layout_constraintTop_toBottomOf="@id/text_view_continue_reading"
                 tools:itemCount="3"
-                tools:listitem="@layout/item_recently_read_books" />
+                tools:listitem="@layout/item_recently_read_books"
+                tools:visibility="visible" />
 
             <com.google.android.material.textview.MaterialTextView
-                android:visibility="visible"
                 android:id="@+id/text_view_recently_added"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:text="Recently added"
-                tools:visibility="visible"
                 android:textAppearance="?attr/textAppearanceTitleLarge"
+                android:visibility="visible"
                 app:layout_constraintBottom_toTopOf="@id/recycler_view_recently_added"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/recycler_view_continue_reading" />
+                app:layout_constraintTop_toBottomOf="@id/recycler_view_continue_reading"
+                tools:visibility="visible" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:visibility="visible"
                 android:id="@+id/recycler_view_recently_added"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:orientation="horizontal"
+                android:visibility="visible"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toTopOf="@id/text_view_finished"
                 app:layout_constraintTop_toBottomOf="@id/text_view_recently_added"
                 tools:itemCount="3"
-                tools:visibility="visible"
-                tools:listitem="@layout/item_recently_read_books" />
+                tools:listitem="@layout/item_recently_read_books"
+                tools:visibility="visible" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/text_view_finished"
@@ -94,13 +94,12 @@
                 android:text="Finished"
                 android:textAppearance="?attr/textAppearanceTitleLarge"
                 android:visibility="gone"
-                tools:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/recycler_view_recently_added" />
+                app:layout_constraintTop_toBottomOf="@id/recycler_view_recently_added"
+                tools:visibility="visible" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view_finished"
-                tools:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -108,11 +107,10 @@
                 android:visibility="gone"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toBottomOf="@id/text_view_finished"
-
                 tools:itemCount="3"
-                tools:listitem="@layout/item_recently_read_books" />
 
-
+                tools:listitem="@layout/item_recently_read_books"
+                tools:visibility="visible" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -96,7 +96,6 @@
         android:id="@+id/library_recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:clipToPadding="false"
         android:paddingHorizontal="8dp"
         android:paddingTop="8dp"
         android:paddingBottom="16dp"

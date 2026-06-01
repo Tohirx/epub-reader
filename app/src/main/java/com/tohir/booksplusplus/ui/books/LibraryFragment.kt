@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.tohir.booksplusplus.R
 import com.tohir.booksplusplus.data.model.Book
@@ -48,7 +49,17 @@ class LibraryFragment : Fragment(), BookAdapter.BookClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.libraryRecyclerView.adapter = adapter
+        binding.libraryRecyclerView.apply {
+            adapter = this@LibraryFragment.adapter
+            val spanCount = when {
+                resources.configuration.smallestScreenWidthDp >= 900 -> 6
+                resources.configuration.smallestScreenWidthDp >= 600 -> 4
+                else -> 2
+            }
+            layoutManager = GridLayoutManager(requireContext(), spanCount)
+
+        }
+
         fetchAllBooks()
 
         binding.categoryChipGroup.setOnCheckedStateChangeListener { _, checkedId ->

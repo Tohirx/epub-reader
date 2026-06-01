@@ -79,30 +79,21 @@ class DictionaryBottomSheet : BottomSheetDialogFragment() {
     }
 
     private suspend fun fetchDictionaryData(selectedWord: String): DictionaryResult? {
+        val result = DictionaryApi.lookup(selectedWord.lowercase())
 
-        val connectivityManager =
-            requireContext().getSystemService(ConnectivityManager::class.java) as ConnectivityManager
+        if (result.isSuccess) {
+            val wordEntries = result.getOrNull()!!
+            val adapter = WordEntryAdapter()
 
-        if (connectivityManager.activeNetwork != null) {
-
-            val api = DictionaryApi()
-            val result = api.lookup(selectedWord.lowercase())
-
-
-            if (result.isSuccess) {
-                val wordEntries = result.getOrNull()!!
-                val adapter = WordEntryAdapter()
-
-                adapter.setWordEntries(wordEntries)
-                binding.loadingSpinner.visibility = View.GONE
-                binding.recyclerViewMeanings.visibility = View.GONE
-                binding.recyclerViewWordEntry.visibility = View.VISIBLE
-                binding.recyclerViewWordEntry.adapter = adapter
-                binding.textViewWordText.visibility = View.GONE
-                return null
-            }
-
+            adapter.setWordEntries(wordEntries)
+            binding.loadingSpinner.visibility = View.GONE
+            binding.recyclerViewMeanings.visibility = View.GONE
+            binding.recyclerViewWordEntry.visibility = View.VISIBLE
+            binding.recyclerViewWordEntry.adapter = adapter
+            binding.textViewWordText.visibility = View.GONE
+            return null
         }
+
 
         val db = DictionaryProvider.getInstance(requireContext())
 
